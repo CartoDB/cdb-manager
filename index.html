@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en" ng-app="cdbmanager">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>CDN Manager</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<!--        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>-->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.js"></script>
+    </head>
+    <body>
+        <!-- Top bar -->
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">CDB Manager</a>
+                </div>
+          </div>
+        </nav>
+        <!-- Alert messages -->
+        <div class="container-fluid">
+            <div ng-controller="AlertCtrl">
+                <div ng-repeat="alert in alerts" ng-class="'alert alert-dismissable alert-' + alert.type" role="alert">
+                    <button type="button" class="close" ng-click="closeAlert($index)" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <alert  role="alert" >{{ alert.msg }}</alert>
+                </div>
+            </div>
+        </div>
+        <!-- Main work area -->
+        <div class="container-fluid" ng-controller="serversCtrl">
+            <!-- New server dialog -->
+            <div class="modal fade" id="add_server_modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Add server</h4>
+                        </div>
+                        <form novalidate>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="name">Account name</label>
+                                    <input type="text" id="name" class="form-control" ng-model="newServer.name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">SQL API endpoint URL</label>
+                                    <input type="text" id="url" class="form-control" ng-model="newServer.url">
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">API key</label>
+                                    <input type="text" id="api_key" class="form-control" ng-model="newServer.apiKey">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" ng-click="addServer(newServer)">Add</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel">
+                <!-- Server tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li ng-repeat="server in servers" role="presentation" ng-class="{active: current == server}"><a href="#{{ server.name }}" ng-click="setCurrent(server)" aria-controls="{{ server.name }}" role="tab" data-toggle="tab">{{ server.name }} <button type="button" class="close" ng-click="removeServer(server)" aria-label="Delete"><span aria-hidden="true">&times;</span></button></a></li>
+                    <li role="presentation" class="pull-right"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_server_modal">New server</button></li>
+                </ul>
+
+                <div ng-show="current" class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="tbd">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="panel">
+                                    <div class="panel-body">
+                                        <!-- Left menu -->
+                                        <ul class="nav nav-pills nav-stacked">
+                                            <li role="presentation" class="active"><a href="#">Tables</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Tables pane -->
+                            <div class="col-md-9" ng-controller="tablesCtrl">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Owner</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="table in tables">
+                                            <td>{{ table.table_name }}</td>
+                                            <td>{{ table.table_schema }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="vendor/ngStorage.min.js"></script>
+        <script>
+            var cdbmanager = angular.module("cdbmanager", ["ngStorage"]);
+        </script>
+        <script src="alerts.js"></script>
+        <script src="servers.js"></script>
+        <script src="api.js"></script>
+        <script src="tables.js"></script>
+    </body>
+</html>
