@@ -31,7 +31,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", fun
         $scope.sql.query = null;
         $scope.sql.result = null;
         $scope.sql.headers = null;
-    });
+    }, true);
 
 
     $scope.$watch(function () {

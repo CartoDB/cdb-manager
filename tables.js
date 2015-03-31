@@ -14,8 +14,8 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     $scope.$watch(function () {
         return endpoints.current;
     }, function (currentEndpoint) {
-        return tables.getAll(currentEndpoint);
-    });
+        $scope.tables = tables.getAll(currentEndpoint);
+    }, true);
 
     $scope.$watch(function () {
         return tables.api.items;
@@ -30,8 +30,8 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", fun
     $scope.$watch(function () {
         return endpoints.current;
     }, function (currentEndpoint) {
-        return tables.getAll(currentEndpoint);
-    });
+        $scope.tables = tables.getAll(currentEndpoint);
+    }, true);
 
     $scope.$watch(function () {
         return tables.api.items;
