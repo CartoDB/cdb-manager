@@ -12,14 +12,23 @@ cdbmanager.service('endpoints', ["$localStorage", function ($localStorage) {
     };
 
     this.add = function (endpoint) {
-        $localStorage.endpoints.push(endpoint);
-        this.current = endpoint;
+        $localStorage.endpoints.push(angular.copy(endpoint));
+        this.current = $localStorage.endpoints[$localStorage.endpoints.length - 1];
+    };
+
+    this.update = function (endpoint, properties) {
+        for (var propertyName in properties) {
+            if (properties.hasOwnProperty(propertyName)) {
+                endpoint[propertyName] = properties[propertyName];
+            }
+        }
     };
 
     this.remove = function (endpoint) {
         $localStorage.endpoints = $localStorage.endpoints.filter(function (_endpoint) {
             return endpoint != _endpoint;
         });
+
         if (this.current == endpoint) {
             if ($localStorage.endpoints) {
                 this.current = $localStorage.endpoints[0];
@@ -35,6 +44,8 @@ cdbmanager.service('endpoints', ["$localStorage", function ($localStorage) {
 }]);
 
 cdbmanager.controller('endpointsCtrl', ["$scope", "endpoints", function ($scope, endpoints) {
+    $scope.updatedEndpoint = {};
+
     $scope.$watch(function () {
         return endpoints.all();
     }, function (endpoints) {
@@ -45,7 +56,7 @@ cdbmanager.controller('endpointsCtrl', ["$scope", "endpoints", function ($scope,
         return endpoints.current;
     }, function (endpoint) {
         $scope.current = endpoint;
-        $scope.activePanel = 'table';
+        $scope.updatedEndpoint = angular.copy($scope.current);
     });
 
     $scope.addEndpoint = function () {
@@ -57,11 +68,16 @@ cdbmanager.controller('endpointsCtrl', ["$scope", "endpoints", function ($scope,
         });
     };
 
-    $scope.removeEndpoint = function (endpoint) {
-        endpoints.remove(endpoint);
+    $scope.removeCurrentEndpoint = function () {
+        endpoints.remove($scope.current);
+    };
+
+    $scope.updateCurrentEndpoint = function (updatedEndpoint) {
+        endpoints.update($scope.current, updatedEndpoint);
     };
 
     $scope.setCurrent = function () {
         endpoints.setCurrent($scope.current);
+        $scope.updatedEndpoint = angular.copy($scope.current);
     };
 }]);
