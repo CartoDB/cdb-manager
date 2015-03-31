@@ -22,12 +22,14 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", function ($scope, SQLCl
     $scope.$watch(function () {
         return self.api.raw;
     }, function (result) {
+        $scope.sql.headers = [];
+        if (result && result.data && result.data.rows && result.data.rows.length > 0) {
+            $scope.sql.headers = Object.keys(result.data.rows[0]);
+        }
         $scope.sql.result = result;
-        console.log("RESULT", result);
     });
 
     $scope.execSQL = function (query) {
-        console.log("QUERY", query);
         return self.api.get(query);
     }
 }]);
