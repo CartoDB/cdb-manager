@@ -8,9 +8,11 @@ cdbmanager.service("tables", ["SQLClient", function (SQLClient) {
     };
 }]);
 
-cdbmanager.controller('tablesCtrl', ["$scope", "tables", function ($scope, tables) {
+cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "nav", function ($scope, tables, endpoints, nav) {
+    $scope.nav = nav;
+
     $scope.$watch(function () {
-        return $scope.current;
+        return endpoints.current;
     }, function (currentEndpoint) {
         return tables.getAll(currentEndpoint);
     });
@@ -20,4 +22,24 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", function ($scope, table
     }, function (table_list) {
         $scope.tables = table_list;
     });
+}]);
+
+cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", function ($scope, tables, endpoints, nav) {
+    $scope.nav = nav;
+
+    $scope.$watch(function () {
+        return endpoints.current;
+    }, function (currentEndpoint) {
+        return tables.getAll(currentEndpoint);
+    });
+
+    $scope.$watch(function () {
+        return tables.api.items;
+    }, function (table_list) {
+        $scope.tables = table_list;
+    });
+}]);
+
+cdbmanager.controller('tableCtrl', ["$scope", "nav", function ($scope, nav) {
+    $scope.nav = nav;
 }]);

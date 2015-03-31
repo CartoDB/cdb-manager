@@ -12,9 +12,8 @@ cdbmanager.service('endpoints', ["$localStorage", function ($localStorage) {
     };
 
     this.add = function (endpoint) {
-        var newEndpoint = angular.copy(endpoint);
-        $localStorage.endpoints.push(newEndpoint);
-        this.current = newEndpoint;
+        $localStorage.endpoints.push(endpoint);
+        this.current = endpoint;
     };
 
     this.remove = function (endpoint) {
@@ -49,15 +48,20 @@ cdbmanager.controller('endpointsCtrl', ["$scope", "endpoints", function ($scope,
         $scope.activePanel = 'table';
     });
 
-    $scope.addEndpoint = function (endpoint) {
-        endpoints.add(endpoint);
+    $scope.addEndpoint = function () {
+        endpoints.add({
+            name: "New",
+            url: "",
+            account: "",
+            apiKey: ""
+        });
     };
 
     $scope.removeEndpoint = function (endpoint) {
         endpoints.remove(endpoint);
     };
 
-    $scope.setCurrent = function (endpoint) {
-        endpoints.setCurrent(endpoint);
+    $scope.setCurrent = function () {
+        endpoints.setCurrent($scope.current);
     };
 }]);

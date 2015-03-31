@@ -37,110 +37,129 @@
             </div>
         </div>
         <!-- Main work area -->
-        <div class="container-fluid" ng-controller="endpointsCtrl">
-            <!-- New endpoint dialog -->
-            <div class="modal fade" id="add_endpoint_modal">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title">Add endpoint</h4>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3">
+                    <!-- Endpoint selector -->
+                    <div class="panel-group" id="accordion" role="tablist">
+                        <div class="panel panel-default" ng-controller="endpointsCtrl">
+                            <div class="panel-heading" role="tab" id="endpointPanelHeading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="true" aria-controls="endpointPanelCollapse">Current endpoint:</a>
+                                    <select ng-options="endpoint as endpoint.name for endpoint in endpoints" ng-model="current" ng-change="setCurrent()"></select>
+                                </h4>
+                            </div>
+                            <div id="endpointPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="endpointPanelHeading">
+                                <form name="endpoint_form" novalidate>
+                                    <div class="panel-body">
+                                        <!-- New endpoint dialog -->
+                                        <div class="form-group">
+                                            <label for="name">Endpoint name</label>
+                                            <input type="text" id="name" class="form-control" ng-model="current.name" ng-required="true">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="name">SQL API endpoint URL</label>
+                                            <input type="text" id="url" class="form-control" ng-model="current.url" ng-required="true">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="name">Account name</label>
+                                            <input type="text" id="account" class="form-control" ng-model="current.account" ng-required="true">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="name">API key</label>
+                                            <input type="text" id="api_key" class="form-control" ng-model="current.apiKey">
+                                        </div>
+                                    </div>
+                                    <div class="panel-footer">
+                                        <button type="button" class="btn btn-default" ng-click="removeEndpoint(current)">Remove</button>
+                                        <button type="button" class="btn btn-default pull-right" ng-disabled="endpoint_form.$invalid || current.name == 'New'" ng-click="addEndpoint()">New</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        <form name="new_endpoint_form" novalidate>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label for="name">Endpoint name</label>
-                                    <input type="text" id="name" class="form-control" ng-model="newEndpoint.name" ng-required="true">
-                                </div>
-                                <div class="form-group">
-                                    <label for="name">SQL API endpoint URL</label>
-                                    <input type="text" id="url" class="form-control" ng-model="newEndpoint.url" ng-required="true">
-                                </div>
-                                <div class="form-group">
-                                    <label for="name">Account name</label>
-                                    <input type="text" id="account" class="form-control" ng-model="newEndpoint.account" ng-required="true">
-                                </div>
-                                <div class="form-group">
-                                    <label for="name">API key</label>
-                                    <input type="text" id="api_key" class="form-control" ng-model="newEndpoint.apiKey">
+                        <div class="panel panel-default" ng-controller="tableSelectorCtrl">
+                            <div class="panel-heading" role="tab" id="tablePanelHeading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#tablePanelCollapse" aria-expanded="true" aria-controls="tablePanelCollapse">Tables</a>
+                                    <a href ng-click="nav.current = 'tables'">({{ tables.length }})</a>
+                                </h4>
+                            </div>
+                            <div id="tablePanelCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="tablePanelHeading">
+                                <div class="panel-body">
+                                    <ul>
+                                        <li ng-repeat="table in tables"><a href ng-click="nav.current = 'table'">{{ table.table_name }}</a></li>
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" ng-disabled="new_endpoint_form.$invalid" ng-click="addEndpoint(newEndpoint)">Add</button>
+                        </div>
+                        <div class="panel panel-default" ng-controller="sqlSelectorCtrl">
+                            <div class="panel-heading" role="tab" id="sqlPanel">
+                                <h4 class="panel-title">
+                                    <a href ng-click="nav.current = 'sql'">
+                                        SQL Console
+                                    </a>
+                                </h4>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div role="tabpanel">
-                <!-- Endpoint tabs -->
-                <ul class="nav nav-tabs" role="tablist">
-                    <li ng-repeat="endpoint in endpoints" role="presentation" ng-class="{active: current == endpoint}"><a href="#{{ endpoint.name }}" ng-click="setCurrent(endpoint)" aria-controls="{{ endpoint.name }}" role="tab" data-toggle="tab">{{ endpoint.name }} <button type="button" class="close" ng-click="removeEndpoint(endpoint)" aria-label="Delete"><span aria-hidden="true">&times;</span></button></a></li>
-                    <li role="presentation" class="pull-right"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_endpoint_modal">New endpoint</button></li>
-                </ul>
-
-                <div ng-show="current" class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="tbd">
+                <!-- Tables pane -->
+                <div class="col-md-9" ng-controller="tablesCtrl" ng-show="nav.current == 'tables'">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Owner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="table in tables">
+                                <td>{{ table.table_name }}</td>
+                                <td>{{ table.table_schema }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Single table pane -->
+                <div class="col-md-9" ng-controller="tableCtrl" ng-show="nav.current == 'table'">
+                    <div role="tabpanel">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation"><a href="#" aria-controls="columns" role="tab" data-toggle="tab">Columns</a></li>
+                            <li role="presentation"><a href="#" aria-controls="columns" role="tab" data-toggle="tab">Indexes</a></li>
+                            <li role="presentation"><a href="#" aria-controls="columns" role="tab" data-toggle="tab">...</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            TBD
+                        </div>
+                    </div>
+                </div>
+                <!-- SQL console pane -->
+                <div class="col-md-9" ng-controller="sqlCtrl" ng-show="nav.current == 'sql'">
+                    <div class="container-fluid">
                         <div class="row">
-                            <div class="col-md-3">
+                            <form novalidate>
                                 <div class="panel">
                                     <div class="panel-body">
-                                        <!-- Left menu -->
-                                        <ul class="nav nav-pills nav-stacked">
-                                            <li role="presentation" ng-class="{active: activePanel == 'table'}"><a href ng-click="activePanel = 'table'">Tables</a></li>
-                                            <li role="presentation" ng-class="{active: activePanel == 'sql'}"><a href ng-click="activePanel = 'sql'">SQL console</a></li>
-                                        </ul>
+                                        <div ui-codemirror ui-codemirror-opts="editorOptions" ng-model="sql.query"></div>
+                                    </div>
+                                    <div class=panel-footer">
+                                        <button type="button" class="btn btn-primary pull-right" ng-click="execSQL(sql.query)">Execute query</button>
                                     </div>
                                 </div>
-                            </div>
-                            <!-- Tables pane -->
-                            <div class="col-md-9" ng-controller="tablesCtrl" ng-if="activePanel == 'table'">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Owner</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="table in tables">
-                                            <td>{{ table.table_name }}</td>
-                                            <td>{{ table.table_schema }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- SQL console pane -->
-                            <div class="col-md-9" ng-controller="sqlCtrl" ng-show="activePanel == 'sql'">
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <form novalidate>
-                                            <div class="panel">
-                                                <div class="panel-body">
-                                                    <div ui-codemirror ui-codemirror-opts="editorOptions" ng-model="sql.query"></div>
-                                                </div>
-                                                <div class=panel-footer">
-                                                    <button type="button" class="btn btn-primary pull-right" ng-click="execSQL(sql.query)">Execute query</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <div class="row" style="overflow: auto;">
-                                        <dir-pagination-controls ng-show="sql.result"></dir-pagination-controls>
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <th ng-repeat="(title, value) in sql.result.data.rows[0]">{{ title }}</th>
-                                            </thead>
-                                            <tbody>
-                                                <tr dir-paginate="row in sql.result.data.rows | itemsPerPage: 25">
-                                                    <td ng-repeat="column in row">{{ column }}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
+                        </div>
+                        <div class="row" style="overflow: auto;">
+                            <dir-pagination-controls ng-show="sql.result"></dir-pagination-controls>
+                            <table class="table table-striped">
+                                <thead>
+                                    <th ng-repeat="(title, value) in sql.result.data.rows[0]">{{ title }}</th>
+                                </thead>
+                                <tbody>
+                                    <tr dir-paginate="row in sql.result.data.rows | itemsPerPage: 25">
+                                        <td ng-repeat="column in row">{{ column }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -157,6 +176,7 @@
                 paginationTemplateProvider.setPath('vendor/dirPagination.tpl.html');
             });
         </script>
+        <script src="nav.js"></script>
         <script src="alerts.js"></script>
         <script src="endpoints.js"></script>
         <script src="api.js"></script>

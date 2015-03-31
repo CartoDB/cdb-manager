@@ -1,9 +1,15 @@
-cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", function ($scope, SQLClient) {
+cdbmanager.controller('sqlSelectorCtrl', ["$scope", "nav", function ($scope, nav) {
+    $scope.nav = nav;
+}]);
+
+
+cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", function ($scope, SQLClient, endpoints, nav) {
     this.api = new SQLClient();
 
     var self = this;
 
     $scope.sql = {};
+    $scope.nav = nav;
 
     var mime = 'text/x-mariadb';
     // get mime type
@@ -20,8 +26,8 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", function ($scope, SQLCl
     };
 
     $scope.$watch(function () {
-        return $scope.current;
-    }, function (currentEndpoint) {
+        return endpoints.current;
+    }, function () {
         $scope.sql.query = null;
         $scope.sql.result = null;
         $scope.sql.headers = null;
