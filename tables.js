@@ -1,21 +1,21 @@
-cdbmanager.service('tables', ["api", function (api) {
-    this.all = function () {
-        return $localStorage.servers;
+cdbmanager.service("tables", ["SQLClient", function (SQLClient) {
+    this.api = new SQLClient();
+
+    this.getAll = function (server) {
+        return this.api.get("SELECT * FROM information_schema.tables WHERE table_schema = '" + server.name + "' ORDER BY table_schema, table_name;");
     };
 }]);
 
-cdbmanager.controller('tablesCtrl', ["$scope", "servers", "api", function ($scope, servers, api) {
+cdbmanager.controller('tablesCtrl', ["$scope", "tables", function ($scope, tables) {
     $scope.$watch(function () {
         return $scope.current;
     }, function (currentServer) {
-        console.log("CURR", currentServer);
-        return api.get("SELECT * FROM information_schema.tables WHERE table_schema = '" + currentServer.name + "' ORDER BY table_schema, table_name;");
+        return tables.getAll(currentServer);
     });
 
     $scope.$watch(function () {
-        return api.items;
-    }, function (tables) {
-        $scope.tables = tables;
+        return tables.api.items;
+    }, function (table_list) {
+        $scope.tables = table_list;
     });
-
 }]);

@@ -6,6 +6,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>CartoDB Manager</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <link rel="stylesheet" href="vendor/codemirror/codemirror.css" />
+        <style>
+            .CodeMirror {
+                border-top: 1px solid black;
+                border-bottom: 1px solid black;
+            }
+        </style>
         <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <!--        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>-->
@@ -77,13 +84,14 @@
                                     <div class="panel-body">
                                         <!-- Left menu -->
                                         <ul class="nav nav-pills nav-stacked">
-                                            <li role="presentation" class="active"><a href="#">Tables</a></li>
+                                            <li role="presentation" ng-class="{active: activePanel == 'table'}"><a href ng-click="activePanel = 'table'">Tables</a></li>
+                                            <li role="presentation" ng-class="{active: activePanel == 'sql'}"><a href ng-click="activePanel = 'sql'">SQL console</a></li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                             <!-- Tables pane -->
-                            <div class="col-md-9" ng-controller="tablesCtrl">
+                            <div class="col-md-9" ng-controller="tablesCtrl" ng-if="activePanel == 'table'">
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
@@ -99,18 +107,56 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <!-- SQL console pane -->
+                            <div class="col-md-9" ng-controller="sqlCtrl" ng-show="activePanel == 'sql'">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <form novalidate>
+                                            <div class="panel">
+                                                <div class="panel-body">
+                                                    <div ui-codemirror ui-codemirror-opts="editorOptions" ng-model="sql.query"></div>
+                                                </div>
+                                                <div class=panel-footer">
+                                                    <button type="button" class="btn btn-primary pull-right" ng-click="execSQL(sql.query)">Execute query</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="row" style="overflow: auto;">
+                                        <dir-pagination-controls></dir-pagination-controls>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <th ng-repeat="(title, value) in sql.result.data.rows[0]">{{ title }}</th>
+                                            </thead>
+                                            <tbody>
+                                                <tr dir-paginate="row in sql.result.data.rows | itemsPerPage: 25">
+                                                    <td ng-repeat="column in row">{{ column }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <script src="vendor/ngStorage.min.js"></script>
+        <script src="vendor/codemirror/codemirror.js"></script>
+        <script src="vendor/codemirror/sql.js"></script>
+        <script src="vendor/codemirror/ui-codemirror.js"></script>
+        <script src="vendor/dirPagination.js"></script>
         <script>
-            var cdbmanager = angular.module("cdbmanager", ["ngStorage"]);
+            var cdbmanager = angular.module("cdbmanager", ["ngStorage", "api", "ui.codemirror", "angularUtils.directives.dirPagination"]);
+            cdbmanager.config(function (paginationTemplateProvider) {
+                paginationTemplateProvider.setPath('vendor/dirPagination.tpl.html');
+            });
         </script>
         <script src="alerts.js"></script>
         <script src="servers.js"></script>
         <script src="api.js"></script>
         <script src="tables.js"></script>
+        <script src="sql.js"></script>
     </body>
 </html>

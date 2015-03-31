@@ -46,6 +46,7 @@ cdbmanager.controller('serversCtrl', ["$scope", "servers", function ($scope, ser
         return servers.current;
     }, function (server) {
         $scope.current = server;
+        $scope.activePanel = 'table';
     });
 
     $scope.addServer = function (server) {
