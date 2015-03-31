@@ -37,43 +37,47 @@
             </div>
         </div>
         <!-- Main work area -->
-        <div class="container-fluid" ng-controller="serversCtrl">
-            <!-- New server dialog -->
-            <div class="modal fade" id="add_server_modal">
+        <div class="container-fluid" ng-controller="endpointsCtrl">
+            <!-- New endpoint dialog -->
+            <div class="modal fade" id="add_endpoint_modal">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title">Add server</h4>
+                            <h4 class="modal-title">Add endpoint</h4>
                         </div>
-                        <form novalidate>
+                        <form name="new_endpoint_form" novalidate>
                             <div class="modal-body">
                                 <div class="form-group">
-                                    <label for="name">Account name</label>
-                                    <input type="text" id="name" class="form-control" ng-model="newServer.name">
+                                    <label for="name">Endpoint name</label>
+                                    <input type="text" id="name" class="form-control" ng-model="newEndpoint.name" ng-required="true">
                                 </div>
                                 <div class="form-group">
                                     <label for="name">SQL API endpoint URL</label>
-                                    <input type="text" id="url" class="form-control" ng-model="newServer.url">
+                                    <input type="text" id="url" class="form-control" ng-model="newEndpoint.url" ng-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">Account name</label>
+                                    <input type="text" id="account" class="form-control" ng-model="newEndpoint.account" ng-required="true">
                                 </div>
                                 <div class="form-group">
                                     <label for="name">API key</label>
-                                    <input type="text" id="api_key" class="form-control" ng-model="newServer.apiKey">
+                                    <input type="text" id="api_key" class="form-control" ng-model="newEndpoint.apiKey">
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" ng-click="addServer(newServer)">Add</button>
+                                <button type="button" class="btn btn-primary" ng-disabled="new_endpoint_form.$invalid" ng-click="addEndpoint(newEndpoint)">Add</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
             <div role="tabpanel">
-                <!-- Server tabs -->
+                <!-- Endpoint tabs -->
                 <ul class="nav nav-tabs" role="tablist">
-                    <li ng-repeat="server in servers" role="presentation" ng-class="{active: current == server}"><a href="#{{ server.name }}" ng-click="setCurrent(server)" aria-controls="{{ server.name }}" role="tab" data-toggle="tab">{{ server.name }} <button type="button" class="close" ng-click="removeServer(server)" aria-label="Delete"><span aria-hidden="true">&times;</span></button></a></li>
-                    <li role="presentation" class="pull-right"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_server_modal">New server</button></li>
+                    <li ng-repeat="endpoint in endpoints" role="presentation" ng-class="{active: current == endpoint}"><a href="#{{ endpoint.name }}" ng-click="setCurrent(endpoint)" aria-controls="{{ endpoint.name }}" role="tab" data-toggle="tab">{{ endpoint.name }} <button type="button" class="close" ng-click="removeEndpoint(endpoint)" aria-label="Delete"><span aria-hidden="true">&times;</span></button></a></li>
+                    <li role="presentation" class="pull-right"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_endpoint_modal">New endpoint</button></li>
                 </ul>
 
                 <div ng-show="current" class="tab-content">
@@ -123,7 +127,7 @@
                                         </form>
                                     </div>
                                     <div class="row" style="overflow: auto;">
-                                        <dir-pagination-controls></dir-pagination-controls>
+                                        <dir-pagination-controls ng-show="sql.result"></dir-pagination-controls>
                                         <table class="table table-striped">
                                             <thead>
                                                 <th ng-repeat="(title, value) in sql.result.data.rows[0]">{{ title }}</th>
@@ -154,7 +158,7 @@
             });
         </script>
         <script src="alerts.js"></script>
-        <script src="servers.js"></script>
+        <script src="endpoints.js"></script>
         <script src="api.js"></script>
         <script src="tables.js"></script>
         <script src="sql.js"></script>

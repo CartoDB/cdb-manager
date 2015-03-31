@@ -20,6 +20,15 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", function ($scope, SQLCl
     };
 
     $scope.$watch(function () {
+        return $scope.current;
+    }, function (currentEndpoint) {
+        $scope.sql.query = null;
+        $scope.sql.result = null;
+        $scope.sql.headers = null;
+    });
+
+
+    $scope.$watch(function () {
         return self.api.raw;
     }, function (result) {
         $scope.sql.headers = [];

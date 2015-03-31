@@ -1,16 +1,16 @@
 var api = angular.module("api", []);
 
-api.factory('SQLClient', ["$http", "servers", "alerts", function ($http, servers, alerts) {
+api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpoints, alerts) {
     return function () {
         this.get = function (query, action, error) {
-            var currentServer = servers.current;
+            var currentEndpoint = endpoints.current;
 
             var req = {
                 method: 'GET',
-                url: currentServer.url,
+                url: currentEndpoint.url,
                 params: {
                     q: query,
-                    api_key: currentServer.apiKey
+                    api_key: currentEndpoint.apiKey
                 }
             };
 
@@ -27,7 +27,8 @@ api.factory('SQLClient', ["$http", "servers", "alerts", function ($http, servers
                     self.items = null;
                     self.raw = null;
                     self.time = null;
-                    alerts.add("error", "Server error: " + result.data);
+                    var error_message = result.statusText ? result.statusText : result.data;
+                    alerts.add("error", "Endpoint error: " + error_message);
                 }
             }
 
