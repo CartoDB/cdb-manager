@@ -50,29 +50,29 @@
                                 </h4>
                             </div>
                             <div id="endpointPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="endpointPanelHeading">
-                                <form name="endpoint_form" novalidate>
+                                <form novalidate>
                                     <div class="panel-body">
                                         <!-- New endpoint dialog -->
                                         <div class="form-group">
                                             <label for="name">Endpoint name</label>
-                                            <input type="text" id="name" class="form-control" ng-model="current.name" ng-required="true">
+                                            <input type="text" id="name" class="form-control" ng-model="current.name" ng-disabled="!current">
                                         </div>
                                         <div class="form-group">
                                             <label for="name">SQL API endpoint URL</label>
-                                            <input type="text" id="url" class="form-control" ng-model="current.url" ng-required="true">
+                                            <input type="text" id="url" class="form-control" ng-model="current.url" ng-disabled="!current">
                                         </div>
                                         <div class="form-group">
                                             <label for="name">Account name</label>
-                                            <input type="text" id="account" class="form-control" ng-model="current.account" ng-required="true">
+                                            <input type="text" id="account" class="form-control" ng-model="current.account" ng-disabled="!current">
                                         </div>
                                         <div class="form-group">
                                             <label for="name">API key</label>
-                                            <input type="text" id="api_key" class="form-control" ng-model="current.apiKey">
+                                            <input type="text" id="api_key" class="form-control" ng-model="current.apiKey" ng-disabled="!current">
                                         </div>
                                     </div>
                                     <div class="panel-footer">
                                         <button type="button" class="btn btn-default" ng-click="removeEndpoint(current)">Remove</button>
-                                        <button type="button" class="btn btn-default pull-right" ng-disabled="endpoint_form.$invalid || current.name == 'New'" ng-click="addEndpoint()">New</button>
+                                        <button type="button" class="btn btn-default pull-right" ng-click="addEndpoint()">New</button>
                                     </div>
                                 </form>
                             </div>
