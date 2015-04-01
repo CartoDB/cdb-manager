@@ -152,7 +152,9 @@
                             </form>
                         </div>
                         <div class="row" style="overflow: auto;">
-                            <dir-pagination-controls ng-show="sql.result"></dir-pagination-controls>
+                            <h4 ng-show="running">Please wait...</h4>
+                            <h4 ng-show="sql.result.data.rows">Total rows: {{ sql.result.data.total_rows }}, server runtime: {{ sql.result.data.time }}s</h4>
+                            <dir-pagination-controls class="pull-right" ng-show="sql.result"></dir-pagination-controls>
                             <table class="table table-striped">
                                 <thead>
                                     <th ng-repeat="(title, value) in sql.result.data.rows[0]">{{ title }}</th>
@@ -163,6 +165,7 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <dir-pagination-controls class="pull-right" ng-show="sql.result"></dir-pagination-controls>
                         </div>
                     </div>
                 </div>

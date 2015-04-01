@@ -10,6 +10,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", fun
 
     $scope.sql = {};
     $scope.nav = nav;
+    $scope.running = false;
 
     var mime = 'text/x-mariadb';
     // get mime type
@@ -28,6 +29,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", fun
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
+        $scope.running = false;
         $scope.sql.query = null;
         $scope.sql.result = null;
         $scope.sql.headers = null;
@@ -37,6 +39,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", fun
     $scope.$watch(function () {
         return self.api.raw;
     }, function (result) {
+        $scope.running = false;
         $scope.sql.headers = [];
         if (result && result.data && result.data.rows && result.data.rows.length > 0) {
             $scope.sql.headers = Object.keys(result.data.rows[0]);
@@ -45,6 +48,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", fun
     });
 
     $scope.execSQL = function (query) {
+        $scope.running = true;
         return self.api.get(query);
     }
 }]);
