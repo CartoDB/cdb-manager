@@ -2,6 +2,7 @@ var api = angular.module("api", []);
 
 api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpoints, alerts) {
     return function () {
+        // action and error are functions for the promise. if undefined, default functions will be used
         this.get = function (query, action, error) {
             var currentEndpoint = endpoints.current;
 
@@ -16,6 +17,7 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
 
             var self = this;
             if (!action) {
+                // default action function
                 action = function (result) {
                     self.raw = result;
                     self.items = result.data.rows;
@@ -23,6 +25,7 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
                 }
             }
             if (!error) {
+                // default error function
                 error = function (result) {
                     self.items = null;
                     self.raw = null;

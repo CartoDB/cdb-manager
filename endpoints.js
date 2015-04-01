@@ -1,3 +1,4 @@
+// saves endpoints to local storage
 cdbmanager.service('endpoints', ["$localStorage", function ($localStorage) {
     $localStorage.endpoints = $localStorage.endpoints || [];
 
@@ -46,12 +47,14 @@ cdbmanager.service('endpoints', ["$localStorage", function ($localStorage) {
 cdbmanager.controller('endpointsCtrl', ["$scope", "endpoints", function ($scope, endpoints) {
     $scope.updatedEndpoint = {};
 
+    // keep the endpoint list in the scope always updated
     $scope.$watch(function () {
         return endpoints.all();
     }, function (endpoints) {
         $scope.endpoints = endpoints;
     });
 
+    // keep the current endpoint and form in the scope always updated
     $scope.$watch(function () {
         return endpoints.current;
     }, function (endpoint) {
@@ -78,6 +81,5 @@ cdbmanager.controller('endpointsCtrl', ["$scope", "endpoints", function ($scope,
 
     $scope.setCurrent = function () {
         endpoints.setCurrent($scope.current);
-        $scope.updatedEndpoint = angular.copy($scope.current);
     };
 }]);

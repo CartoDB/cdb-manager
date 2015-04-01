@@ -13,6 +13,7 @@ cdbmanager.service('alerts', function () {
         return this.alerts;
     };
 
+    // type can be one of: "success", "info" (or "debug"), "warning", "danger" (or "error")
     this.add = function (type, msg) {
         if (type == "error") {
             type = "danger";

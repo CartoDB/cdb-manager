@@ -12,8 +12,8 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", fun
     $scope.nav = nav;
     $scope.running = false;
 
+    // codemirror configuration
     var mime = 'text/x-mariadb';
-    // get mime type
     if (window.location.href.indexOf('mime=') > -1) {
         mime = window.location.href.substr(window.location.href.indexOf('mime=') + 5);
     }
@@ -26,6 +26,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", fun
         autofocus: true
     };
 
+    // clean console if current endpoint changes
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
@@ -36,6 +37,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", fun
     }, true);
 
 
+    // query executed successfully
     $scope.$watch(function () {
         return self.api.raw;
     }, function (result) {

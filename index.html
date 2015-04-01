@@ -40,19 +40,20 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-3">
-                    <!-- Endpoint selector -->
                     <div class="panel-group" id="accordion" role="tablist">
+                        <!-- Endpoint manager -->
                         <div class="panel panel-default" ng-controller="endpointsCtrl">
+                            <!-- Endpoint selector -->
                             <div class="panel-heading" role="tab" id="endpointPanelHeading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="true" aria-controls="endpointPanelCollapse">Current endpoint:</a>
                                     <select ng-options="endpoint as endpoint.name for endpoint in endpoints" ng-model="current" ng-change="setCurrent()"></select>
                                 </h4>
                             </div>
+                            <!-- New endpoint dialog -->
                             <div id="endpointPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="endpointPanelHeading">
                                 <form name="updatedEndpoint" novalidate>
                                     <div class="panel-body">
-                                        <!-- New endpoint dialog -->
                                         <div class="form-group">
                                             <label for="name">Endpoint name</label>
                                             <input type="text" id="name" class="form-control" ng-model="updatedEndpoint.name" ng-disabled="!current">
@@ -80,6 +81,7 @@
                                 </form>
                             </div>
                         </div>
+                        <!-- Table selector -->
                         <div class="panel panel-default" ng-controller="tableSelectorCtrl">
                             <div class="panel-heading" role="tab" id="tablePanelHeading">
                                 <h4 class="panel-title">
@@ -95,6 +97,7 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- SQL console link -->
                         <div class="panel panel-default" ng-controller="sqlSelectorCtrl">
                             <div class="panel-heading" role="tab" id="sqlPanel">
                                 <h4 class="panel-title">
