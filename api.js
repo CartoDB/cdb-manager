@@ -30,8 +30,11 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
                     self.items = null;
                     self.raw = null;
                     self.time = null;
-                    var error_message = result.statusText ? result.statusText : result.data;
-                    alerts.add("error", "Endpoint error: " + error_message);
+                    var errorMessage = result.statusText ? result.statusText : result.data;
+                    if (result.data && result.data.error) {
+                        errorMessage += " (" + result.data.error[0] + ")";
+                    }
+                    alerts.add("error", "Endpoint error: " + errorMessage);
                 }
             }
 

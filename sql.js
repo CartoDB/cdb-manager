@@ -42,10 +42,6 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", fun
         return self.api.raw;
     }, function (result) {
         $scope.running = false;
-        $scope.sql.headers = [];
-        if (result && result.data && result.data.rows && result.data.rows.length > 0) {
-            $scope.sql.headers = Object.keys(result.data.rows[0]);
-        }
         $scope.sql.result = result;
     });
 
