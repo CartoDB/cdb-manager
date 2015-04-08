@@ -199,21 +199,24 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="row" style="overflow: auto;">
+                        <div class="row">
                             <h4 ng-show="running">Please wait...</h4>
                             <h4 ng-show="!running && sql.result.data.rows">Total rows: {{ sql.result.data.total_rows }}, server runtime: {{ sql.result.data.time }}s</h4>
+                        </div>
+                        <div class="row">
                             <dir-pagination-controls class="pull-right" ng-show="sql.result"></dir-pagination-controls>
+                        </div>
+                        <div class="row" style="overflow: auto;">
                             <table class="table table-striped">
-                                <thead>
+                                <thead style="display: block;">
                                     <th ng-repeat="(title, value) in sql.result.data.rows[0]">{{ title }}</th>
                                 </thead>
-                                <tbody>
+                                <tbody style="display: block; height: 300px; overflow-y: auto; overflow-x: hidden">
                                     <tr dir-paginate="row in sql.result.data.rows | itemsPerPage: 25">
                                         <td ng-repeat="column in row">{{ column }}</td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <dir-pagination-controls class="pull-right" ng-show="sql.result"></dir-pagination-controls>
                         </div>
                     </div>
                 </div>
