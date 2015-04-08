@@ -128,6 +128,13 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
             }
         };
         editor.addKeyMap(ctrlDown);
+
+        var ctrlEnter = {
+            "Ctrl-Enter": function () {
+                $scope.execSQL($scope.sql.query);
+            }
+        };
+        editor.addKeyMap(ctrlEnter);
     };
 
     this.resetEditor();
