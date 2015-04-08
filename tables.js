@@ -69,7 +69,6 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpo
     $scope.$watch(function () {
         return nav.current;
     }, function (section) {
-        console.log("LL", section);
         if (section == "tables.table.columns") {
             $scope.columns = columns.getAll(tables.current, endpoints.current);
         } else if (section == "tables.table.indexes") {
