@@ -177,17 +177,21 @@
                             <form novalidate>
                                 <div class="panel">
                                     <div class="panel-body">
-                                        <div ui-codemirror ui-codemirror-opts="editorOptions" ng-model="sql.query"></div>
+                                        <div ui-codemirror="{ onLoad: codemirrorLoaded }" ui-codemirror-opts="editorOptions" ng-model="sql.query"></div>
                                     </div>
                                     <div class=panel-footer">
-                                        <button type="button" class="btn btn-primary pull-right" ng-click="execSQL(sql.query)">Execute query</button>
+                                        <span class="pull-right">
+                                            <small><i>Use Ctrl-Up / Ctrl-Down to browse history</i></small>
+                                            <button type="button" class="btn" ng-click="cleanHistory()">Clean history</button>
+                                            <button type="button" class="btn btn-primary" ng-click="execSQL(sql.query)">Execute query</button>
+                                        </span>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div class="row" style="overflow: auto;">
                             <h4 ng-show="running">Please wait...</h4>
-                            <h4 ng-show="sql.result.data.rows">Total rows: {{ sql.result.data.total_rows }}, server runtime: {{ sql.result.data.time }}s</h4>
+                            <h4 ng-show="!running && sql.result.data.rows">Total rows: {{ sql.result.data.total_rows }}, server runtime: {{ sql.result.data.time }}s</h4>
                             <dir-pagination-controls class="pull-right" ng-show="sql.result"></dir-pagination-controls>
                             <table class="table table-striped">
                                 <thead>
