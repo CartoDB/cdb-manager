@@ -181,8 +181,18 @@
                                     </div>
                                     <div class=panel-footer">
                                         <span class="pull-right">
+                                            <span ng-show="historyNotFound">(Not found)</span>
+                                            <div style="width: 300px; display: inline-block">
+                                                <div class="input-group">
+                                                    <input type="text" ng-model="sql.historyNeedle" class="form-control">
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-default" ng-click="searchHistory(sql.historyNeedle)" type="button">Search history</button>
+                                                    </span>
+                                                </div>
+                                            </div>
                                             <small><i>Use Ctrl-Up / Ctrl-Down to browse history</i></small>
                                             <button type="button" class="btn" ng-click="cleanHistory()">Clean history</button>
+                                            <button type="button" class="btn" ng-click="resetConsole()">Reset console</button>
                                             <button type="button" class="btn btn-primary" ng-click="execSQL(sql.query)">Execute query</button>
                                         </span>
                                     </div>

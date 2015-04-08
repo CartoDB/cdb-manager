@@ -4,17 +4,19 @@ cdbmanager.controller('sqlSelectorCtrl', ["$scope", "nav", function ($scope, nav
 
 
 cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$localStorage", function ($scope, SQLClient, endpoints, nav, $localStorage) {
+    var self = this;
+
     this.api = new SQLClient();
 
     $localStorage.history = $localStorage.history || [];
-    this.historyCurrent = $localStorage.history.length;
-    this.historyBuffer = null;
 
-    var self = this;
+    this.historyCurrent = null;  // Idx to the current position in the history array. If greater than its size, we're not browsing the history.
+    this.historyBuffer = null;  // Temporary buffer for the current input when browsing the history.
 
     $scope.sql = {};
     $scope.nav = nav;
     $scope.running = false;
+    $scope.historyNotFound = false;
 
     // codemirror configuration
     var mime = 'text/x-mariadb';
@@ -30,18 +32,35 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
         autofocus: true
     };
 
+    this.setHistoryCurrent = function (idx) {
+        self.historyCurrent = idx;
+        $scope.historyNotFound = false;
+        if (idx < $localStorage.history.length) {
+            $scope.sql.query = $localStorage.history[self.historyCurrent];
+        } else {
+            $scope.sql.query = self.historyBuffer;
+        }
+    };
+
+    this.resetEditor = function () {
+        $scope.sql.result = null;
+        $scope.sql.headers = null;
+        $scope.running = false;
+        $scope.historyNotFound = false;
+        self.historyBuffer = "";
+        self.setHistoryCurrent($localStorage.history.length);
+    };
+
+    $scope.resetConsole = function () {
+        self.resetEditor();
+    };
+
     // clean console if current endpoint changes
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
-        self.historyCurrent = $localStorage.history.length;
-        self.historyBuffer = null;
-        $scope.running = false;
-        $scope.sql.query = null;
-        $scope.sql.result = null;
-        $scope.sql.headers = null;
+        self.resetEditor();
     }, true);
-
 
     // query executed successfully
     $scope.$watch(function () {
@@ -53,18 +72,31 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
 
     $scope.execSQL = function (query) {
         $scope.running = true;
-        if ($localStorage.history[$localStorage.history.length - 1] != query) {
+        self.historyCurrent = $localStorage.history.length;
+        if ($localStorage.history[self.historyCurrent - 1] != query) {
             $localStorage.history.push(query);
         }
-        self.historyCurrent = $localStorage.history.length;
-        self.historyBuffer = null;
+        self.historyBuffer = "";
+        $scope.historyNotFound = false;
         return self.api.get(query);
     };
 
     $scope.cleanHistory = function () {
         $localStorage.history = [];
+        // Now we don't call resetEditor directly because we don't want to lose the current input.
         self.historyCurrent = 0;
-        self.historyBuffer = null;
+        self.historyBuffer = "";
+    };
+
+    $scope.searchHistory = function (needle) {
+        for (var i = self.historyCurrent - 1; i >= 0; i--) {
+            var historyIdx = $localStorage.history[i].indexOf(needle);
+            if (historyIdx >= 0) {
+                self.setHistoryCurrent(i);
+                return;
+            }
+        }
+        $scope.historyNotFound = true;
     };
 
     // Key bindings for history
@@ -97,4 +129,6 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
         };
         editor.addKeyMap(ctrlDown);
     };
+
+    this.resetEditor();
 }]);
