@@ -207,12 +207,14 @@
                             <dir-pagination-controls class="pull-right" ng-show="sql.result"></dir-pagination-controls>
                         </div>
                         <div class="row" style="overflow: auto;">
-                            <table class="table table-striped">
-                                <thead style="display: block;">
-                                    <th ng-repeat="(title, value) in sql.result.data.rows[0]">{{ title }}</th>
+                            <table id="sql_console_table" class="table table-striped">
+                                <thead style="display: block; width: auto;">
+                                    <tr>
+                                        <th ng-repeat="(title, value) in sql.result.data.rows[0]">{{ title }}</th>
+                                    </tr>
                                 </thead>
                                 <tbody style="display: block; height: 300px; overflow-y: auto; overflow-x: hidden">
-                                    <tr dir-paginate="row in sql.result.data.rows | itemsPerPage: 25">
+                                    <tr dir-paginate="row in sql.result.data.rows | itemsPerPage: 25" on-finish="fixColumnWidth()">
                                         <td ng-repeat="column in row">{{ column }}</td>
                                     </tr>
                                 </tbody>
