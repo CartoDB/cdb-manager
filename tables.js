@@ -5,7 +5,7 @@ cdbmanager.service("tables", ["SQLClient", function (SQLClient) {
 
     this.getAll = function (endpoint) {
         if (endpoint) {
-            return this.api.get("SELECT * FROM information_schema.tables WHERE table_schema = '" + endpoint.account + "' ORDER BY table_schema, table_name;");
+            return this.api.get("SELECT relname, reltuples FROM pg_class, pg_namespace where relnamespace = pg_namespace.oid and pg_namespace.nspname = '" + endpoint.account + "' and relkind = 'r';");
         }
     };
 }]);
@@ -32,8 +32,27 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     });
 }]);
 
-cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", function ($scope, tables, endpoints, nav) {
+cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "columns", function ($scope, tables, endpoints, nav, columns) {
     $scope.nav = nav;
+    $scope.headers = ['Name', 'Estimated row count'];
+    $scope.actions = [
+        {
+            text: "Columns",
+            onClick: function (tableName) {
+                columns.getAll(tableName, endpoints.current);
+                $scope.nav.current = "tables.table.columns";
+                tables.current = tableName;
+            },
+            idField: "relname"
+        },
+        {
+            text: "Drop",
+            onClick: function (tableName) {
+                // TBD
+            },
+            idField: "relname"
+        }
+    ];
 
     // update table list when current endpoint changes
     $scope.$watch(function () {

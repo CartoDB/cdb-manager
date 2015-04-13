@@ -91,7 +91,7 @@
                             <div id="tablePanelCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="tablePanelHeading">
                                 <div class="panel-body">
                                     <ul>
-                                        <li ng-repeat="table in tables"><a href ng-click="showTable(table.table_name)">{{ table.table_name }}</a></li>
+                                        <li ng-repeat="table in tables"><a href ng-click="showTable(table.relname)">{{ table.relname }}</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -110,20 +110,7 @@
                 </div>
                 <!-- Tables pane -->
                 <div class="col-md-9" ng-controller="tablesCtrl" ng-show="nav.current == 'tables'">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Owner</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="table in tables">
-                                <td>{{ table.table_name }}</td>
-                                <td>{{ table.table_schema }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <cdb-result-table rows="tables" headers="headers" actions="actions" settings="cdbrt"></cdb-result-table>
                 </div>
                 <!-- Single table pane -->
                 <div class="col-md-9" ng-controller="tableCtrl" ng-show="nav.current.indexOf('tables.table') == 0">
