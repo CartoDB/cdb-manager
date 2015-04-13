@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>CartoDB Manager</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
         <link rel="stylesheet" href="vendor/codemirror/codemirror.css" />
         <style>
             .CodeMirror {
@@ -13,10 +13,9 @@
                 border-bottom: 1px solid black;
             }
         </style>
-        <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<!--        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>-->
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.js"></script>
+        <script src="vendor/jquery-1.11.2.min.js"></script>
+        <script src="vendor/bootstrap/bootstrap.min.js"></script>
+        <script src="vendor/angularjs/angular.min.js"></script>
     </head>
     <body>
         <!-- Top bar -->
@@ -32,7 +31,7 @@
             <div ng-controller="AlertCtrl">
                 <div ng-repeat="alert in alerts" ng-class="'alert alert-dismissable alert-' + alert.type" role="alert">
                     <button type="button" class="close" ng-click="closeAlert($index)" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <alert  role="alert" >{{ alert.msg }}</alert>
+                    <alert role="alert">{{ alert.msg }}</alert>
                 </div>
             </div>
         </div>
@@ -188,11 +187,11 @@
         <script src="vendor/codemirror/codemirror.js"></script>
         <script src="vendor/codemirror/sql.js"></script>
         <script src="vendor/codemirror/ui-codemirror.js"></script>
-        <script src="vendor/dirPagination.js"></script>
+        <script src="vendor/angularutils/dirPagination.js"></script>
         <script>
             var cdbmanager = angular.module("cdbmanager", ["ngStorage", "api", "ui.codemirror", "angularUtils.directives.dirPagination"]);
             cdbmanager.config(function (paginationTemplateProvider) {
-                paginationTemplateProvider.setPath('vendor/dirPagination.tpl.html');
+                paginationTemplateProvider.setPath('vendor/angularutils/dirPagination.tpl.html');
             });
         </script>
         <script src="settings.js"></script>
