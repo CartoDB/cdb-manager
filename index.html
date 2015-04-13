@@ -136,36 +136,10 @@
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.columns'">
-                                <div class="container-fluid">
-                                    <div class="row" style="overflow: auto;">
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <th ng-repeat="(title, value) in columns[0]">{{ title }}</th>
-                                            </thead>
-                                            <tbody>
-                                                <tr dir-paginate="row in columns | itemsPerPage: 25">
-                                                    <td ng-repeat="column in row">{{ column }}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                <cdb-result-table rows="columns" settings="cdbrt"></cdb-result-table>
                             </div>
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.indexes'">
-                                <div class="container-fluid">
-                                    <div class="row" style="overflow: auto;">
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <th ng-repeat="(title, value) in indexes[0]">{{ title }}</th>
-                                            </thead>
-                                            <tbody>
-                                                <tr dir-paginate="row in indexes | itemsPerPage: 25">
-                                                    <td ng-repeat="column in row">{{ column }}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                <cdb-result-table rows="indexes" settings="cdbrt"></cdb-result-table>
                             </div>
                         </div>
                     </div>
@@ -204,21 +178,7 @@
                             <h4 ng-show="!running && sql.result.data.rows">Total rows: {{ sql.result.data.total_rows }}, server runtime: {{ sql.result.data.time }}s</h4>
                         </div>
                         <div class="row">
-                            <dir-pagination-controls class="pull-right" ng-show="sql.result"></dir-pagination-controls>
-                        </div>
-                        <div class="row" style="overflow: auto;">
-                            <table id="sql_console_table" class="table table-striped">
-                                <thead style="display: block; width: auto;">
-                                    <tr>
-                                        <th ng-repeat="(title, value) in sql.result.data.rows[0]">{{ title }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody style="display: block; height: 300px; overflow-y: auto; overflow-x: hidden">
-                                    <tr dir-paginate="row in sql.result.data.rows | itemsPerPage: 25" on-finish="fixColumnWidth()">
-                                        <td ng-repeat="column in row">{{ column }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <cdb-result-table rows="sql.result.data.rows" settings="cdbrt"></cdb-result-table>
                         </div>
                     </div>
                 </div>
@@ -235,6 +195,8 @@
                 paginationTemplateProvider.setPath('vendor/dirPagination.tpl.html');
             });
         </script>
+        <script src="settings.js"></script>
+        <script src="ui.js"></script>
         <script src="nav.js"></script>
         <script src="alerts.js"></script>
         <script src="endpoints.js"></script>

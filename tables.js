@@ -49,8 +49,11 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", fun
 }]);
 
 // TBD
-cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpoints", "indexes", function ($scope, nav, columns, tables, endpoints, indexes) {
+cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpoints", "indexes", "settings", function ($scope, nav, columns, tables, endpoints, indexes, settings) {
     $scope.nav = nav;
+    $scope.cdbrt = {  // Settings for the tables (same settings for all of them for now)
+        rowsPerPage: settings.rowsPerPage
+    };
 
     //
     $scope.$watch(function () {

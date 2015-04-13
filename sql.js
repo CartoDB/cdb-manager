@@ -3,7 +3,7 @@ cdbmanager.controller('sqlSelectorCtrl', ["$scope", "nav", function ($scope, nav
 }]);
 
 
-cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$localStorage", function ($scope, SQLClient, endpoints, nav, $localStorage) {
+cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$localStorage", "settings", function ($scope, SQLClient, endpoints, nav, $localStorage, settings) {
     var self = this;
 
     this.api = new SQLClient();
@@ -17,6 +17,9 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
     $scope.nav = nav;
     $scope.running = false;
     $scope.historyNotFound = false;
+    $scope.cdbrt = {  // Settings for the result table
+        rowsPerPage: settings.sqlConsoleRowsPerPage
+    };
 
     // codemirror configuration
     var mime = 'text/x-mariadb';
@@ -99,21 +102,6 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
         $scope.historyNotFound = true;
     };
 
-    // Set same width to thead and tbody columns
-    $scope.fixColumnWidth = function () {
-        var table = $('#sql_console_table');
-        var headColumns = table.find('thead tr').children();
-        var bodyColumns = table.find('tbody tr:first').children();
-
-        for (var i = 0; i < headColumns.length; i++) {
-            if ($(headColumns[i]).width() > $(bodyColumns[i]).width()) {
-                $(bodyColumns[i]).css("min-width", ($(headColumns[i]).width() + 20) + "px");
-            } else {
-                $(headColumns[i]).css("min-width", ($(bodyColumns[i]).width() + 20) + "px");
-            }
-        }
-    };
-
     // Key bindings for history
     $scope.codemirrorLoaded = function (editor) {
         var ctrlUp = {
@@ -154,16 +142,3 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
 
     this.resetEditor();
 }]);
-
-// on-finish="function()" will call function after a ng-repeat has finished rendering (DOM-level,
-// before browser actually renders)
-cdbmanager.directive('onFinish', function () {
-    return {
-        restrict: 'A',
-        link: function (scope, element, attr) {
-            if (scope.$last) {
-                scope.$evalAsync(attr.onFinish);
-            }
-        }
-    }
-});
