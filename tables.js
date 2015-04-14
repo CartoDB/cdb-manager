@@ -37,7 +37,7 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "co
     $scope.headers = ['Name', 'Estimated row count'];
     $scope.actions = [
         {
-            text: "Columns",
+            text: "Details",
             onClick: function (tableName) {
                 columns.getAll(tableName, endpoints.current);
                 $scope.nav.current = "tables.table.columns";
