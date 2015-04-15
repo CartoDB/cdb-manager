@@ -135,8 +135,9 @@
                     <div role="tabpanel">
                         <ul class="nav nav-tabs" role="tablist">
                             <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.columns'}" aria-controls="columns" role="tab" ng-click="nav.current = 'tables.table.columns'">Columns</a></li>
-                            <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.indexes'}" aria-controls="indexes" role="tab" ng-click="nav.current = 'tables.table.indexes'">Indexes</a></li>
                             <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.records'}" aria-controls="records" role="tab" ng-click="nav.current = 'tables.table.records'">Records</a></li>
+                            <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.indexes'}" aria-controls="indexes" role="tab" ng-click="nav.current = 'tables.table.indexes'">Indexes</a></li>
+                            <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.constraints'}" aria-controls="constraints" role="tab" ng-click="nav.current = 'tables.table.constraints'">Constraints</a></li>
                             <li role="presentation"><a href ng-class="" aria-controls="tdb" role="tab" ng-click="">...</a></li>
                         </ul>
                         <div class="tab-content">
@@ -148,6 +149,9 @@
                             </div>
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.records'">
                                 <cdb-result-table rows="records" settings="cdbrt"></cdb-result-table>
+                            </div>
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.constraints'">
+                                <cdb-result-table rows="constraints" settings="cdbrt"></cdb-result-table>
                             </div>
                         </div>
                     </div>
@@ -211,6 +215,7 @@
         <script src="api.js"></script>
         <script src="records.js"></script>
         <script src="tables.js"></script>
+        <script src="constraints.js"></script>
         <script src="columns.js"></script>
         <script src="indexes.js"></script>
         <script src="sql.js"></script>

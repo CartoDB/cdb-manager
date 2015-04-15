@@ -64,7 +64,7 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "co
 }]);
 
 // TBD
-cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpoints", "indexes", "records", "settings", function ($scope, nav, columns, tables, endpoints, indexes, records, settings) {
+cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpoints", "indexes", "records", "constraints", "settings", function ($scope, nav, columns, tables, endpoints, indexes, records, constraints, settings) {
     $scope.nav = nav;
     $scope.cdbrt = {  // Settings for the tables (same settings for all of them for now)
         rowsPerPage: settings.rowsPerPage
@@ -75,6 +75,13 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpo
         return columns.api.items;
     }, function (columns) {
         $scope.columns = columns;
+    });
+
+    //
+    $scope.$watch(function () {
+        return constraints.api.items;
+    }, function (constraints) {
+        $scope.constraints = constraints;
     });
 
     //
@@ -100,6 +107,8 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpo
             $scope.columns = indexes.getAll(tables.current);
         } else if (section == "tables.table.records") {
             $scope.columns = records.getAll(tables.current);
+        } else if (section == "tables.table.constraints") {
+            $scope.constraints = constraints.getAll(tables.current);
         }
     });
 }]);
