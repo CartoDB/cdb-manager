@@ -1,9 +1,8 @@
-<div class="container-fluid" style="overflow: auto;">
-    <div class="row">
-        <span>Rows per page: <input ng-model="settings.rowsPerPage" /></span>
-        <span class="pull-right"><dir-pagination-controls ng-show="rows"></dir-pagination-controls></span>
+<div class="panel panel-default" ng-show="rows">
+    <div class="panel-heading">
+        Rows per page: <input ng-model="settings.rowsPerPage" type="number" />
     </div>
-    <div class="row" style="overflow: auto;">
+    <div style="overflow: auto;">
         <table id="sql_console_table" class="table table-striped table-bordered">
             <thead>
                 <tr>
@@ -20,7 +19,7 @@
             </tbody>
         </table>
     </div>
-    <div class="row">
-        <dir-pagination-controls class="pull-right" ng-show="rows"></dir-pagination-controls>
+    <div class="panel-footer" style="text-align: right">
+        <dir-pagination-controls></dir-pagination-controls>
     </div>
 </div>

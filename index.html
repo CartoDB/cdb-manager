@@ -137,7 +137,6 @@
                             <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.indexes'}" aria-controls="indexes" role="tab" ng-click="nav.current = 'tables.table.indexes'">Indexes</a></li>
                             <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.constraints'}" aria-controls="constraints" role="tab" ng-click="nav.current = 'tables.table.constraints'">Constraints</a></li>
                             <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.triggers'}" aria-controls="triggers" role="tab" ng-click="nav.current = 'tables.table.triggers'">Triggers</a></li>
-                            <li role="presentation"><a href ng-class="" aria-controls="tdb" role="tab" ng-click="">...</a></li>
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.columns'">
@@ -162,34 +161,35 @@
                 <div class="col-md-9" ng-controller="sqlCtrl" ng-show="nav.current == 'sql'">
                     <div class="container-fluid">
                         <div class="row">
-                            <form novalidate>
-                                <div class="panel">
-                                    <div class="panel-body">
-                                        <div ui-codemirror="{ onLoad: codemirrorLoaded }" ui-codemirror-opts="editorOptions" ng-model="sql.query"></div>
-                                    </div>
-                                    <div class=panel-footer">
-                                        <span class="pull-right">
-                                            <span ng-show="historyNotFound">(Not found)</span>
-                                            <div style="width: 300px; display: inline-block">
-                                                <div class="input-group">
-                                                    <input type="text" ng-model="sql.historyNeedle" class="form-control">
-                                                    <span class="input-group-btn">
-                                                        <button class="btn btn-default" ng-click="searchHistory(sql.historyNeedle)" type="button">Search history</button>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <small><i>Use Ctrl-Up / Ctrl-Down to browse history</i></small>
-                                            <button type="button" class="btn" ng-click="cleanHistory()">Clean history</button>
-                                            <button type="button" class="btn" ng-click="resetConsole()">Reset console</button>
-                                            <button type="button" class="btn btn-primary" ng-click="execSQL(sql.query)">Execute query (Ctrl-Enter)</button>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="input-group" ng-class="{'has-error': historyNotFound}">
+                                        <input type="text" ng-model="sql.historyNeedle" class="form-control">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" ng-click="searchHistory(sql.historyNeedle)" type="button">Search history</button>
                                         </span>
                                     </div>
                                 </div>
-                            </form>
+                                <div class="panel-body">
+                                    <div ui-codemirror="{ onLoad: codemirrorLoaded }" ui-codemirror-opts="editorOptions" ng-model="sql.query"></div>
+                                    <small><i>Use Ctrl-Up / Ctrl-Down to browse history</i></small>
+                                </div>
+                                <div class="panel-footer" style="text-align: right">
+                                    <span>
+                                        <button type="button" class="btn btn-default" ng-click="cleanHistory()">Clean history</button>
+                                        <button type="button" class="btn btn-default" ng-click="resetConsole()">Reset console</button>
+                                        <button type="button" class="btn btn-primary" ng-disabled="running" ng-click="execSQL(sql.query)">Execute query (Ctrl-Enter)</button>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
-                            <h4 ng-show="running">Please wait...</h4>
-                            <h4 ng-show="!running && sql.result.data.rows">Total rows: {{ sql.result.data.total_rows }}, server runtime: {{ sql.result.data.time }}s</h4>
+                            <div class="alert alert-info" role="alert" ng-show="running">
+                                <alert role="alert">Please wait...</alert>
+                            </div>
+                            <div class="alert alert-success" role="alert" ng-show="!running && sql.result.data.rows">
+                                <alert role="alert">Total rows: {{ sql.result.data.total_rows }}, server runtime: {{ sql.result.data.time }}s</alert>
+                            </div>
                         </div>
                         <div class="row">
                             <cdb-result-table rows="sql.result.data.rows" settings="cdbrt"></cdb-result-table>
