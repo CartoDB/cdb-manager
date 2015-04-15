@@ -64,7 +64,7 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "co
 }]);
 
 // TBD
-cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpoints", "indexes", "records", "constraints", "settings", function ($scope, nav, columns, tables, endpoints, indexes, records, constraints, settings) {
+cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpoints", "indexes", "records", "constraints", "triggers", "settings", function ($scope, nav, columns, tables, endpoints, indexes, records, constraints, triggers, settings) {
     $scope.nav = nav;
     $scope.cdbrt = {  // Settings for the tables (same settings for all of them for now)
         rowsPerPage: settings.rowsPerPage
@@ -82,6 +82,13 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpo
         return constraints.api.items;
     }, function (constraints) {
         $scope.constraints = constraints;
+    });
+
+    //
+    $scope.$watch(function () {
+        return triggers.api.items;
+    }, function (triggers) {
+        $scope.triggers = triggers;
     });
 
     //
@@ -109,6 +116,8 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpo
             $scope.columns = records.getAll(tables.current);
         } else if (section == "tables.table.constraints") {
             $scope.constraints = constraints.getAll(tables.current);
+        } else if (section == "tables.table.triggers") {
+            $scope.triggers = triggers.getAll(tables.current);
         }
     });
 }]);
