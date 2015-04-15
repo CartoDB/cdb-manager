@@ -66,7 +66,6 @@ cdbmanager.controller('endpointsCtrl', ["$scope", "endpoints", function ($scope,
         endpoints.add({
             name: "New",
             url: "",
-            account: "",
             apiKey: ""
         });
     };

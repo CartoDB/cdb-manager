@@ -3,20 +3,18 @@ cdbmanager.service("tables", ["SQLClient", function (SQLClient) {
 
     this.current = null;
 
-    this.getAll = function (endpoint) {
-        if (endpoint) {
-            return this.api.get("SELECT relname, reltuples FROM pg_class, pg_namespace where relnamespace = pg_namespace.oid and pg_namespace.nspname = '" + endpoint.account + "' and relkind = 'r';");
-        }
+    this.getAll = function () {
+        return this.api.get("select pg_class.oid, pg_class.relname, pg_class.reltuples from pg_class, pg_roles where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_class.relkind = 'r';");
     };
 }]);
 
 cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "nav", "columns", function ($scope, tables, endpoints, nav, columns) {
     $scope.nav = nav;
 
-    $scope.showTable = function (tableName) {
-        columns.getAll(tableName, endpoints.current);
+    $scope.showTable = function (tableOID) {
+        columns.getAll(tableOID, endpoints.current);
         $scope.nav.current = "tables.table.columns";
-        tables.current = tableName;
+        tables.current = tableOID;
     };
 
     // update table list when current endpoint changes
@@ -34,20 +32,20 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
 
 cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "columns", function ($scope, tables, endpoints, nav, columns) {
     $scope.nav = nav;
-    $scope.headers = ['Name', 'Estimated row count'];
+    $scope.headers = ['oid', 'Name', 'Estimated row count'];
     $scope.actions = [
         {
             text: "Details",
-            onClick: function (tableName) {
-                columns.getAll(tableName, endpoints.current);
+            onClick: function (tableOID) {
+                columns.getAll(tableOID, endpoints.current);
                 $scope.nav.current = "tables.table.columns";
-                tables.current = tableName;
+                tables.current = tableOID;
             },
-            idField: "relname"
+            idField: "oid"
         },
         {
             text: "Drop",
-            onClick: function (tableName) {
+            onClick: function (tableOID) {
                 // TBD
             },
             idField: "relname"
@@ -92,7 +90,7 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpo
         return nav.current;
     }, function (section) {
         if (section == "tables.table.columns") {
-            $scope.columns = columns.getAll(tables.current, endpoints.current);
+            $scope.columns = columns.getAll(tables.current);
         } else if (section == "tables.table.indexes") {
             $scope.columns = indexes.getAll(tables.current);
         }

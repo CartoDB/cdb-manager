@@ -62,10 +62,6 @@
                                             <input type="text" id="url" class="form-control" ng-model="updatedEndpoint.url" ng-disabled="!current">
                                         </div>
                                         <div class="form-group">
-                                            <label for="name">Account name</label>
-                                            <input type="text" id="account" class="form-control" ng-model="updatedEndpoint.account" ng-disabled="!current">
-                                        </div>
-                                        <div class="form-group">
                                             <label for="name">API key</label>
                                             <input type="text" id="api_key" class="form-control" ng-model="updatedEndpoint.apiKey" ng-disabled="!current">
                                         </div>
@@ -91,7 +87,7 @@
                             <div id="tablePanelCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="tablePanelHeading">
                                 <div class="panel-body">
                                     <ul>
-                                        <li ng-repeat="table in tables"><a href ng-click="showTable(table.relname)">{{ table.relname }}</a></li>
+                                        <li ng-repeat="table in tables"><a href ng-click="showTable(table.oid)">{{ table.relname }}</a></li>
                                     </ul>
                                 </div>
                             </div>
