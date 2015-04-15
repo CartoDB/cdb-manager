@@ -87,7 +87,7 @@
                             <div id="tablePanelCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="tablePanelHeading">
                                 <div class="panel-body">
                                     <ul>
-                                        <li ng-repeat="table in tables"><a href ng-click="showTable(table)">{{ table.relname }}</a></li>
+                                        <li ng-repeat="table in tables" ng-class="{'bg-info': nav.current.indexOf('tables.table') == 0 && table == currentTable}"><a href ng-click="showTable(table)">{{ table.relname }}</a></li>
                                     </ul>
                                 </div>
                             </div>

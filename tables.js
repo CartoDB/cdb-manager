@@ -28,6 +28,13 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     }, function (table_list) {
         $scope.tables = table_list;
     });
+
+    // Watch current table
+    $scope.$watch(function () {
+        return tables.current;
+    }, function (currentTable) {
+        $scope.currentTable = currentTable;
+    });
 }]);
 
 cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "columns", function ($scope, tables, endpoints, nav, columns) {
