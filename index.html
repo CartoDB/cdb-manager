@@ -106,6 +106,28 @@
                                 </h4>
                             </div>
                         </div>
+                        <!-- Settings -->
+                        <div class="panel panel-default" ng-controller="settingsCtrl">
+                            <div class="panel-heading" role="tab" id="settingsPanelHeading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#settingsPanelCollapse" aria-expanded="true" aria-controls="settingsPanelCollapse">Settings</a>
+                                </h4>
+                            </div>
+                            <div id="settingsPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="settingsPanelHeading">
+                                <form novalidate>
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <label for="name">Default # rows in result tables</label>
+                                            <input type="number" id="rowsPerPage" class="form-control" ng-model="settings.rowsPerPage">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="name">Default # rows in SQL console table</label>
+                                            <input type="number" id="sqlConsoleRowsPerPage" class="form-control" ng-model="settings.sqlConsoleRowsPerPage">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- Tables pane -->
