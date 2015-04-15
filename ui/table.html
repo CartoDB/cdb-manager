@@ -15,7 +15,7 @@
             <tbody>
                 <tr dir-paginate="row in rows | itemsPerPage: settings.rowsPerPage">
                     <td ng-repeat="column in row">{{ column }}</td>
-                    <td ng-show="actions"><a href ng-repeat="action in actions" ng-click="action.onClick(row[action.idField])" class="btn btn-default" role="button">{{ action.text }}</a></td>
+                    <td ng-show="actions"><a href ng-repeat="action in actions" ng-click="action.onClick(row)" class="btn btn-default" role="button">{{ action.text }}</a></td>
                 </tr>
             </tbody>
         </table>

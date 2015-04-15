@@ -87,7 +87,7 @@
                             <div id="tablePanelCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="tablePanelHeading">
                                 <div class="panel-body">
                                     <ul>
-                                        <li ng-repeat="table in tables"><a href ng-click="showTable(table.oid)">{{ table.relname }}</a></li>
+                                        <li ng-repeat="table in tables"><a href ng-click="showTable(table)">{{ table.relname }}</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -136,6 +136,7 @@
                         <ul class="nav nav-tabs" role="tablist">
                             <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.columns'}" aria-controls="columns" role="tab" ng-click="nav.current = 'tables.table.columns'">Columns</a></li>
                             <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.indexes'}" aria-controls="indexes" role="tab" ng-click="nav.current = 'tables.table.indexes'">Indexes</a></li>
+                            <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.records'}" aria-controls="records" role="tab" ng-click="nav.current = 'tables.table.records'">Records</a></li>
                             <li role="presentation"><a href ng-class="" aria-controls="tdb" role="tab" ng-click="">...</a></li>
                         </ul>
                         <div class="tab-content">
@@ -144,6 +145,9 @@
                             </div>
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.indexes'">
                                 <cdb-result-table rows="indexes" settings="cdbrt"></cdb-result-table>
+                            </div>
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.records'">
+                                <cdb-result-table rows="records" settings="cdbrt"></cdb-result-table>
                             </div>
                         </div>
                     </div>
@@ -205,6 +209,7 @@
         <script src="alerts.js"></script>
         <script src="endpoints.js"></script>
         <script src="api.js"></script>
+        <script src="records.js"></script>
         <script src="tables.js"></script>
         <script src="columns.js"></script>
         <script src="indexes.js"></script>
