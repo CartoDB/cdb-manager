@@ -8,13 +8,13 @@
             <thead>
                 <tr>
                     <th ng-show="headers" ng-repeat="header in headers">{{ header }}</th>
-                    <th ng-show="!headers" ng-repeat="(title, value) in rows[0]">{{ title }}</th>
+                    <th ng-show="!headers" ng-repeat="(title, value) in rows[0]" ng-if="!title.startsWith('_')">{{ title }}</th>
                     <th ng-show="actions">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr dir-paginate="row in rows | itemsPerPage: settings.rowsPerPage">
-                    <td ng-repeat="column in row">{{ column }}</td>
+                    <td ng-repeat="(title, value) in row" ng-if="!title.startsWith('_')">{{ value }}</td>
                     <td ng-show="actions"><a href ng-repeat="action in actions" ng-click="action.onClick(row)" class="btn btn-default" role="button">{{ action.text }}</a></td>
                 </tr>
             </tbody>
