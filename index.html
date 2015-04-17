@@ -86,7 +86,7 @@
                                     <a href ng-click="nav.current = 'tables'">({{ tables.length }})</a>
                                 </h4>
                             </div>
-                            <div id="tablePanelCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="tablePanelHeading">
+                            <div id="tablePanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="tablePanelHeading">
                                 <div class="panel-body list-group">
                                     <a href ng-click="showTable(table)" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.current.indexOf('tables.table') == 0 && table == currentTable}">{{ table.relname }}</a>
                                 </div>
