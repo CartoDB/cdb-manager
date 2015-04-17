@@ -47,8 +47,9 @@
                             <!-- Endpoint selector -->
                             <div class="panel-heading" role="tab" id="endpointPanelHeading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="true" aria-controls="endpointPanelCollapse">Current endpoint:</a>
-                                    <select ng-options="endpoint as endpoint.name for endpoint in endpoints" ng-model="current" ng-change="setCurrent()"></select>
+                                    <a ng-show="endpoints.length == 0" data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="true" aria-controls="endpointPanelCollapse">Endpoints (start here)</a>
+                                    <a ng-show="endpoints.length > 0" data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="true" aria-controls="endpointPanelCollapse">Current endpoint:</a>
+                                    <select ng-show="endpoints.length > 0" ng-options="endpoint as endpoint.name for endpoint in endpoints" ng-model="current" ng-change="setCurrent()"></select>
                                 </h4>
                             </div>
                             <!-- New endpoint dialog -->
@@ -79,7 +80,7 @@
                                     <div class="panel-footer">
                                         <button type="button" class="btn btn-default" ng-click="addEndpoint()">New</button>
                                         <div class="pull-right">
-                                            <button type="button" class="btn btn-default" ng-click="removeCurrentEndpoint()" ng-disabled="!current">Remove</button>
+                                            <button type="button" class="btn btn-danger" ng-click="removeCurrentEndpoint()" ng-disabled="!current">Remove</button>
                                             <button type="button" class="btn btn-default btn-primary" ng-click="updateCurrentEndpoint(updatedEndpoint)" ng-disabled="!current">Update</button>
                                         </div>
                                     </div>
@@ -91,7 +92,7 @@
                             <div class="panel-heading" role="tab" id="tablePanelHeading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#tablePanelCollapse" aria-expanded="true" aria-controls="tablePanelCollapse">Tables</a>
-                                    <a href ng-click="nav.current = 'tables'">({{ tables.length }})</a>
+                                    <a href ng-show="tables.length > 0" ng-click="nav.current = 'tables'">({{ tables.length }})</a>
                                 </h4>
                             </div>
                             <div id="tablePanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="tablePanelHeading">
@@ -259,11 +260,11 @@
                                 </div>
                                 <div class="panel-body">
                                     <div ui-codemirror="{ onLoad: codemirrorLoaded }" ui-codemirror-opts="editorOptions" ng-model="sql.query"></div>
-                                    <small><i>Use Ctrl-Up / Ctrl-Down to browse history</i></small>
+                                    <small><i>Use Ctrl-Up / Ctrl-Down to browse history, Ctrl-Enter to run query</i></small>
                                 </div>
-                                <div class="panel-footer" style="text-align: right">
-                                    <span>
-                                        <button type="button" class="btn btn-default" ng-click="cleanHistory()">Clean history</button>
+                                <div class="panel-footer">
+                                    <button type="button" class="btn btn-warning" ng-click="cleanHistory()">Clean history</button>
+                                    <span class="pull-right">
                                         <button type="button" class="btn btn-default" ng-click="resetConsole()">Reset console</button>
                                         <button type="button" class="btn btn-primary" ng-disabled="running" ng-click="execSQL(sql.query)">Execute query (Ctrl-Enter)</button>
                                     </span>

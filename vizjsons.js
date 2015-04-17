@@ -87,7 +87,6 @@ cdbmanager.controller('vizjsonCtrl', ["$scope", "nav", "vizjsons", function ($sc
         return vizjsons.current;
     }, function (vizjson) {
         $scope.vizjsonInEditor = angular.copy(vizjson);
-        console.log($scope.vizjsonInEditor);
         $scope.showEditor();
     });
 
