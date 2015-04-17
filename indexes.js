@@ -2,9 +2,17 @@ cdbmanager.service("indexes", ["SQLClient", function (SQLClient) {
     this.api = new SQLClient();
 
     this.getAll = function (table) {
-        var query = "SELECT i.relname as index_name, a.attname as column_name from pg_class t, pg_class i, ";
-        query += "pg_index ix, pg_attribute a where t.oid = ix.indrelid and i.oid = ix.indexrelid and a.attrelid = t.oid ";
-        query += "and a.attnum = ANY(ix.indkey) and t.relkind = 'r' and t.oid = '" + table._oid + "' order by t.relname, i.relname;";
+        var query = "SELECT " +
+                    "i.relname AS index_name, a.attname AS column_name, am.amname AS index_type " +
+                    "FROM pg_class t " +
+                    "JOIN pg_attribute a ON t.oid = a.attrelid " +
+                    "JOIN pg_index ix ON ix.indrelid = t.oid " +
+                    "JOIN pg_class i ON ix.indexrelid = i.oid AND a.attnum = ANY(ix.indkey) " +
+                    "JOIN pg_am am ON i.relam = am.oid " +
+                    "WHERE t.relkind = 'r' " +
+                    "AND t.oid = " + table._oid +
+                    "ORDER BY t.relname, i.relname;";
+
         return this.api.get(query);
     };
 }]);
