@@ -42,3 +42,54 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
         }
     }
 }]);
+
+api.factory('MapsClient', ["$http", "endpoints", "alerts", function ($http, endpoints, alerts) {
+    return function () {
+        this.send = function (req, action, error) {
+            var self = this;
+
+            if (!action) {
+                // default action function
+                action = function (result) {
+                    self.raw = result;
+                }
+            }
+
+            if (!error) {
+                // default error function
+                error = function (result) {
+                    self.raw = null;
+                    var errorMessage = result.statusText ? result.statusText : result.data;
+                    if (result.data && result.data.error) {
+                        errorMessage += " (" + result.data.error + ")";
+                    }
+                    alerts.add("error", "Endpoint error: " + errorMessage);
+                }
+            }
+
+            $http(req).then(action).catch(error);
+        };
+
+        this.get = function () {
+            var currentEndpoint = endpoints.current;
+
+            var req = {
+                method: 'GET',
+                url: currentEndpoint.mapsURL + "/named",
+                params: {
+                    api_key: currentEndpoint.apiKey
+                }
+            };
+
+            var self = this;
+
+            this.send(req, function (result) {
+                self.raw = result;
+                self.items = [];
+                for (var i = 0; i < result.data.template_ids.length; i++) {
+                    self.items.push({name: result.data.template_ids[i]});
+                }
+            });
+        };
+    }
+}]);

@@ -61,7 +61,15 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="name">SQL API endpoint URL</label>
-                                            <input type="text" id="url" class="form-control" ng-model="updatedEndpoint.url" ng-disabled="!current">
+                                            <input type="text" id="sql_url" class="form-control" ng-model="updatedEndpoint.sqlURL" ng-disabled="!current">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="name">Maps API endpoint URL</label>
+                                            <input type="text" id="maps_url" class="form-control" ng-model="updatedEndpoint.mapsURL" ng-disabled="!current">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="name">Account name</label>
+                                            <input type="text" id="account" class="form-control" ng-model="updatedEndpoint.account" ng-disabled="!current">
                                         </div>
                                         <div class="form-group">
                                             <label for="name">API key</label>
@@ -112,6 +120,19 @@
                                             </span>
                                         </div>
                                     </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Named maps selector -->
+                        <div class="panel panel-default" ng-controller="namedMapSelectorCtrl">
+                            <div class="panel-heading" role="tab" id="namedMapPanelHeading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#namedMapPanelCollapse" aria-expanded="true" aria-controls="namedMapPanelCollapse">Named maps</a>
+                                </h4>
+                            </div>
+                            <div id="namedMapPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="namedMapPanelHeading">
+                                <div class="panel-body list-group">
+                                    <a href ng-click="showNamedMap(namedMap)" ng-repeat="namedMap in namedMaps" class="list-group-item">{{ namedMap.name }}</a>
                                 </div>
                             </div>
                         </div>
@@ -210,6 +231,19 @@
                         </div>
                     </div>
                 </div>
+                <!-- Named maps pane -->
+                <div class="col-md-9" ng-controller="namedMapCtrl" ng-show="nav.current.indexOf('namedMaps') == 0">
+                    <div role="tabpanel">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation"><a href ng-class="{active: nav.current == 'namedMaps.visualization'}" aria-controls="visualization" role="tab" ng-click="showVisualization()">Visualization</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'namedMaps.visualization'">
+                                <div id="named_map" style="height: 500px"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- SQL console pane -->
                 <div class="col-md-9" ng-controller="sqlCtrl" ng-show="nav.current == 'sql'">
                     <div class="container-fluid">
@@ -268,6 +302,7 @@
         <script src="nav.js"></script>
         <script src="alerts.js"></script>
         <script src="vizjsons.js"></script>
+        <script src="namedmaps.js"></script>
         <script src="endpoints.js"></script>
         <script src="api.js"></script>
         <script src="records.js"></script>
