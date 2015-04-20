@@ -80,7 +80,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
         }
         self.historyBuffer = "";
         $scope.historyNotFound = false;
-        self.api.get(query);
+        self.api.send(query);
     };
 
     $scope.cleanHistory = function () {

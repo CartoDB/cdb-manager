@@ -8,7 +8,7 @@ cdbmanager.service('namedMaps', ["MapsClient", function (MapsClient) {
     };
 
     this.get = function () {
-        this.api.get();
+        this.api.send();
     };
 }]);
 

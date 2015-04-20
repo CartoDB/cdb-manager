@@ -13,6 +13,6 @@ cdbmanager.service("indexes", ["SQLClient", function (SQLClient) {
                     "AND t.oid = " + table._oid +
                     "ORDER BY t.relname, i.relname;";
 
-        return this.api.get(query);
+        return this.api.send(query);
     };
 }]);

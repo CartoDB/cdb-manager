@@ -4,7 +4,7 @@ cdbmanager.service("tables", ["SQLClient", function (SQLClient) {
     this.current = null;
 
     this.getAll = function () {
-        return this.api.get("select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples from pg_class, pg_roles where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_class.relkind = 'r';");
+        return this.api.send("select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples from pg_class, pg_roles where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_class.relkind = 'r';");
     };
 }]);
 

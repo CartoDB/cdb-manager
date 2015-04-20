@@ -1,8 +1,9 @@
 var api = angular.module("api", []);
 
-function sendRequest(obj, request, action, error, httpService) {
+function sendRequest(obj, request, httpService, action, error) {
     obj.running = true;
 
+    // action and error are functions for the promise. if undefined, default functions will be used
     if (!action) {
         // default action function
         action = function (result) {
@@ -10,7 +11,6 @@ function sendRequest(obj, request, action, error, httpService) {
             obj.running = false;
         }
     }
-
     if (!error) {
         // default error function
         error = function (result) {
@@ -32,8 +32,7 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
     return function () {
         this.lastQueryId = 0;  // id to keep track of query changes
 
-        // action and error are functions for the promise. if undefined, default functions will be used
-        this.get = function (query, action, error) {
+        this.send = function (query) {
             var currentEndpoint = endpoints.current;
 
             if (currentEndpoint && currentEndpoint.sqlURL) {
@@ -48,7 +47,7 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
 
                 var self = this;
 
-                sendRequest(this, req, function (result) {
+                sendRequest(this, req, $http, function (result) {
                     self.raw = result;
                     self.items = result.data.rows;
                     self.error400 = null;
@@ -57,6 +56,7 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
                 }, function (result) {
                     self.items = null;
                     self.raw = null;
+                    // We assume 400s are only coming from the SQL console
                     if (result.status == 400) {
                         self.error400 = result.data.error[0];
                     } else {
@@ -70,40 +70,15 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
                     }
                     self.running = false;
                     ++self.lastQueryId;
-                }, $http);
+                });
             }
         }
     }
 }]);
 
-api.factory('MapsClient', ["$http", "endpoints", "alerts", function ($http, endpoints, alerts) {
+api.factory('MapsClient', ["$http", "endpoints", function ($http, endpoints) {
     return function () {
-        this.send = function (req, action, error) {
-            var self = this;
-
-            if (!action) {
-                // default action function
-                action = function (result) {
-                    self.raw = result;
-                }
-            }
-
-            if (!error) {
-                // default error function
-                error = function (result) {
-                    self.raw = null;
-                    var errorMessage = result.statusText ? result.statusText : result.data;
-                    if (result.data && result.data.error) {
-                        errorMessage += " (" + result.data.error + ")";
-                    }
-                    alerts.add("error", "Endpoint error: " + errorMessage);
-                }
-            }
-
-            $http(req).then(action).catch(error);
-        };
-
-        this.get = function () {
+        this.send = function () {
             var currentEndpoint = endpoints.current;
 
             if (currentEndpoint && currentEndpoint.mapsURL) {
@@ -117,7 +92,7 @@ api.factory('MapsClient', ["$http", "endpoints", "alerts", function ($http, endp
 
                 var self = this;
 
-                this.send(req, function (result) {
+                sendRequest(this, req, $http, function (result) {
                     self.raw = result;
                     self.items = [];
                     for (var i = 0; i < result.data.template_ids.length; i++) {
