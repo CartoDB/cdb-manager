@@ -72,7 +72,7 @@ cdbmanager.controller('vizjsonSelectorCtrl', ["$scope", "nav", "vizjsons", funct
     };
 }]);
 
-cdbmanager.controller('vizjsonCtrl', ["$scope", "nav", "vizjsons", function ($scope, nav, vizjsons) {
+cdbmanager.controller('vizjsonCtrl', ["$scope", "nav", "vizjsons", "$timeout", function ($scope, nav, vizjsons, $timeout) {
     $scope.nav = nav;
 
     $scope.editorOptions = {
@@ -95,9 +95,11 @@ cdbmanager.controller('vizjsonCtrl', ["$scope", "nav", "vizjsons", function ($sc
 
     $scope.showVisualization = function () {
         nav.current = "vizjsons.visualization";
-        $scope.$apply();  // We need to make sure the map is not created in an invisible area of the page, otherwise it won't render correctly
-        $("#vizjson").replaceWith('<div id="vizjson" style="height: 500px"></div>');
-        cartodb.createVis("vizjson", JSON.parse($scope.vizjsonInEditor.json));
+        // We need to make sure the map is not created in an invisible area of the page, otherwise it won't render correctly
+        $timeout(function () {
+            $("#vizjson").replaceWith('<div id="vizjson" style="height: 500px"></div>');
+            cartodb.createVis("vizjson", JSON.parse($scope.vizjsonInEditor.json));
+        });
     };
 
     $scope.$watch(function () {
