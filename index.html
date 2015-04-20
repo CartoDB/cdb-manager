@@ -278,6 +278,9 @@
                             <div class="alert alert-success" role="alert" ng-show="!running && sql.result.data.rows">
                                 <alert role="alert">Total rows: {{ sql.result.data.total_rows }}, server runtime: {{ sql.result.data.time }}s</alert>
                             </div>
+                            <div class="alert alert-danger" role="alert" ng-show="!running && sql.error">
+                                <alert role="alert">{{ sql.error }}</alert>
+                            </div>
                         </div>
                         <div class="row">
                             <cdb-result-table rows="sql.result.data.rows" settings="cdbrt"></cdb-result-table>

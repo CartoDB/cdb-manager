@@ -15,7 +15,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
 
     $scope.sql = {};
     $scope.nav = nav;
-    $scope.running = false;
+    $scope.running = this.api.running;
     $scope.historyNotFound = false;
     $scope.cdbrt = {  // Settings for the result table
         rowsPerPage: settings.sqlConsoleRowsPerPage
@@ -48,7 +48,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
     this.resetEditor = function () {
         $scope.sql.result = null;
         $scope.sql.headers = null;
-        $scope.running = false;
+        $scope.sql.error = null;
         $scope.historyNotFound = false;
         self.historyBuffer = "";
         self.setHistoryCurrent($localStorage.history.length);
@@ -67,21 +67,20 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
 
     // query executed successfully
     $scope.$watch(function () {
-        return self.api.raw;
-    }, function (result) {
-        $scope.running = false;
-        $scope.sql.result = result;
+        return self.api.lastQueryId;
+    }, function () {
+        $scope.sql.result = self.api.raw;
+        $scope.sql.error = self.api.error400;
     });
 
     $scope.execSQL = function (query) {
-        $scope.running = true;
         self.historyCurrent = $localStorage.history.length;
         if ($localStorage.history[self.historyCurrent - 1] != query) {
             $localStorage.history.push(query);
         }
         self.historyBuffer = "";
         $scope.historyNotFound = false;
-        return self.api.get(query);
+        self.api.get(query);
     };
 
     $scope.cleanHistory = function () {
