@@ -48,12 +48,6 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "co
                 $scope.nav.current = "tables.table.columns";
                 tables.current = table;
             }
-        },
-        {
-            text: "Drop",
-            onClick: function (table) {
-                // TBD
-            }
         }
     ];
 
