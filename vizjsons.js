@@ -31,6 +31,17 @@ cdbmanager.service('vizjsons', ["$localStorage", function ($localStorage) {
         }
     };
 
+    this.nameIsUsed = function (name) {
+        var vizjsons = this.get();
+
+        for (var i = 0; i < vizjsons.length; i++) {
+            if (vizjsons[i].name === name) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     this.setCurrent = function (vizjson) {
         this.current = vizjson;
     };
@@ -44,6 +55,10 @@ cdbmanager.controller('vizjsonSelectorCtrl', ["$scope", "nav", "vizjsons", funct
         vizjsons.setCurrent(vizjson);
     };
 
+    $scope.nameIsValid = function (name) {
+        return vizjsons.nameIsUsed(name);
+    };
+
     // keep the vizjson list in the scope always updated
     $scope.$watch(function () {
         return vizjsons.get();
@@ -53,6 +68,7 @@ cdbmanager.controller('vizjsonSelectorCtrl', ["$scope", "nav", "vizjsons", funct
 
     $scope.addVizjson = function (vizjson) {
         vizjsons.add(vizjson);
+        $scope.newVizjson = {};
     };
 }]);
 

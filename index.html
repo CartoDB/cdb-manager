@@ -114,10 +114,10 @@
                                 </div>
                                 <div class="panel-footer">
                                     <form novalidate>
-                                        <div class="input-group">
+                                        <div class="input-group" ng-class="{'has-error': !nameIsValid(newVizjson.name)}">
                                             <input type="text" class="form-control" ng-model="newVizjson.name" />
                                             <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default" ng-click="addVizjson(newVizjson)">New</button>
+                                                <button type="button" class="btn btn-default" ng-disabled="!newVizjson.name || !nameIsValid(newVizjson.name)" ng-click="addVizjson(newVizjson)">New</button>
                                             </span>
                                         </div>
                                     </form>
