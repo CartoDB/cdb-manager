@@ -95,6 +95,7 @@ cdbmanager.controller('vizjsonCtrl', ["$scope", "nav", "vizjsons", function ($sc
 
     $scope.showVisualization = function () {
         nav.current = "vizjsons.visualization";
+        $scope.$apply();  // We need to make sure the map is not created in an invisible area of the page, otherwise it won't render correctly
         $("#vizjson").replaceWith('<div id="vizjson" style="height: 500px"></div>');
         cartodb.createVis("vizjson", JSON.parse($scope.vizjsonInEditor.json));
     };
