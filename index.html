@@ -137,6 +137,23 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Function selector -->
+                        <div class="panel panel-default" ng-controller="functionSelectorCtrl">
+                            <div class="panel-heading" role="tab" id="functionPanelHeading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#functionPanelCollapse" aria-expanded="true" aria-controls="functionPanelCollapse">Functions</a>
+                                    <a href ng-show="functions.length > 0" ng-click="nav.current = 'functions'">({{ functions.length }})</a>
+                                </h4>
+                            </div>
+                            <div id="functionPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="functionPanelHeading">
+                                <div class="panel-body list-group">
+                                    <a href ng-click="showFunction(func)" ng-repeat="func in functions" class="list-group-item" ng-class="{active: nav.current.indexOf('functions.function') == 0 && func == currentFunction}">{{ func.proname }}</a>
+                                </div>
+                                <div class="panel-footer">
+                                    <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
+                                </div>
+                            </div>
+                        </div>
                         <!-- SQL console link -->
                         <div class="panel panel-default" ng-controller="sqlSelectorCtrl">
                             <div class="panel-heading" role="tab" id="sqlPanel">
@@ -245,6 +262,37 @@
                         </div>
                     </div>
                 </div>
+                <!-- Functions pane -->
+                <div class="col-md-9" ng-controller="functionsCtrl" ng-show="nav.current == 'functions'">
+                    <cdb-result-table rows="functions" actions="actions" settings="cdbrt"></cdb-result-table>
+                </div>
+                <!-- Single function pane -->
+                <div class="col-md-9" ng-controller="functionCtrl" ng-show="nav.current == 'functions.function'">
+                    <div class="container-fluid" >
+                        <div class="row">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div ui-codemirror="{ onLoad: codemirrorLoaded }" ui-codemirror-opts="editorOptions" ng-model="functionInEditor.definition"></div>
+                                    <small><i>Use Ctrl-Enter to update function</i></small>
+                                </div>
+                                <div class="panel-footer" style="text-align: right;">
+                                    <button type="button" class="btn btn-primary" ng-disabled="running" ng-click="updateFunction(functionInEditor)">Update function</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="alert alert-info" role="alert" ng-show="running">
+                                <alert role="alert">Please wait...</alert>
+                            </div>
+                            <div class="alert alert-success" role="alert" ng-show="!running && updated">
+                                <alert role="alert">Function updated successfully</alert>
+                            </div>
+                            <div class="alert alert-danger" role="alert" ng-show="!running && error">
+                                <alert role="alert">{{ error }}</alert>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- SQL console pane -->
                 <div class="col-md-9" ng-controller="sqlCtrl" ng-show="nav.current == 'sql'">
                     <div class="container-fluid">
@@ -282,7 +330,7 @@
                                 <alert role="alert">{{ sql.error }}</alert>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" ng-show="sql.result.data.total_rows">
                             <cdb-result-table rows="sql.result.data.rows" settings="cdbrt"></cdb-result-table>
                         </div>
                     </div>
@@ -313,6 +361,7 @@
         <script src="tables.js"></script>
         <script src="constraints.js"></script>
         <script src="triggers.js"></script>
+        <script src="functions.js"></script>
         <script src="columns.js"></script>
         <script src="indexes.js"></script>
         <script src="sql.js"></script>

@@ -32,8 +32,10 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
     return function () {
         this.lastQueryId = 0;  // id to keep track of query changes
 
-        this.send = function (query) {
+        this.send = function (query, action, error) {
             var currentEndpoint = endpoints.current;
+
+            var self = this;
 
             if (currentEndpoint && currentEndpoint.sqlURL) {
                 var req = {
@@ -45,32 +47,38 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
                     }
                 };
 
-                var self = this;
-
-                sendRequest(this, req, $http, function (result) {
-                    self.raw = result;
-                    self.items = result.data.rows;
-                    self.error400 = null;
-                    self.running = false;
-                    ++self.lastQueryId;
-                }, function (result) {
-                    self.items = null;
-                    self.raw = null;
-                    // We assume 400s are only coming from the SQL console
-                    if (result.status == 400) {
-                        self.error400 = result.data.error[0];
-                    } else {
-                        var errorMessage = result.statusText;
+                if (!action) {
+                    action = function (result) {
+                        self.raw = result;
+                        self.items = result.data.rows;
                         self.error400 = null;
-                        if (errorMessage) {
-                            alerts.add("error", "Endpoint error: " + errorMessage);
-                        } else {
-                            alerts.add("error", "Unknown endpoint error");
-                        }
+                        self.running = false;
+                        ++self.lastQueryId;
                     }
-                    self.running = false;
-                    ++self.lastQueryId;
-                });
+                }
+
+                if (!error) {
+                    error = function (result) {
+                        self.items = null;
+                        self.raw = null;
+                        // We assume 400s are only coming from the SQL console
+                        if (result.status == 400) {
+                            self.error400 = result.data.error[0];
+                        } else {
+                            var errorMessage = result.statusText;
+                            self.error400 = null;
+                            if (errorMessage) {
+                                alerts.add("error", "Endpoint error: " + errorMessage);
+                            } else {
+                                alerts.add("error", "Unknown endpoint error");
+                            }
+                        }
+                        self.running = false;
+                        ++self.lastQueryId;
+                    }
+                }
+
+                sendRequest(this, req, $http, action, error);
             }
         }
     }
