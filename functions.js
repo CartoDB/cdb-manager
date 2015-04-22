@@ -1,43 +1,36 @@
-cdbmanager.service("functions", ["SQLClient", function (SQLClient) {
+api.factory('Function', ["SQLClient", function (SQLClient) {
+    return function (functionFromDB, manager) {
+        angular.extend(this, functionFromDB);
+
+        this.api = new SQLClient();
+
+        this.updateDefinition = function () {
+            var self = this;
+
+            var action = function (result) {
+                manager.getAll();
+            };
+
+            this.api.send(this.definition, action);
+        }
+    }
+}]);
+
+cdbmanager.service("functions", ["SQLClient", "Function", function (SQLClient, Function) {
     this.api = new SQLClient();
 
     this.current = null;
 
     this.getAll = function () {
-        this.api.send("select pg_proc.oid as _oid, pg_proc.*, pg_get_functiondef(pg_proc.oid) as definition from pg_proc, pg_roles where pg_proc.proowner = pg_roles.oid and pg_roles.rolname = current_user;");
-    };
-
-    this.update = function (definition) {
-        var api = this.api;
         var self = this;
 
-        var action = function (result) {
-            api.error400 = null;
-            api.updated = true;
-            api.running = false;
-            ++api.lastQueryId;
-            self.getAll();
-        };
-
-        var error = function (result) {
-            api.updated = false;
-            if (result.status == 400) {
-                api.error400 = result.data.error[0];
-            } else {
-                var errorMessage = result.statusText;
-                api.error400 = null;
-                if (errorMessage) {
-                    alerts.add("error", "Endpoint error: " + errorMessage);
-                } else {
-                    alerts.add("error", "Unknown endpoint error");
-                }
+        var action = function () {
+            for (var i = 0; i < self.api.items.length; i++) {
+                self.api.items[i] = new Function(self.api.items[i], self);
             }
-            api.running = false;
-            ++api.lastQueryId;
         };
-
-        this.api.send(definition, action, error);
-    }
+        this.api.send("select pg_proc.oid as _oid, pg_proc.*, pg_get_functiondef(pg_proc.oid) as definition from pg_proc, pg_roles where pg_proc.proowner = pg_roles.oid and pg_roles.rolname = current_user;", action);
+    };
 }]);
 
 cdbmanager.controller('functionSelectorCtrl', ["$scope", "functions", "endpoints", "nav", function ($scope, functions, endpoints, nav) {
@@ -78,7 +71,7 @@ cdbmanager.controller('functionsCtrl', ["$scope", "functions", "endpoints", "nav
 
     $scope.cdbrt = {
         rowsPerPage: settings.sqlConsoleRowsPerPage,
-        skip: ["prosrc"]
+        skip: ["prosrc", "api", "definition"]
     };
     $scope.actions = [
         {
@@ -126,7 +119,7 @@ cdbmanager.controller('functionCtrl', ["$scope", "nav", "functions", function ($
     };
 
     $scope.updateFunction = function (func) {
-        functions.update(func.definition);
+        func.updateDefinition();
     };
 
     //

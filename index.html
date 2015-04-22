@@ -281,14 +281,14 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="alert alert-info" role="alert" ng-show="running">
+                            <div class="alert alert-info" role="alert" ng-show="functionInEditor.api.running">
                                 <alert role="alert">Please wait...</alert>
                             </div>
-                            <div class="alert alert-success" role="alert" ng-show="!running && updated">
+                            <div class="alert alert-success" role="alert" ng-show="!functionInEditor.api.running && functionInEditor.api.valid">
                                 <alert role="alert">Function updated successfully</alert>
                             </div>
-                            <div class="alert alert-danger" role="alert" ng-show="!running && error">
-                                <alert role="alert">{{ error }}</alert>
+                            <div class="alert alert-danger" role="alert" ng-show="!functionInEditor.api.running && functionInEditor.api.errorMessage">
+                                <alert role="alert">{{ functionInEditor.api.errorMessage }}</alert>
                             </div>
                         </div>
                     </div>
@@ -302,7 +302,7 @@
                                     <div class="input-group" ng-class="{'has-error': historyNotFound}">
                                         <input type="text" ng-model="sql.historyNeedle" class="form-control">
                                         <span class="input-group-btn">
-                                            <button class="btn btn-default" ng-click="searchHistory(sql.historyNeedle)" type="button">Search history</button>
+                                            <button class="btn btn-default" ng-disabled="!sql.historyNeedle" ng-click="searchHistory(sql.historyNeedle)" type="button">Search history</button>
                                         </span>
                                     </div>
                                 </div>
@@ -314,24 +314,24 @@
                                     <button type="button" class="btn btn-warning" ng-click="cleanHistory()">Clean history</button>
                                     <span class="pull-right">
                                         <button type="button" class="btn btn-default" ng-click="resetConsole()">Reset console</button>
-                                        <button type="button" class="btn btn-primary" ng-disabled="running" ng-click="execSQL(sql.query)">Execute query (Ctrl-Enter)</button>
+                                        <button type="button" class="btn btn-primary" ng-disabled="sql.result.running" ng-click="execSQL(sql.query)">Execute query (Ctrl-Enter)</button>
                                     </span>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="alert alert-info" role="alert" ng-show="running">
+                            <div class="alert alert-info" role="alert" ng-show="sql.result.running">
                                 <alert role="alert">Please wait...</alert>
                             </div>
-                            <div class="alert alert-success" role="alert" ng-show="!running && sql.result.data.rows">
-                                <alert role="alert">Total rows: {{ sql.result.data.total_rows }}, server runtime: {{ sql.result.data.time }}s</alert>
+                            <div class="alert alert-success" role="alert" ng-show="!sql.result.running && sql.result.items">
+                                <alert role="alert">Total rows: {{ sql.result.raw.data.total_rows }}, server runtime: {{ sql.result.raw.data.time }}s</alert>
                             </div>
-                            <div class="alert alert-danger" role="alert" ng-show="!running && sql.error">
-                                <alert role="alert">{{ sql.error }}</alert>
+                            <div class="alert alert-danger" role="alert" ng-show="!sql.result.running && sql.result.errorMessage">
+                                <alert role="alert">{{ sql.result.errorMessage }}</alert>
                             </div>
                         </div>
-                        <div class="row" ng-show="sql.result.data.total_rows">
-                            <cdb-result-table rows="sql.result.data.rows" settings="cdbrt"></cdb-result-table>
+                        <div class="row" ng-show="sql.result.items">
+                            <cdb-result-table rows="sql.result.items" settings="cdbrt"></cdb-result-table>
                         </div>
                     </div>
                 </div>

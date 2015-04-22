@@ -47,9 +47,8 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
 
     this.resetEditor = function () {
         $scope.sql.result = null;
-        $scope.sql.headers = null;
-        $scope.sql.error = null;
         $scope.historyNotFound = false;
+        $scope.sql.historyNeedle = null;
         self.historyBuffer = "";
         self.setHistoryCurrent($localStorage.history.length);
     };
@@ -67,10 +66,9 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
 
     // query executed successfully
     $scope.$watch(function () {
-        return self.api.lastQueryId;
+        return self.api.raw;
     }, function () {
-        $scope.sql.result = self.api.raw;
-        $scope.sql.error = self.api.error400;
+        $scope.sql.result = self.api;
     });
 
     $scope.execSQL = function (query) {
