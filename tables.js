@@ -1,10 +1,50 @@
-cdbmanager.service("tables", ["SQLClient", function (SQLClient) {
+api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records", "triggers", function (SQLClient, columns, constraints, indexes, records, triggers) {
+    return function (tableFromDB) {
+        angular.extend(this, tableFromDB);
+
+        this.api = new SQLClient();
+
+        this.getColumns = function (action, error) {
+            columns.get(this, action, error);
+        };
+
+        this.getConstraints = function (action, error) {
+            constraints.get(this, action, error);
+        };
+
+        this.getIndexes = function (action, error) {
+            indexes.get(this, action, error);
+        };
+
+        this.getRecords = function (action, error) {
+            records.get(this, action, error);
+        };
+
+        this.getTriggers = function (action, error) {
+            triggers.get(this, action, error);
+        };
+    }
+}]);
+
+cdbmanager.service("tables", ["SQLClient", "Table", function (SQLClient, Table) {
     this.api = new SQLClient();
 
     this.current = null;
 
-    this.getAll = function () {
-        return this.api.send("select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples from pg_class, pg_roles where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_class.relkind = 'r';");
+    this.get = function (action, error) {
+        var self = this;
+
+        var _action = function () {
+            for (var i = 0; i < self.api.items.length; i++) {
+                self.api.items[i] = new Table(self.api.items[i], self);
+            }
+
+            if (action) {
+                action();
+            }
+        };
+
+        this.api.send("select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples from pg_class, pg_roles where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_class.relkind = 'r';", _action, error);
     };
 }]);
 
@@ -12,7 +52,7 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     $scope.nav = nav;
 
     $scope.showTable = function (table) {
-        columns.getAll(table);
+        columns.get(table);
         $scope.nav.current = "tables.table.columns";
         tables.current = table;
     };
@@ -21,7 +61,7 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
-        $scope.tables = tables.getAll();
+        $scope.tables = tables.get();
     }, true);
     $scope.$watch(function () {
         return tables.api.items;
@@ -37,14 +77,18 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     });
 }]);
 
-cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "columns", function ($scope, tables, endpoints, nav, columns) {
+cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "columns", "settings", function ($scope, tables, endpoints, nav, columns, settings) {
     $scope.nav = nav;
+
+    $scope.cdbrt = {
+        rowsPerPage: settings.sqlConsoleRowsPerPage
+    };
     $scope.headers = ['Name', 'Estimated row count'];
     $scope.actions = [
         {
             text: "Details",
             onClick: function (table) {
-                columns.getAll(table);
+                columns.get(table);
                 $scope.nav.current = "tables.table.columns";
                 tables.current = table;
             }
@@ -55,7 +99,7 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "co
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
-        $scope.tables = tables.getAll();
+        $scope.tables = tables.get();
     }, true);
     $scope.$watch(function () {
         return tables.api.items;
@@ -110,15 +154,15 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpo
         return nav.current;
     }, function (section) {
         if (section == "tables.table.columns") {
-            $scope.columns = columns.getAll(tables.current);
+            $scope.columns = tables.current.getColumns();
         } else if (section == "tables.table.indexes") {
-            $scope.columns = indexes.getAll(tables.current);
+            $scope.columns = tables.current.getIndexes();
         } else if (section == "tables.table.records") {
-            $scope.columns = records.getAll(tables.current);
+            $scope.columns = tables.current.getRecords();
         } else if (section == "tables.table.constraints") {
-            $scope.constraints = constraints.getAll(tables.current);
+            $scope.constraints = tables.current.getConstraints();
         } else if (section == "tables.table.triggers") {
-            $scope.triggers = triggers.getAll(tables.current);
+            $scope.triggers = tables.current.getTriggers();
         }
     });
 }]);

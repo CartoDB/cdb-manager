@@ -16,6 +16,11 @@ cdbmanager.directive('cdbResultTable', function () {
             actions: "=actions"
         },
         replace: true,
-        templateUrl: "ui/table.html"
+        templateUrl: "ui/table.html",
+        link: function link(scope, element, attrs) {
+            scope.itemIsData = function (name, value) {
+                return (name != 'api' && !name.startsWith('_') && (!attrs.settings.skip || attrs.settings.skip.indexOf(name) < 0) && typeof(value) != 'function');
+            }
+        }
     }
 });

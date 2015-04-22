@@ -52,7 +52,7 @@
                                     <select ng-show="endpoints.length > 0" ng-options="endpoint as endpoint.name for endpoint in endpoints" ng-model="current" ng-change="setCurrent()"></select>
                                 </h4>
                             </div>
-                            <!-- New endpoint dialog -->
+                            <!-- New endpoint selector -->
                             <div id="endpointPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="endpointPanelHeading">
                                 <form name="updatedEndpoint" novalidate>
                                     <div class="panel-body">
@@ -188,11 +188,11 @@
                         </div>
                     </div>
                 </div>
-                <!-- Tables pane -->
+                <!-- Tables view -->
                 <div class="col-md-9" ng-controller="tablesCtrl" ng-show="nav.current == 'tables'">
                     <cdb-result-table rows="tables" headers="headers" actions="actions" settings="cdbrt"></cdb-result-table>
                 </div>
-                <!-- Single table pane -->
+                <!-- Single table view -->
                 <div class="col-md-9" ng-controller="tableCtrl" ng-show="nav.current.indexOf('tables.table') == 0">
                     <div role="tabpanel">
                         <ul class="nav nav-tabs" role="tablist">
@@ -221,7 +221,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- vizjson pane -->
+                <!-- vizjson view -->
                 <div class="col-md-9" ng-controller="vizjsonCtrl" ng-show="nav.current.indexOf('vizjsons') == 0">
                     <div role="tabpanel">
                         <ul class="nav nav-tabs" role="tablist">
@@ -249,7 +249,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Named maps pane -->
+                <!-- Named maps view -->
                 <div class="col-md-9" ng-controller="namedMapCtrl" ng-show="nav.current.indexOf('namedMaps') == 0">
                     <div role="tabpanel">
                         <ul class="nav nav-tabs" role="tablist">
@@ -262,11 +262,11 @@
                         </div>
                     </div>
                 </div>
-                <!-- Functions pane -->
+                <!-- Functions view -->
                 <div class="col-md-9" ng-controller="functionsCtrl" ng-show="nav.current == 'functions'">
                     <cdb-result-table rows="functions" actions="actions" settings="cdbrt"></cdb-result-table>
                 </div>
-                <!-- Single function pane -->
+                <!-- Single function view -->
                 <div class="col-md-9" ng-controller="functionCtrl" ng-show="nav.current == 'functions.function'">
                     <div class="container-fluid" >
                         <div class="row">
@@ -293,7 +293,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- SQL console pane -->
+                <!-- SQL console view -->
                 <div class="col-md-9" ng-controller="sqlCtrl" ng-show="nav.current == 'sql'">
                     <div class="container-fluid">
                         <div class="row">

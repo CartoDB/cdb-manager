@@ -1,17 +1,11 @@
 api.factory('Function', ["SQLClient", function (SQLClient) {
-    return function (functionFromDB, manager) {
+    return function (functionFromDB) {
         angular.extend(this, functionFromDB);
 
         this.api = new SQLClient();
 
-        this.updateDefinition = function () {
-            var self = this;
-
-            var action = function (result) {
-                manager.getAll();
-            };
-
-            this.api.send(this.definition, action);
+        this.updateDefinition = function (action, error) {
+            this.api.send(this.definition, action, error);
         }
     }
 }]);
@@ -21,15 +15,20 @@ cdbmanager.service("functions", ["SQLClient", "Function", function (SQLClient, F
 
     this.current = null;
 
-    this.getAll = function () {
+    this.get = function (action, error) {
         var self = this;
 
-        var action = function () {
+        var _action = function () {
             for (var i = 0; i < self.api.items.length; i++) {
                 self.api.items[i] = new Function(self.api.items[i], self);
             }
+
+            if (action) {
+                action();
+            }
         };
-        this.api.send("select pg_proc.oid as _oid, pg_proc.*, pg_get_functiondef(pg_proc.oid) as definition from pg_proc, pg_roles where pg_proc.proowner = pg_roles.oid and pg_roles.rolname = current_user;", action);
+
+        this.api.send("select pg_proc.oid as _oid, pg_proc.*, pg_get_functiondef(pg_proc.oid) as definition from pg_proc, pg_roles where pg_proc.proowner = pg_roles.oid and pg_roles.rolname = current_user;", _action, error);
     };
 }]);
 
@@ -42,14 +41,14 @@ cdbmanager.controller('functionSelectorCtrl', ["$scope", "functions", "endpoints
     };
 
     $scope.refreshList = function () {
-        functions.getAll();
+        functions.get();
     };
 
     // update function list when current endpoint changes
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
-        $scope.functions = functions.getAll();
+        $scope.functions = functions.get();
     }, true);
 
     $scope.$watch(function () {
@@ -71,7 +70,7 @@ cdbmanager.controller('functionsCtrl', ["$scope", "functions", "endpoints", "nav
 
     $scope.cdbrt = {
         rowsPerPage: settings.sqlConsoleRowsPerPage,
-        skip: ["prosrc", "api", "definition"]
+        skip: ["prosrc", "definition"]
     };
     $scope.actions = [
         {
@@ -87,7 +86,7 @@ cdbmanager.controller('functionsCtrl', ["$scope", "functions", "endpoints", "nav
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
-        $scope.functions = functions.getAll();
+        $scope.functions = functions.get();
     }, true);
 
     $scope.$watch(function () {
@@ -119,7 +118,9 @@ cdbmanager.controller('functionCtrl', ["$scope", "nav", "functions", function ($
     };
 
     $scope.updateFunction = function (func) {
-        func.updateDefinition();
+        func.updateDefinition(function () {
+            functions.get();
+        });
     };
 
     //

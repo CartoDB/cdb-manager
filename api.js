@@ -1,43 +1,42 @@
 var api = angular.module("api", []);
 
-function sendRequest(obj, request, httpService, extraAction, extraError) {
+function sendRequest(obj, request, httpService, action, error) {
     obj.running = true;
     obj.valid = null;
     obj.raw = null;
 
-    // extraAction and extraError are functions for the promise. if defined they'll be run after the default action and error functions
-    var action = function (result) {
+    // action and error are functions for the promise. if defined they'll be run after the default action and error functions
+    var _action = function (result) {
         obj.raw = result;
         obj.valid = true;
 
-        if (extraAction) {
-            extraAction(result);
+        if (action) {
+            action(result);
         }
 
         obj.running = false;
     };
 
-    var error = function (result) {
+    var _error = function (result) {
         obj.raw = result;
         obj.valid = false;
 
-        if (extraError) {
-            extraError(result);
+        if (error) {
+            error(result);
         }
 
         obj.running = false;
     };
 
-    httpService(request).then(action).catch(error);
+    httpService(request).then(_action).catch(_error);
 }
 
 api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpoints, alerts) {
     return function () {
-//        this.lastQueryId = 0;  // id to keep track of query changes
         this.items = null;
         this.errorMessage = null;
 
-        this.send = function (query, extraAction, extraError) {
+        this.send = function (query, action, error) {
             var currentEndpoint = endpoints.current;
 
             if (currentEndpoint && currentEndpoint.sqlURL) {
@@ -52,21 +51,20 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
                     }
                 };
 
-                var action = function (result) {
+                var _action = function (result) {
                     if (result.data && result.data.rows.length > 0) {
                         self.items = result.data.rows;
                     } else {
                         self.items = null;
                     }
                     self.errorMessage = null;
-//                    ++self.lastQueryId;
 
-                    if (extraAction) {
-                        extraAction(result);
+                    if (action) {
+                        action(result);
                     }
                 };
 
-                var error = function (result) {
+                var _error = function (result) {
                     self.items = null;
                     // We assume 400s are only coming from the SQL console
                     if (result.status == 400) {
@@ -79,15 +77,14 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
                             alerts.add("error", "Unknown endpoint error");
                         }
                     }
-//                        ++self.lastQueryId;
 
-                    if (extraError) {
-                        extraError(result);
+                    if (error) {
+                        error(result);
                     }
 
                 };
 
-                sendRequest(this, req, $http, action, error);
+                sendRequest(this, req, $http, _action, _error);
             }
         }
     }

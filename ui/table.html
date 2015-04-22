@@ -7,13 +7,13 @@
             <thead>
                 <tr>
                     <th ng-show="headers" ng-repeat="header in headers">{{ header }}</th>
-                    <th ng-show="!headers" ng-repeat="(title, value) in rows[0]" ng-if="!title.startsWith('_') && (!settings.skip || settings.skip.indexOf(title) < 0)">{{ title }}</th>
+                    <th ng-show="!headers" ng-repeat="(name, value) in rows[0]" ng-if="itemIsData(name, value)">{{ name }}</th>
                     <th ng-show="actions">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr dir-paginate="row in rows | itemsPerPage: settings.rowsPerPage">
-                    <td ng-repeat="(title, value) in row" ng-if="!title.startsWith('_') && (!settings.skip || settings.skip.indexOf(title) < 0)">{{ value }}</td>
+                    <td ng-repeat="(name, value) in row" ng-if="itemIsData(name, value)">{{ value }}</td>
                     <td ng-show="actions"><a href ng-repeat="action in actions" ng-click="action.onClick(row)" class="btn btn-default" role="button">{{ action.text }}</a></td>
                 </tr>
             </tbody>

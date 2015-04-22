@@ -1,7 +1,27 @@
-cdbmanager.service("indexes", ["SQLClient", function (SQLClient) {
+api.factory('Index', ["SQLClient", function (SQLClient) {
+    return function (indexFromDB) {
+        angular.extend(this, indexFromDB);
+
+        this.api = new SQLClient();
+    }
+}]);
+
+cdbmanager.service("indexes", ["SQLClient", "Index", function (SQLClient, Index) {
     this.api = new SQLClient();
 
-    this.getAll = function (table) {
+    this.get = function (table, action, error) {
+        var self = this;
+
+        var _action = function () {
+            for (var i = 0; i < self.api.items.length; i++) {
+                self.api.items[i] = new Index(self.api.items[i], self);
+            }
+
+            if (action) {
+                action();
+            }
+        };
+
         var query = "SELECT " +
                     "i.relname AS index_name, a.attname AS column_name, am.amname AS index_type " +
                     "FROM pg_class t " +
@@ -13,6 +33,6 @@ cdbmanager.service("indexes", ["SQLClient", function (SQLClient) {
                     "AND t.oid = " + table._oid +
                     "ORDER BY t.relname, i.relname;";
 
-        return this.api.send(query);
+        this.api.send(query, _action, error);
     };
 }]);
