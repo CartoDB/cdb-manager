@@ -44,20 +44,21 @@ cdbmanager.controller('functionSelectorCtrl', ["$scope", "functions", "endpoints
         functions.get();
     };
 
-    // update function list when current endpoint changes
+    // update function list in scope when current endpoint changes
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
         $scope.functions = functions.get();
     }, true);
 
+    // update function list in scope when actual function list change
     $scope.$watch(function () {
         return functions.api.items;
     }, function (functionList) {
         $scope.functions = functionList;
     });
 
-    // Watch current function
+    // update current function in scope when current function changes
     $scope.$watch(function () {
         return functions.current;
     }, function (currentFunction) {
@@ -68,6 +69,7 @@ cdbmanager.controller('functionSelectorCtrl', ["$scope", "functions", "endpoints
 cdbmanager.controller('functionsCtrl', ["$scope", "functions", "endpoints", "nav", "settings", function ($scope, functions, endpoints, nav, settings) {
     $scope.nav = nav;
 
+    // Result table config
     $scope.cdbrt = {
         rowsPerPage: settings.sqlConsoleRowsPerPage,
         skip: ["prosrc", "definition"]
@@ -82,13 +84,14 @@ cdbmanager.controller('functionsCtrl', ["$scope", "functions", "endpoints", "nav
         }
     ];
 
-    // update function list when current endpoint changes
+    // update function list in scope when current endpoint changes
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
         $scope.functions = functions.get();
     }, true);
 
+    // update function list in scope when actual function list change
     $scope.$watch(function () {
         return functions.api.items;
     }, function (functionList) {
@@ -123,30 +126,11 @@ cdbmanager.controller('functionCtrl', ["$scope", "nav", "functions", function ($
         });
     };
 
-    //
+    // update function in editor when current function changes
     $scope.$watch(function () {
         return functions.current;
     }, function (currentFunction) {
         $scope.functionInEditor = angular.copy(currentFunction);
-        functions.api.updated = false;
-    });
-
-    $scope.$watch(function () {
-        return functions.api.error400;
-    }, function (error) {
-        $scope.error = error;
-    });
-
-    $scope.$watch(function () {
-        return functions.api.updated;
-    }, function (updated) {
-        $scope.updated = updated;
-    });
-
-    $scope.$watch(function () {
-        return functions.api.running;
-    }, function (running) {
-        $scope.running = running;
     });
 
     $scope.codemirrorLoaded = function (editor) {

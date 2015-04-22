@@ -1,5 +1,9 @@
 var api = angular.module("api", []);
 
+// generic function for sending requests through a $http-like http service
+// obj is the api object that makes the request
+// action and error are promises to be run on success and error respectively and after the
+// corresponding default promises have been run
 function sendRequest(obj, request, httpService, action, error) {
     obj.running = true;
     obj.valid = null;
@@ -31,11 +35,17 @@ function sendRequest(obj, request, httpService, action, error) {
     httpService(request).then(_action).catch(_error);
 }
 
+// SQLClient makes request to CartoDB's SQL API
+// internal objects:
+//   running, valid and raw from sendRequest
+//   items: list of objects returned by the database on success
+//   errorMessage: error message on error
 api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpoints, alerts) {
     return function () {
         this.items = null;
         this.errorMessage = null;
 
+        // action and error are functions for the promise. if defined they'll be run after the default action and error functions
         this.send = function (query, action, error) {
             var currentEndpoint = endpoints.current;
 
@@ -66,10 +76,11 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
 
                 var _error = function (result) {
                     self.items = null;
-                    // We assume 400s are only coming from the SQL console
                     if (result.status == 400) {
+                        // PostgreSQL error
                         self.errorMessage = result.data.error[0];
                     } else {
+                        // Network error
                         self.errorMessage = result.statusText;
                         if (self.errorMessage) {
                             alerts.add("error", "Endpoint error: " + self.errorMessage);
@@ -90,8 +101,15 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
     }
 }]);
 
+// MapsClient makes request to CartoDB's Maps API
+// internal objects:
+//   running, valid and raw from sendRequest
+//   items: list of objects returned by the database on success
+//   errorMessage: error message on error
 api.factory('MapsClient', ["$http", "endpoints", function ($http, endpoints) {
     return function () {
+        this.items = null;
+
         this.get = function () {
             var currentEndpoint = endpoints.current;
 
@@ -111,6 +129,8 @@ api.factory('MapsClient', ["$http", "endpoints", function ($http, endpoints) {
                     for (var i = 0; i < result.data.template_ids.length; i++) {
                         self.items.push({name: result.data.template_ids[i]});
                     }
+                }, function () {
+                    self.items = null;
                 });
             }
         };

@@ -60,6 +60,7 @@ cdbmanager.controller('namedMapCtrl', ["$scope", "nav", "namedMaps", "endpoints"
         });
     };
 
+    // show map when selected map changes
     $scope.$watch(function () {
         return namedMaps.current;
     }, function (currentNamedMap) {

@@ -1,4 +1,3 @@
-// saves vizjsons to local storage
 cdbmanager.service('vizjsons', ["$localStorage", function ($localStorage) {
     $localStorage.vizjsons = $localStorage.vizjsons || [];
 

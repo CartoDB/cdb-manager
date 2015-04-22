@@ -52,24 +52,29 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     $scope.nav = nav;
 
     $scope.showTable = function (table) {
-        columns.get(table);
-        nav.setCurrentView("table.columns");
         tables.current = table;
+        nav.setCurrentView("table.columns");
     };
 
-    // update table list when current endpoint changes
+    $scope.refreshList = function () {
+        tables.get();
+    };
+
+    // update table list in scope when current endpoint changes
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
         $scope.tables = tables.get();
     }, true);
+
+    // update table list in scope when actual table list changes
     $scope.$watch(function () {
         return tables.api.items;
-    }, function (table_list) {
-        $scope.tables = table_list;
+    }, function (tableList) {
+        $scope.tables = tableList;
     });
 
-    // Watch current table
+    // update current table pointer in scope when a new table is selected
     $scope.$watch(function () {
         return tables.current;
     }, function (currentTable) {
@@ -80,6 +85,7 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
 cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "columns", "settings", function ($scope, tables, endpoints, nav, columns, settings) {
     $scope.nav = nav;
 
+    // Config resutl table
     $scope.cdbrt = {
         rowsPerPage: settings.sqlConsoleRowsPerPage
     };
@@ -88,81 +94,84 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "co
         {
             text: "Details",
             onClick: function (table) {
-                columns.get(table);
                 nav.setCurrentView("table.columns");
                 tables.current = table;
             }
         }
     ];
 
-    // update table list when current endpoint changes
+    // update table list in scope when current endpoint changes
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
         $scope.tables = tables.get();
     }, true);
+
+    // update table list in scope when actual table list changes
     $scope.$watch(function () {
         return tables.api.items;
-    }, function (table_list) {
-        $scope.tables = table_list;
+    }, function (tableList) {
+        $scope.tables = tableList;
     });
 }]);
 
-// TBD
 cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpoints", "indexes", "records", "constraints", "triggers", "settings", function ($scope, nav, columns, tables, endpoints, indexes, records, constraints, triggers, settings) {
     $scope.nav = nav;
-    $scope.cdbrt = {  // Settings for the tables (same settings for all of them for now)
+
+    // Settings for the result tables
+    $scope.cdbrt = {
         rowsPerPage: settings.rowsPerPage
     };
 
-    //
+    // Synchronize columns in scope with actual columns
     $scope.$watch(function () {
         return columns.api.items;
     }, function (columns) {
         $scope.columns = columns;
     });
 
-    //
+    // Synchronize constraints in scope with actual constraints
     $scope.$watch(function () {
         return constraints.api.items;
     }, function (constraints) {
         $scope.constraints = constraints;
     });
 
-    //
+    // Synchronize triggers in scope with actual triggers
     $scope.$watch(function () {
         return triggers.api.items;
     }, function (triggers) {
         $scope.triggers = triggers;
     });
 
-    //
+    // Synchronize records in scope with actual records
     $scope.$watch(function () {
         return records.api.items;
     }, function (records) {
         $scope.records = records;
     });
 
-    //
+    // Synchronize indexes in scope with actual indexes
     $scope.$watch(function () {
         return indexes.api.items;
     }, function (indexes) {
         $scope.indexes = indexes;
     });
 
+    // Force data refresh when a tab is selected
     $scope.$watch(function () {
         return nav.current;
     }, function () {
         if (nav.isCurrentView("table.columns")) {
-            $scope.columns = tables.current.getColumns();
+            tables.current.getColumns();
         } else if (nav.isCurrentView("table.indexes")) {
-            $scope.columns = tables.current.getIndexes();
+            tables.current.getIndexes();
         } else if (nav.isCurrentView("table.records")) {
-            $scope.columns = tables.current.getRecords();
+            tables.current.getRecords();
         } else if (nav.isCurrentView("table.constraints")) {
-            $scope.constraints = tables.current.getConstraints();
+            tables.current.getConstraints();
         } else if (nav.isCurrentView("table.triggers")) {
-            $scope.triggers = tables.current.getTriggers();
+            tables.current.getTriggers();
         }
     });
 }]);

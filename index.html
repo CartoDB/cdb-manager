@@ -99,6 +99,9 @@
                                 <div class="panel-body list-group">
                                     <a href ng-click="showTable(table)" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.isCurrentView('table') && table == currentTable}">{{ table.relname }}</a>
                                 </div>
+                                <div class="panel-footer">
+                                    <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
+                                </div>
                             </div>
                         </div>
                         <!-- vizjson selector -->
@@ -276,7 +279,7 @@
                                     <small><i>Use Ctrl-Enter to update function</i></small>
                                 </div>
                                 <div class="panel-footer" style="text-align: right;">
-                                    <button type="button" class="btn btn-primary" ng-disabled="running" ng-click="updateFunction(functionInEditor)">Update function</button>
+                                    <button type="button" class="btn btn-primary" ng-disabled="functionInEditor.api.running" ng-click="updateFunction(functionInEditor)">Update function</button>
                                 </div>
                             </div>
                         </div>

@@ -2,7 +2,6 @@ cdbmanager.controller('sqlSelectorCtrl', ["$scope", "nav", function ($scope, nav
     $scope.nav = nav;
 }]);
 
-
 cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$localStorage", "settings", function ($scope, SQLClient, endpoints, nav, $localStorage, settings) {
     var self = this;
 

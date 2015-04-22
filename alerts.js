@@ -1,11 +1,3 @@
-cdbmanager.controller('AlertCtrl', function ($scope, alerts) {
-    $scope.alerts = alerts.get();
-
-    $scope.closeAlert = function (index) {
-        alerts.close(index);
-    };
-});
-
 cdbmanager.service('alerts', function () {
     this.alerts = [];
 
@@ -25,5 +17,13 @@ cdbmanager.service('alerts', function () {
 
     this.close = function (index) {
         this.alerts.splice(index, 1);
+    };
+});
+
+cdbmanager.controller('AlertCtrl', function ($scope, alerts) {
+    $scope.alerts = alerts.get();
+
+    $scope.closeAlert = function (index) {
+        alerts.close(index);
     };
 });

@@ -1,7 +1,7 @@
 // Takes care of changing the view on the main area of the app window
 // View names are string:
 //   * one word for simple views (e.g., tables)
-//   * two words separated by a dot for tabbed views (e.g. table.columns means the column tab of a single table)
+//   * two words separated by a dot for tabbed views (e.g. table.columns means the column tab subview of a single table view)
 // Currently only those two levels are supported, but isCurrentView is prepared to support an arbitrary number of levels.
 cdbmanager.service("nav", function () {
     this.current = null;
