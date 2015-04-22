@@ -2,8 +2,10 @@ cdbmanager.controller('sqlSelectorCtrl', ["$scope", "nav", function ($scope, nav
     $scope.nav = nav;
 }]);
 
-cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$localStorage", "settings", function ($scope, SQLClient, endpoints, nav, $localStorage, settings) {
+cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$localStorage", "settings", "$timeout", function ($scope, SQLClient, endpoints, nav, $localStorage, settings, $timeout) {
     var self = this;
+
+    var editor = null;
 
     this.api = new SQLClient();
 
@@ -56,20 +58,6 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
         self.resetEditor();
     };
 
-    // clean console if current endpoint changes
-    $scope.$watch(function () {
-        return endpoints.current;
-    }, function () {
-        self.resetEditor();
-    }, true);
-
-    // query executed successfully
-    $scope.$watch(function () {
-        return self.api.raw;
-    }, function () {
-        $scope.sql.result = self.api;
-    });
-
     $scope.execSQL = function (query) {
         self.historyCurrent = $localStorage.history.length;
         if ($localStorage.history[self.historyCurrent - 1] != query) {
@@ -98,8 +86,36 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
         $scope.historyNotFound = true;
     };
 
+    // clean console if current endpoint changes
+    $scope.$watch(function () {
+        return endpoints.current;
+    }, function () {
+        self.resetEditor();
+    }, true);
+
+    // query executed successfully
+    $scope.$watch(function () {
+        return self.api.raw;
+    }, function () {
+        $scope.sql.result = self.api;
+    });
+
+    // codemirror must be refreshed when not hidden anymore, otherwise the text won't show until you click on the editor
+    $scope.$watch(function () {
+        return nav.current;
+    }, function () {
+        if (nav.isCurrentView("sql")) {
+            // Need to refresh after digest cycle is over
+            $timeout(function () {
+                editor.refresh();
+            });
+        }
+    });
+
     // Key bindings for history
-    $scope.codemirrorLoaded = function (editor) {
+    $scope.codemirrorLoaded = function (_editor) {
+        editor = _editor;
+
         var ctrlUp = {
             "Ctrl-Up": function () {
                 if (self.historyCurrent == $localStorage.history.length) {

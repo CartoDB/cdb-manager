@@ -22,6 +22,7 @@ cdbmanager.service("records", ["SQLClient", "Record", function (SQLClient, Recor
             }
         };
 
-        this.api.send("select * from " + table.relname + ";", _action, error);
+        // Limited to 1000 records until we implement server-side pagination
+        this.api.send("select * from " + table.relname + " limit 1000;", _action, error);
     };
 }]);

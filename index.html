@@ -113,7 +113,7 @@
                             </div>
                             <div id="vizjsonPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="vizjsonPanelHeading">
                                 <div class="panel-body list-group">
-                                    <a href ng-click="showVizjson(vizjson)" ng-repeat="vizjson in vizjsons" class="list-group-item">{{ vizjson.name }}</a>
+                                    <a href ng-click="showVizjson(vizjson)" ng-repeat="vizjson in vizjsons" class="list-group-item" ng-class="{active: nav.isCurrentView('vizjson') && vizjson == currentVizjson}">{{ vizjson.name }}</a>
                                 </div>
                                 <div class="panel-footer">
                                     <form novalidate>
@@ -136,7 +136,7 @@
                             </div>
                             <div id="namedMapPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="namedMapPanelHeading">
                                 <div class="panel-body list-group">
-                                    <a href ng-click="showNamedMap(namedMap)" ng-repeat="namedMap in namedMaps" class="list-group-item">{{ namedMap.name }}</a>
+                                    <a href ng-click="showNamedMap(namedMap)" ng-repeat="namedMap in namedMaps" class="list-group-item" ng-class="{active: nav.isCurrentView('namedMap') && namedMap == currentNamedMap}">{{ namedMap.name }}</a>
                                 </div>
                             </div>
                         </div>
@@ -199,11 +199,11 @@
                 <div class="col-md-9" ng-controller="tableCtrl" ng-show="nav.isCurrentView('table')">
                     <div role="tabpanel">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('table.columns')}" aria-controls="columns" role="tab" ng-click="nav.setCurrentView('table.columns')">Columns</a></li>
-                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('table.records')}" aria-controls="records" role="tab" ng-click="nav.setCurrentView('table.records')">Records</a></li>
-                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('table.indexes')}" aria-controls="indexes" role="tab" ng-click="nav.setCurrentView('table.indexes')">Indexes</a></li>
-                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('table.constraints')}" aria-controls="constraints" role="tab" ng-click="nav.setCurrentView('table.constraints')">Constraints</a></li>
-                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('table.triggers')}" aria-controls="triggers" role="tab" ng-click="nav.setCurrentView('table.triggers')">Triggers</a></li>
+                            <li role="presentation" ng-class="{active: nav.isCurrentView('table.columns')}"><a href aria-controls="columns" role="tab" ng-click="nav.setCurrentView('table.columns')">Columns</a></li>
+                            <li role="presentation" ng-class="{active: nav.isCurrentView('table.records')}"><a href aria-controls="records" role="tab" ng-click="nav.setCurrentView('table.records')">Records</a></li>
+                            <li role="presentation" ng-class="{active: nav.isCurrentView('table.indexes')}"><a href aria-controls="indexes" role="tab" ng-click="nav.setCurrentView('table.indexes')">Indexes</a></li>
+                            <li role="presentation" ng-class="{active: nav.isCurrentView('table.constraints')}"><a href aria-controls="constraints" role="tab" ng-click="nav.setCurrentView('table.constraints')">Constraints</a></li>
+                            <li role="presentation" ng-class="{active: nav.isCurrentView('table.triggers')}"><a href aria-controls="triggers" role="tab" ng-click="nav.setCurrentView('table.triggers')">Triggers</a></li>
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.columns')">
@@ -228,8 +228,8 @@
                 <div class="col-md-9" ng-controller="vizjsonCtrl" ng-show="nav.isCurrentView('vizjson')">
                     <div role="tabpanel">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('vizjson.editor')}" aria-controls="editor" role="tab" ng-click="showEditor()">Editor</a></li>
-                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('vizjson.visualization')}" aria-controls="visualization" role="tab" ng-click="showVisualization()">Visualization</a></li>
+                            <li role="presentation" ng-class="{active: nav.isCurrentView('vizjson.editor')}"><a href aria-controls="editor" role="tab" ng-click="showEditor()">Editor</a></li>
+                            <li role="presentation" ng-class="{active: nav.isCurrentView('vizjson.visualization')}"><a href aria-controls="visualization" role="tab" ng-click="showVisualization()">Visualization</a></li>
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('vizjson.editor')">
@@ -256,7 +256,7 @@
                 <div class="col-md-9" ng-controller="namedMapCtrl" ng-show="nav.isCurrentView('namedMap')">
                     <div role="tabpanel">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('namedMap.visualization')}" aria-controls="visualization" role="tab" ng-click="showVisualization()">Visualization</a></li>
+                            <li role="presentation" ng-class="{active: nav.isCurrentView('namedMap.visualization')}"><a href aria-controls="visualization" role="tab" ng-click="showVisualization()">Visualization</a></li>
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('namedMap.visualization')">

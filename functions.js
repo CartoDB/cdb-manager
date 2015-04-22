@@ -99,12 +99,14 @@ cdbmanager.controller('functionsCtrl', ["$scope", "functions", "endpoints", "nav
     });
 }]);
 
-cdbmanager.controller('functionCtrl', ["$scope", "nav", "functions", function ($scope, nav, functions) {
+cdbmanager.controller('functionCtrl', ["$scope", "nav", "functions", "$timeout", function ($scope, nav, functions, $timeout) {
     $scope.nav = nav;
 
     $scope.running = null;
     $scope.error = null;
     $scope.updated = null;
+
+    var editor = null;
 
     // codemirror configuration
     var mime = 'text/x-mariadb';
@@ -133,7 +135,21 @@ cdbmanager.controller('functionCtrl', ["$scope", "nav", "functions", function ($
         $scope.functionInEditor = angular.copy(currentFunction);
     });
 
-    $scope.codemirrorLoaded = function (editor) {
+    // codemirror must be refreshed when not hidden anymore, otherwise the text won't show until you click on the editor
+    $scope.$watch(function () {
+        return nav.current;
+    }, function () {
+        if (nav.isCurrentView("function")) {
+            // Need to refresh after digest cycle is over
+            $timeout(function () {
+                editor.refresh();
+            });
+        }
+    });
+
+    $scope.codemirrorLoaded = function (_editor) {
+        editor = _editor;
+
         var ctrlEnter = {
             "Ctrl-Enter": function () {
                 $scope.updateFunction($scope.functionInEditor);

@@ -49,6 +49,8 @@ cdbmanager.service('vizjsons', ["$localStorage", function ($localStorage) {
 cdbmanager.controller('vizjsonSelectorCtrl', ["$scope", "nav", "vizjsons", function ($scope, nav, vizjsons) {
     $scope.nav = nav;
 
+    $scope.currentVizjson = null;
+
     $scope.showVizjson = function (vizjson) {
         nav.setCurrentView("vizjson.editor");
         vizjsons.setCurrent(vizjson);
@@ -58,6 +60,11 @@ cdbmanager.controller('vizjsonSelectorCtrl', ["$scope", "nav", "vizjsons", funct
         return vizjsons.nameIsUsed(name);
     };
 
+    $scope.addVizjson = function (vizjson) {
+        vizjsons.add(vizjson);
+        $scope.newVizjson = {};
+    };
+
     // keep the vizjson list in the scope always updated
     $scope.$watch(function () {
         return vizjsons.get();
@@ -65,10 +72,12 @@ cdbmanager.controller('vizjsonSelectorCtrl', ["$scope", "nav", "vizjsons", funct
         $scope.vizjsons = vizjsons;
     });
 
-    $scope.addVizjson = function (vizjson) {
-        vizjsons.add(vizjson);
-        $scope.newVizjson = {};
-    };
+    // update current vizjson pointer in scope when a new vizjson is selected
+    $scope.$watch(function () {
+        return vizjsons.current;
+    }, function (currentVizjson) {
+        $scope.currentVizjson = currentVizjson;
+    });
 }]);
 
 cdbmanager.controller('vizjsonCtrl', ["$scope", "nav", "vizjsons", "$timeout", function ($scope, nav, vizjsons, $timeout) {
@@ -84,12 +93,19 @@ cdbmanager.controller('vizjsonCtrl', ["$scope", "nav", "vizjsons", "$timeout", f
         autofocus: true
     };
 
+    var editor = null;
+
     $scope.vizjsonInEditor = null;
 
     $scope.showEditor = function () {
         if ($scope.vizjsonInEditor) {
             nav.setCurrentView("vizjson.editor");
         }
+        // codemirror must be refreshed when not hidden anymore, otherwise the text won't show until you click on the editor
+        // Need to refresh after digest cycle is over
+        $timeout(function () {
+            editor.refresh();
+        });
     };
 
     $scope.showVisualization = function () {
@@ -115,4 +131,9 @@ cdbmanager.controller('vizjsonCtrl', ["$scope", "nav", "vizjsons", "$timeout", f
     $scope.removeCurrentVizjson = function () {
         vizjsons.remove(vizjsons.current);
     };
+
+    $scope.codemirrorLoaded = function (_editor) {
+        editor = _editor;
+    };
+
 }]);

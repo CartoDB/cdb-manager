@@ -13,6 +13,10 @@ cdbmanager.service('namedMaps', ["MapsClient", function (MapsClient) {
 }]);
 
 cdbmanager.controller('namedMapSelectorCtrl', ["$scope", "nav", "namedMaps", function ($scope, nav, namedMaps) {
+    $scope.nav = nav;
+
+    $scope.currentNamedMap = null;
+
     $scope.showNamedMap = function (namedMap) {
         namedMaps.setCurrent(namedMap);
     };
@@ -22,6 +26,13 @@ cdbmanager.controller('namedMapSelectorCtrl', ["$scope", "nav", "namedMaps", fun
         return namedMaps.api.items;
     }, function (namedMapList) {
         $scope.namedMaps = namedMapList;
+    });
+
+    // update current named map pointer in scope when a new name map is selected
+    $scope.$watch(function () {
+        return namedMaps.current;
+    }, function (currentNamedMap) {
+        $scope.currentNamedMap = currentNamedMap;
     });
 
     namedMaps.get();

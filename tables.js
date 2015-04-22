@@ -4,24 +4,80 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
 
         this.api = new SQLClient();
 
+        this.columns = null;
+        this.constraints = null;
+        this.indexes = null;
+        this.records = null;
+        this.triggers = null;
+
         this.getColumns = function (action, error) {
-            columns.get(this, action, error);
+            var self = this;
+
+            var _action = function () {
+                self.columns = columns.api.items;
+
+                if (action) {
+                    action();
+                }
+            };
+
+            columns.get(this, _action, error);
         };
 
         this.getConstraints = function (action, error) {
-            constraints.get(this, action, error);
+            var self = this;
+
+            var _action = function () {
+                self.constraints = constraints.api.items;
+
+                if (action) {
+                    action();
+                }
+            };
+
+            constraints.get(this, _action, error);
         };
 
         this.getIndexes = function (action, error) {
-            indexes.get(this, action, error);
+            var self = this;
+
+            var _action = function () {
+                self.indexes = indexes.api.items;
+
+                if (action) {
+                    action();
+                }
+            };
+
+            indexes.get(this, _action, error);
         };
 
         this.getRecords = function (action, error) {
-            records.get(this, action, error);
+            var self = this;
+
+            var _action = function () {
+                self.records = records.api.items;
+
+                if (action) {
+                    action();
+                }
+            };
+
+            records.get(this, _action, error);
         };
 
         this.getTriggers = function (action, error) {
-            triggers.get(this, action, error);
+            var self = this;
+
+            var _action = function () {
+                self.triggers = triggers.api.items;
+
+                if (action) {
+                    action();
+                }
+            };
+
+            triggers.get(this, _action, error);
         };
     }
 }]);
@@ -48,12 +104,13 @@ cdbmanager.service("tables", ["SQLClient", "Table", function (SQLClient, Table) 
     };
 }]);
 
-cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "nav", "columns", function ($scope, tables, endpoints, nav, columns) {
+cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "nav", function ($scope, tables, endpoints, nav) {
     $scope.nav = nav;
+
+    $scope.currentTable = null;
 
     $scope.showTable = function (table) {
         tables.current = table;
-        nav.setCurrentView("table.columns");
     };
 
     $scope.refreshList = function () {
@@ -82,12 +139,13 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     });
 }]);
 
-cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "columns", "settings", function ($scope, tables, endpoints, nav, columns, settings) {
+cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "settings", function ($scope, tables, endpoints, nav, settings) {
     $scope.nav = nav;
 
-    // Config resutl table
+    // Config result table
     $scope.cdbrt = {
-        rowsPerPage: settings.sqlConsoleRowsPerPage
+        rowsPerPage: settings.sqlConsoleRowsPerPage,
+        skip: ["columns", "indexes", "triggers", "records", "constraints"]
     };
     $scope.headers = ['Name', 'Estimated row count'];
     $scope.actions = [
@@ -104,7 +162,7 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "co
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
-        $scope.tables = tables.get();
+        tables.get();
     }, true);
 
     // update table list in scope when actual table list changes
@@ -115,45 +173,58 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "co
     });
 }]);
 
-cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpoints", "indexes", "records", "constraints", "triggers", "settings", function ($scope, nav, columns, tables, endpoints, indexes, records, constraints, triggers, settings) {
+cdbmanager.controller('tableCtrl', ["$scope", "nav", "tables", "endpoints", "settings", function ($scope, nav, tables, endpoints, settings) {
     $scope.nav = nav;
+
+    $scope.currentTable = null;
 
     // Settings for the result tables
     $scope.cdbrt = {
         rowsPerPage: settings.rowsPerPage
     };
 
+    // update current table pointer in scope when a new table is selected
+    $scope.$watch(function () {
+        return tables.current;
+    }, function (currentTable) {
+        $scope.currentTable = currentTable;
+        if ($scope.currentTable) {
+            nav.setCurrentView("table.columns");
+            $scope.currentTable.getColumns();
+        }
+    });
+
     // Synchronize columns in scope with actual columns
     $scope.$watch(function () {
-        return columns.api.items;
+        return $scope.currentTable ? $scope.currentTable.columns : null;
     }, function (columns) {
         $scope.columns = columns;
     });
 
     // Synchronize constraints in scope with actual constraints
     $scope.$watch(function () {
-        return constraints.api.items;
+        return $scope.currentTable ? $scope.currentTable.constraints : null;
     }, function (constraints) {
         $scope.constraints = constraints;
     });
 
     // Synchronize triggers in scope with actual triggers
     $scope.$watch(function () {
-        return triggers.api.items;
+        return $scope.currentTable ? $scope.currentTable.triggers : null;
     }, function (triggers) {
         $scope.triggers = triggers;
     });
 
     // Synchronize records in scope with actual records
     $scope.$watch(function () {
-        return records.api.items;
+        return $scope.currentTable ? $scope.currentTable.records : null;
     }, function (records) {
         $scope.records = records;
     });
 
     // Synchronize indexes in scope with actual indexes
     $scope.$watch(function () {
-        return indexes.api.items;
+        return $scope.currentTable ? $scope.currentTable.indexes : null;
     }, function (indexes) {
         $scope.indexes = indexes;
     });
@@ -163,15 +234,15 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpo
         return nav.current;
     }, function () {
         if (nav.isCurrentView("table.columns")) {
-            tables.current.getColumns();
+            $scope.currentTable.getColumns();
         } else if (nav.isCurrentView("table.indexes")) {
-            tables.current.getIndexes();
+            $scope.currentTable.getIndexes();
         } else if (nav.isCurrentView("table.records")) {
-            tables.current.getRecords();
+            $scope.currentTable.getRecords();
         } else if (nav.isCurrentView("table.constraints")) {
-            tables.current.getConstraints();
+            $scope.currentTable.getConstraints();
         } else if (nav.isCurrentView("table.triggers")) {
-            tables.current.getTriggers();
+            $scope.currentTable.getTriggers();
         }
     });
 }]);
