@@ -8,7 +8,7 @@ cdbmanager.service('namedMaps', ["MapsClient", function (MapsClient) {
     };
 
     this.get = function () {
-        this.api.send();
+        this.api.get();
     };
 }]);
 
@@ -33,7 +33,7 @@ cdbmanager.controller('namedMapCtrl', ["$scope", "nav", "namedMaps", "endpoints"
     $scope.showVisualization = function () {
         var namedMap = namedMaps.current;
 
-        nav.current = "namedMaps.visualization";
+        nav.setCurrentView("namedMap.visualization");
         // We need to make sure the map is not created in an invisible area of the page, otherwise it won't render correctly
         $timeout(function () {
             $("#named_map").replaceWith('<div id="named_map" style="height: 500px"></div>');

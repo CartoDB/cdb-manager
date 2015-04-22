@@ -92,7 +92,7 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
 
 api.factory('MapsClient', ["$http", "endpoints", function ($http, endpoints) {
     return function () {
-        this.send = function () {
+        this.get = function () {
             var currentEndpoint = endpoints.current;
 
             if (currentEndpoint && currentEndpoint.mapsURL) {

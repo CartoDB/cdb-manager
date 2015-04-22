@@ -53,7 +53,7 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
 
     $scope.showTable = function (table) {
         columns.get(table);
-        $scope.nav.current = "tables.table.columns";
+        nav.setCurrentView("table.columns");
         tables.current = table;
     };
 
@@ -89,7 +89,7 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "co
             text: "Details",
             onClick: function (table) {
                 columns.get(table);
-                $scope.nav.current = "tables.table.columns";
+                nav.setCurrentView("table.columns");
                 tables.current = table;
             }
         }
@@ -152,16 +152,16 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "columns", "tables", "endpo
 
     $scope.$watch(function () {
         return nav.current;
-    }, function (section) {
-        if (section == "tables.table.columns") {
+    }, function () {
+        if (nav.isCurrentView("table.columns")) {
             $scope.columns = tables.current.getColumns();
-        } else if (section == "tables.table.indexes") {
+        } else if (nav.isCurrentView("table.indexes")) {
             $scope.columns = tables.current.getIndexes();
-        } else if (section == "tables.table.records") {
+        } else if (nav.isCurrentView("table.records")) {
             $scope.columns = tables.current.getRecords();
-        } else if (section == "tables.table.constraints") {
+        } else if (nav.isCurrentView("table.constraints")) {
             $scope.constraints = tables.current.getConstraints();
-        } else if (section == "tables.table.triggers") {
+        } else if (nav.isCurrentView("table.triggers")) {
             $scope.triggers = tables.current.getTriggers();
         }
     });

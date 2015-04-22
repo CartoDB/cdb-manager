@@ -51,7 +51,7 @@ cdbmanager.controller('vizjsonSelectorCtrl', ["$scope", "nav", "vizjsons", funct
     $scope.nav = nav;
 
     $scope.showVizjson = function (vizjson) {
-        nav.current = "vizjsons.editor";
+        nav.setCurrentView("vizjson.editor");
         vizjsons.setCurrent(vizjson);
     };
 
@@ -89,12 +89,12 @@ cdbmanager.controller('vizjsonCtrl', ["$scope", "nav", "vizjsons", "$timeout", f
 
     $scope.showEditor = function () {
         if ($scope.vizjsonInEditor) {
-            nav.current = "vizjsons.editor";
+            nav.setCurrentView("vizjson.editor");
         }
     };
 
     $scope.showVisualization = function () {
-        nav.current = "vizjsons.visualization";
+        nav.setCurrentView("vizjson.visualization");
         // We need to make sure the map is not created in an invisible area of the page, otherwise it won't render correctly
         $timeout(function () {
             $("#vizjson").replaceWith('<div id="vizjson" style="height: 500px"></div>');

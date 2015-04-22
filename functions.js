@@ -36,7 +36,7 @@ cdbmanager.controller('functionSelectorCtrl', ["$scope", "functions", "endpoints
     $scope.nav = nav;
 
     $scope.showFunction = function (func) {
-        nav.current = "functions.function";
+        nav.setCurrentView("function");
         functions.current = func;
     };
 
@@ -76,7 +76,7 @@ cdbmanager.controller('functionsCtrl', ["$scope", "functions", "endpoints", "nav
         {
             text: "View source code",
             onClick: function (func) {
-                nav.current = "functions.function";
+                nav.setCurrentView("function");
                 functions.current = func;
             }
         }

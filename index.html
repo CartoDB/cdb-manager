@@ -92,12 +92,12 @@
                             <div class="panel-heading" role="tab" id="tablePanelHeading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#tablePanelCollapse" aria-expanded="true" aria-controls="tablePanelCollapse">Tables</a>
-                                    <a href ng-show="tables.length > 0" ng-click="nav.current = 'tables'">({{ tables.length }})</a>
+                                    <a href ng-show="tables.length > 0" ng-click="nav.setCurrentView('tables')">({{ tables.length }})</a>
                                 </h4>
                             </div>
                             <div id="tablePanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="tablePanelHeading">
                                 <div class="panel-body list-group">
-                                    <a href ng-click="showTable(table)" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.current.indexOf('tables.table') == 0 && table == currentTable}">{{ table.relname }}</a>
+                                    <a href ng-click="showTable(table)" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.isCurrentView('table') && table == currentTable}">{{ table.relname }}</a>
                                 </div>
                             </div>
                         </div>
@@ -142,12 +142,12 @@
                             <div class="panel-heading" role="tab" id="functionPanelHeading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#functionPanelCollapse" aria-expanded="true" aria-controls="functionPanelCollapse">Functions</a>
-                                    <a href ng-show="functions.length > 0" ng-click="nav.current = 'functions'">({{ functions.length }})</a>
+                                    <a href ng-show="functions.length > 0" ng-click="nav.setCurrentView('functions')">({{ functions.length }})</a>
                                 </h4>
                             </div>
                             <div id="functionPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="functionPanelHeading">
                                 <div class="panel-body list-group">
-                                    <a href ng-click="showFunction(func)" ng-repeat="func in functions" class="list-group-item" ng-class="{active: nav.current.indexOf('functions.function') == 0 && func == currentFunction}">{{ func.proname }}</a>
+                                    <a href ng-click="showFunction(func)" ng-repeat="func in functions" class="list-group-item" ng-class="{active: nav.isCurrentView('function') && func == currentFunction}">{{ func.proname }}</a>
                                 </div>
                                 <div class="panel-footer">
                                     <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
@@ -158,7 +158,7 @@
                         <div class="panel panel-default" ng-controller="sqlSelectorCtrl">
                             <div class="panel-heading" role="tab" id="sqlPanel">
                                 <h4 class="panel-title">
-                                    <a href ng-click="nav.current = 'sql'">
+                                    <a href ng-click="nav.setCurrentView('sql')">
                                         SQL Console
                                     </a>
                                 </h4>
@@ -189,47 +189,47 @@
                     </div>
                 </div>
                 <!-- Tables view -->
-                <div class="col-md-9" ng-controller="tablesCtrl" ng-show="nav.current == 'tables'">
+                <div class="col-md-9" ng-controller="tablesCtrl" ng-show="nav.isCurrentView('tables')">
                     <cdb-result-table rows="tables" headers="headers" actions="actions" settings="cdbrt"></cdb-result-table>
                 </div>
                 <!-- Single table view -->
-                <div class="col-md-9" ng-controller="tableCtrl" ng-show="nav.current.indexOf('tables.table') == 0">
+                <div class="col-md-9" ng-controller="tableCtrl" ng-show="nav.isCurrentView('table')">
                     <div role="tabpanel">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.columns'}" aria-controls="columns" role="tab" ng-click="nav.current = 'tables.table.columns'">Columns</a></li>
-                            <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.records'}" aria-controls="records" role="tab" ng-click="nav.current = 'tables.table.records'">Records</a></li>
-                            <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.indexes'}" aria-controls="indexes" role="tab" ng-click="nav.current = 'tables.table.indexes'">Indexes</a></li>
-                            <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.constraints'}" aria-controls="constraints" role="tab" ng-click="nav.current = 'tables.table.constraints'">Constraints</a></li>
-                            <li role="presentation"><a href ng-class="{active: nav.current == 'tables.table.triggers'}" aria-controls="triggers" role="tab" ng-click="nav.current = 'tables.table.triggers'">Triggers</a></li>
+                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('table.columns')}" aria-controls="columns" role="tab" ng-click="nav.setCurrentView('table.columns')">Columns</a></li>
+                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('table.records')}" aria-controls="records" role="tab" ng-click="nav.setCurrentView('table.records')">Records</a></li>
+                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('table.indexes')}" aria-controls="indexes" role="tab" ng-click="nav.setCurrentView('table.indexes')">Indexes</a></li>
+                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('table.constraints')}" aria-controls="constraints" role="tab" ng-click="nav.setCurrentView('table.constraints')">Constraints</a></li>
+                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('table.triggers')}" aria-controls="triggers" role="tab" ng-click="nav.setCurrentView('table.triggers')">Triggers</a></li>
                         </ul>
                         <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.columns'">
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.columns')">
                                 <cdb-result-table rows="columns" settings="cdbrt"></cdb-result-table>
                             </div>
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.indexes'">
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.indexes')">
                                 <cdb-result-table rows="indexes" settings="cdbrt"></cdb-result-table>
                             </div>
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.records'">
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.records')">
                                 <cdb-result-table rows="records" settings="cdbrt"></cdb-result-table>
                             </div>
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.constraints'">
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.constraints')">
                                 <cdb-result-table rows="constraints" settings="cdbrt"></cdb-result-table>
                             </div>
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'tables.table.triggers'">
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.triggers')">
                                 <cdb-result-table rows="triggers" settings="cdbrt"></cdb-result-table>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- vizjson view -->
-                <div class="col-md-9" ng-controller="vizjsonCtrl" ng-show="nav.current.indexOf('vizjsons') == 0">
+                <div class="col-md-9" ng-controller="vizjsonCtrl" ng-show="nav.isCurrentView('vizjson')">
                     <div role="tabpanel">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation"><a href ng-class="{active: nav.current == 'vizjsons.editor'}" aria-controls="editor" role="tab" ng-click="showEditor()">Editor</a></li>
-                            <li role="presentation"><a href ng-class="{active: nav.current == 'vizjsons.visualization'}" aria-controls="visualization" role="tab" ng-click="showVisualization()">Visualization</a></li>
+                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('vizjson.editor')}" aria-controls="editor" role="tab" ng-click="showEditor()">Editor</a></li>
+                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('vizjson.visualization')}" aria-controls="visualization" role="tab" ng-click="showVisualization()">Visualization</a></li>
                         </ul>
                         <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'vizjsons.editor'">
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('vizjson.editor')">
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <h4>vis.json</h4>
@@ -243,31 +243,31 @@
                                     </div>
                                 </div>
                             </div>
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'vizjsons.visualization'">
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('vizjson.visualization')">
                                 <div id="vizjson" style="height: 500px"></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- Named maps view -->
-                <div class="col-md-9" ng-controller="namedMapCtrl" ng-show="nav.current.indexOf('namedMaps') == 0">
+                <div class="col-md-9" ng-controller="namedMapCtrl" ng-show="nav.isCurrentView('namedMap')">
                     <div role="tabpanel">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation"><a href ng-class="{active: nav.current == 'namedMaps.visualization'}" aria-controls="visualization" role="tab" ng-click="showVisualization()">Visualization</a></li>
+                            <li role="presentation"><a href ng-class="{active: nav.isCurrentView('namedMap.visualization')}" aria-controls="visualization" role="tab" ng-click="showVisualization()">Visualization</a></li>
                         </ul>
                         <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.current == 'namedMaps.visualization'">
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('namedMap.visualization')">
                                 <div id="named_map" style="height: 500px"></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- Functions view -->
-                <div class="col-md-9" ng-controller="functionsCtrl" ng-show="nav.current == 'functions'">
+                <div class="col-md-9" ng-controller="functionsCtrl" ng-show="nav.isCurrentView('functions')">
                     <cdb-result-table rows="functions" actions="actions" settings="cdbrt"></cdb-result-table>
                 </div>
                 <!-- Single function view -->
-                <div class="col-md-9" ng-controller="functionCtrl" ng-show="nav.current == 'functions.function'">
+                <div class="col-md-9" ng-controller="functionCtrl" ng-show="nav.isCurrentView('function')">
                     <div class="container-fluid" >
                         <div class="row">
                             <div class="panel panel-default">
@@ -294,7 +294,7 @@
                     </div>
                 </div>
                 <!-- SQL console view -->
-                <div class="col-md-9" ng-controller="sqlCtrl" ng-show="nav.current == 'sql'">
+                <div class="col-md-9" ng-controller="sqlCtrl" ng-show="nav.isCurrentView('sql')">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="panel panel-default">
