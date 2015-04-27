@@ -64,11 +64,19 @@ cdbmanager.controller('endpointsCtrl', ["$scope", "endpoints", function ($scope,
 
     $scope.addEndpoint = function () {
         endpoints.add({
-            name: "New",
-            url: "",
-            apiKey: ""
+            name: "New"
         });
     };
+
+    $scope.$watch("updatedEndpoint.account", function (accountName) {
+        if (accountName) {
+            $scope.updatedEndpoint.suggestedSQLURL = "https://" + accountName + ".cartodb.com/api/v2/sql";
+            $scope.updatedEndpoint.suggestedMapsURL = "https://" + accountName + ".cartodb.com/api/v1/map";
+        } else {
+            $scope.updatedEndpoint.suggestedSQLURL = "";
+            $scope.updatedEndpoint.suggestedMapsURL = "";
+        }
+    });
 
     $scope.removeCurrentEndpoint = function () {
         endpoints.remove($scope.current);
