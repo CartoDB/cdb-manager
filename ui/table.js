@@ -2,18 +2,19 @@
 // Use like: <cdb-result-table rows="data" settings="cdbrt"></cdb-result-table> where:
 // data is the array with the rows to display (columns starting with _ will not be displayed)
 // cdbrt is an object with the settings for the table.
-// Settings are: rowsPerPage (which acts as an init value for the input field) and skip (list of column names to skip when displaying)
-// actions is a list of objects with text and onClick properties where on-click function that receives the row
-// headers is a list of headers; if not present, they'll be taken from the first row
+// Settings are:
+//   rowsPerPage acts as an init value for the input field
+//   skip is a list of column names to skip when displaying
+//   actions is a list of objects with text and onClick properties where on-click function that receives the row
+//   headers is a list of headers, each item being {title: <HEADER TITLE>, name: <COLUMN NAME>}; if not present, they'll be taken from the first row
+//   orderBy is  function that will be called on header click for column ordering
 cdbmanager.directive('cdbResultTable', function () {
     return {
         restrict: "E",
         transclude: true,
         scope: {
             rows: "=rows",
-            settings: "=settings",
-            headers: "=headers",
-            actions: "=actions"
+            settings: "=settings"
         },
         replace: true,
         templateUrl: "ui/table.html",

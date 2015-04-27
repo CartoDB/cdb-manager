@@ -7,10 +7,12 @@ api.factory('Column', ["SQLClient", function (SQLClient) {
 }]);
 
 cdbmanager.service("columns", ["SQLClient", "Column", function (SQLClient, Column) {
+    var self = this;
+
     this.api = new SQLClient();
 
-    this.get = function (table, action, error) {
-        var self = this;
+    this.get = function (table, action, error, extraQuery) {
+        var query = "select attname, format_type(atttypid, atttypmod) as type from pg_attribute where attrelid = " + table._oid + " and attisdropped = false and attnum > 0;";
 
         var _action = function () {
             for (var i = 0; i < self.api.items.length; i++) {
@@ -22,6 +24,10 @@ cdbmanager.service("columns", ["SQLClient", "Column", function (SQLClient, Colum
             }
         };
 
-        this.api.send("select attname, format_type(atttypid, atttypmod) as type from pg_attribute where attrelid = " + table._oid + " and attisdropped = false and attnum > 0;", _action, error);
+        if (extraQuery) {
+            query += " " + extraQuery;
+        }
+
+        self.api.send(query, _action, error);
     };
 }]);

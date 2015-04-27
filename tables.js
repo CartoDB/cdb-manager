@@ -10,9 +10,29 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
         this.records = null;
         this.triggers = null;
 
-        this.getColumns = function (action, error) {
-            var self = this;
+        var self = this;
 
+        this.orders = {};
+
+        this.orderByJS = function (items, parameter, orderName) {
+            if (self.orders[orderName] == "asc") {
+                self.orders[orderName] = "desc";
+                items.sort(function (a, b) {
+                    if (a[parameter] > b[parameter]) return -1;
+                    if (a[parameter] < b[parameter]) return 1;
+                    return 0;
+                });
+            } else {
+                self.orders[orderName] = "asc";
+                items.sort(function (a, b) {
+                    if (a[parameter] < b[parameter]) return -1;
+                    if (a[parameter] > b[parameter]) return 1;
+                    return 0;
+                });
+            }
+        };
+
+        this.getColumns = function (action, error) {
             var _action = function () {
                 self.columns = columns.api.items;
 
@@ -21,12 +41,14 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
                 }
             };
 
-            columns.get(this, _action, error);
+            columns.get(self, _action, error);
+        };
+
+        this.orderColumns = function (parameter) {
+            self.orderByJS(self.columns, parameter, "columns");
         };
 
         this.getConstraints = function (action, error) {
-            var self = this;
-
             var _action = function () {
                 self.constraints = constraints.api.items;
 
@@ -35,12 +57,14 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
                 }
             };
 
-            constraints.get(this, _action, error);
+            constraints.get(self, _action, error);
+        };
+
+        this.orderConstraints = function (parameter) {
+            self.orderByJS(self.constraints, parameter, "constraints");
         };
 
         this.getIndexes = function (action, error) {
-            var self = this;
-
             var _action = function () {
                 self.indexes = indexes.api.items;
 
@@ -49,12 +73,14 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
                 }
             };
 
-            indexes.get(this, _action, error);
+            indexes.get(self, _action, error);
+        };
+
+        this.orderIndexes = function (parameter) {
+            self.orderByJS(self.indexes, parameter, "indexes");
         };
 
         this.getRecords = function (action, error) {
-            var self = this;
-
             var _action = function () {
                 self.records = records.api.items;
 
@@ -63,12 +89,32 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
                 }
             };
 
-            records.get(this, _action, error);
+            records.get(self, _action, error);
+        };
+
+        this.orderRecords = function (parameter, action, error) {
+            var _action = function () {
+                self.records = records.api.items;
+
+                if (action) {
+                    action();
+                }
+            };
+
+            var extraQuery;
+
+            if (self.orders["records"] == "asc") {
+                self.orders["records"] = "desc";
+                extraQuery = "order by " + parameter + " desc";
+            } else {
+                self.orders["records"] = "asc";
+                extraQuery = "order by " + parameter;
+            }
+
+            records.get(self, _action, error, extraQuery);
         };
 
         this.getTriggers = function (action, error) {
-            var self = this;
-
             var _action = function () {
                 self.triggers = triggers.api.items;
 
@@ -77,20 +123,30 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
                 }
             };
 
-            triggers.get(this, _action, error);
+            triggers.get(self, _action, error);
+        };
+
+        this.orderTriggers = function (parameter) {
+            self.orderByJS(self.triggers, parameter, "triggers");
         };
     }
 }]);
 
 cdbmanager.service("tables", ["SQLClient", "Table", function (SQLClient, Table) {
+    var self = this;
+
     this.api = new SQLClient();
 
     this.current = null;
 
-    this.get = function (action, error) {
-        var self = this;
+    var order = null;
+
+    this.get = function (action, error, extraQuery) {
+        var query = "select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples from pg_class, pg_roles where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_class.relkind = 'r'";
 
         var _action = function () {
+            order = null;
+
             for (var i = 0; i < self.api.items.length; i++) {
                 self.api.items[i] = new Table(self.api.items[i], self);
             }
@@ -100,8 +156,32 @@ cdbmanager.service("tables", ["SQLClient", "Table", function (SQLClient, Table) 
             }
         };
 
-        this.api.send("select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples from pg_class, pg_roles where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_class.relkind = 'r';", _action, error);
+        if (extraQuery) {
+            query += " " + extraQuery;
+        }
+
+        self.api.send(query, _action, error);
     };
+
+    this.order = function (parameter) {
+        if (self.api && self.api.items) {
+            if (order == "asc") {
+                order = "desc";
+                self.api.items.sort(function (a, b) {
+                    if (a[parameter] > b[parameter]) return -1;
+                    if (a[parameter] < b[parameter]) return 1;
+                    return 0;
+                });
+            } else {
+                order = "asc";
+                self.api.items.sort(function (a, b) {
+                    if (a[parameter] < b[parameter]) return -1;
+                    if (a[parameter] > b[parameter]) return 1;
+                    return 0;
+                });
+            }
+        }
+    }
 }]);
 
 cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "nav", function ($scope, tables, endpoints, nav) {
@@ -114,14 +194,14 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     };
 
     $scope.refreshList = function () {
-        tables.get();
+        tables.order("relname");
     };
 
     // update table list in scope when current endpoint changes
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
-        $scope.tables = tables.get();
+        $scope.tables = tables.order("relname");
     }, true);
 
     // update table list in scope when actual table list changes
@@ -145,18 +225,22 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "se
     // Config result table
     $scope.cdbrt = {
         rowsPerPage: settings.sqlConsoleRowsPerPage,
-        skip: ["columns", "indexes", "triggers", "records", "constraints"]
-    };
-    $scope.headers = ['Name', 'Estimated row count'];
-    $scope.actions = [
-        {
-            text: "Details",
-            onClick: function (table) {
-                nav.setCurrentView("table.columns");
-                tables.current = table;
+        headers: [
+            {name: 'relname', title: 'Name'},
+            {name: 'reltuples', title: 'Estimated row count'}
+        ],
+        skip: ["columns", "constraints", "triggers", "records", "indexes", "orders"],
+        actions: [
+            {
+                text: "Details",
+                onClick: function (table) {
+                    nav.setCurrentView("table.columns");
+                    tables.current = table;
+                }
             }
-        }
-    ];
+        ],
+        orderBy: tables.order
+    };
 
     // update table list in scope when current endpoint changes
     $scope.$watch(function () {
@@ -173,14 +257,26 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "se
     });
 }]);
 
-cdbmanager.controller('tableCtrl', ["$scope", "nav", "tables", "endpoints", "settings", function ($scope, nav, tables, endpoints, settings) {
+cdbmanager.controller('tableCtrl', ["$scope", "nav", "tables", "columns", "indexes", "triggers", "constraints", "records", "endpoints", "settings", function ($scope, nav, tables, columns, indexes, triggers, constraints, records, endpoints, settings) {
     $scope.nav = nav;
 
     $scope.currentTable = null;
 
     // Settings for the result tables
-    $scope.cdbrt = {
-        rowsPerPage: settings.rowsPerPage
+    $scope.cdbrt4Columns = {
+        rowsPerPage: settings.sqlConsoleRowsPerPage
+    };
+    $scope.cdbrt4Indexes = {
+        rowsPerPage: settings.sqlConsoleRowsPerPage
+    };
+    $scope.cdbrt4Triggers = {
+        rowsPerPage: settings.sqlConsoleRowsPerPage
+    };
+    $scope.cdbrt4Constraints = {
+        rowsPerPage: settings.sqlConsoleRowsPerPage
+    };
+    $scope.cdbrt4Records = {
+        rowsPerPage: settings.sqlConsoleRowsPerPage
     };
 
     // update current table pointer in scope when a new table is selected
@@ -191,6 +287,13 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "tables", "endpoints", "set
         if ($scope.currentTable) {
             nav.setCurrentView("table.columns");
             $scope.currentTable.getColumns();
+
+            // Update settings for the result tables
+            $scope.cdbrt4Columns.orderBy = currentTable.orderColumns;
+            $scope.cdbrt4Indexes.orderBy = currentTable.orderIndexes;
+            $scope.cdbrt4Triggers.orderBy = currentTable.orderTriggers;
+            $scope.cdbrt4Constraints.orderBy = currentTable.orderConstraints;
+            $scope.cdbrt4Records.orderBy = currentTable.orderRecords;
         }
     });
 

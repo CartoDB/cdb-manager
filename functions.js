@@ -11,13 +11,15 @@ api.factory('Function', ["SQLClient", function (SQLClient) {
 }]);
 
 cdbmanager.service("functions", ["SQLClient", "Function", function (SQLClient, Function) {
+    var self = this;
+
     this.api = new SQLClient();
 
     this.current = null;
 
-    this.get = function (action, error) {
-        var self = this;
+    var order = null;
 
+    this.get = function (action, error, extraQuery) {
         var _action = function () {
             for (var i = 0; i < self.api.items.length; i++) {
                 self.api.items[i] = new Function(self.api.items[i], self);
@@ -28,8 +30,32 @@ cdbmanager.service("functions", ["SQLClient", "Function", function (SQLClient, F
             }
         };
 
+        if (extraQuery) {
+            query += " " + extraQuery;
+        }
+
         this.api.send("select pg_proc.oid as _oid, pg_proc.*, pg_get_functiondef(pg_proc.oid) as definition from pg_proc, pg_roles where pg_proc.proowner = pg_roles.oid and pg_roles.rolname = current_user;", _action, error);
     };
+
+    this.order = function (parameter) {
+        if (self.api && self.api.items) {
+            if (order == "asc") {
+                order = "desc";
+                self.api.items.sort(function (a, b) {
+                    if (a[parameter] > b[parameter]) return -1;
+                    if (a[parameter] < b[parameter]) return 1;
+                    return 0;
+                });
+            } else {
+                order = "asc";
+                self.api.items.sort(function (a, b) {
+                    if (a[parameter] < b[parameter]) return -1;
+                    if (a[parameter] > b[parameter]) return 1;
+                    return 0;
+                });
+            }
+        }
+    }
 }]);
 
 cdbmanager.controller('functionSelectorCtrl', ["$scope", "functions", "endpoints", "nav", function ($scope, functions, endpoints, nav) {
@@ -72,17 +98,18 @@ cdbmanager.controller('functionsCtrl', ["$scope", "functions", "endpoints", "nav
     // Result table config
     $scope.cdbrt = {
         rowsPerPage: settings.sqlConsoleRowsPerPage,
-        skip: ["prosrc", "definition"]
-    };
-    $scope.actions = [
-        {
-            text: "View source code",
-            onClick: function (func) {
-                nav.setCurrentView("function");
-                functions.current = func;
+        skip: ["prosrc", "definition"],
+        actions: [
+            {
+                text: "View source code",
+                onClick: function (func) {
+                    nav.setCurrentView("function");
+                    functions.current = func;
+                }
             }
-        }
-    ];
+        ],
+        orderBy: functions.order
+    };
 
     // update function list in scope when current endpoint changes
     $scope.$watch(function () {

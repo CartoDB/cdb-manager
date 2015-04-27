@@ -195,7 +195,7 @@
                 </div>
                 <!-- Tables view -->
                 <div class="col-md-9" ng-controller="tablesCtrl" ng-show="nav.isCurrentView('tables')">
-                    <cdb-result-table rows="tables" headers="headers" actions="actions" settings="cdbrt"></cdb-result-table>
+                    <cdb-result-table rows="tables" settings="cdbrt"></cdb-result-table>
                 </div>
                 <!-- Single table view -->
                 <div class="col-md-9" ng-controller="tableCtrl" ng-show="nav.isCurrentView('table')">
@@ -209,19 +209,19 @@
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.columns')">
-                                <cdb-result-table rows="columns" settings="cdbrt"></cdb-result-table>
+                                <cdb-result-table rows="columns" settings="cdbrt4Columns"></cdb-result-table>
                             </div>
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.indexes')">
-                                <cdb-result-table rows="indexes" settings="cdbrt"></cdb-result-table>
+                                <cdb-result-table rows="indexes" settings="cdbrt4Indexes"></cdb-result-table>
                             </div>
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.records')">
-                                <cdb-result-table rows="records" settings="cdbrt"></cdb-result-table>
+                                <cdb-result-table rows="records" settings="cdbrt4Records"></cdb-result-table>
                             </div>
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.constraints')">
-                                <cdb-result-table rows="constraints" settings="cdbrt"></cdb-result-table>
+                                <cdb-result-table rows="constraints" settings="cdbrt4Constraints"></cdb-result-table>
                             </div>
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.triggers')">
-                                <cdb-result-table rows="triggers" settings="cdbrt"></cdb-result-table>
+                                <cdb-result-table rows="triggers" settings="cdbrt4Triggers"></cdb-result-table>
                             </div>
                         </div>
                     </div>
@@ -269,7 +269,7 @@
                 </div>
                 <!-- Functions view -->
                 <div class="col-md-9" ng-controller="functionsCtrl" ng-show="nav.isCurrentView('functions')">
-                    <cdb-result-table rows="functions" actions="actions" settings="cdbrt"></cdb-result-table>
+                    <cdb-result-table rows="functions" settings="cdbrt"></cdb-result-table>
                 </div>
                 <!-- Single function view -->
                 <div class="col-md-9" ng-controller="functionCtrl" ng-show="nav.isCurrentView('function')">

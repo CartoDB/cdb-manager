@@ -7,10 +7,12 @@ api.factory('Record', ["SQLClient", function (SQLClient) {
 }]);
 
 cdbmanager.service("records", ["SQLClient", "Record", function (SQLClient, Record) {
+    var self = this;
+
     this.api = new SQLClient();
 
-    this.get = function (table, action, error) {
-        var self = this;
+    this.get = function (table, action, error, extraQuery) {
+        var query = "select * from " + table.relname;
 
         var _action = function () {
             for (var i = 0; i < self.api.items.length; i++) {
@@ -22,7 +24,13 @@ cdbmanager.service("records", ["SQLClient", "Record", function (SQLClient, Recor
             }
         };
 
+        if (extraQuery) {
+            query += " " + extraQuery;
+        }
+
         // Limited to 1000 records until we implement server-side pagination
-        this.api.send("select * from " + table.relname + " limit 1000;", _action, error);
+        query += " limit 1000";
+
+        this.api.send(query, _action, error);
     };
 }]);
