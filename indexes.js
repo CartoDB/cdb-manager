@@ -7,11 +7,11 @@ api.factory('Index', ["SQLClient", function (SQLClient) {
 }]);
 
 cdbmanager.service("indexes", ["SQLClient", "Index", function (SQLClient, Index) {
+    var self = this;
+
     this.api = new SQLClient();
 
-    this.get = function (table, action, error) {
-        var self = this;
-
+    this.get = function (table, action, error, extraQuery) {
         var _action = function () {
             for (var i = 0; i < self.api.items.length; i++) {
                 self.api.items[i] = new Index(self.api.items[i], self);
@@ -33,6 +33,10 @@ cdbmanager.service("indexes", ["SQLClient", "Index", function (SQLClient, Index)
                     "AND t.oid = " + table._oid +
                     "ORDER BY t.relname, i.relname;";
 
-        this.api.send(query, _action, error);
+        if (extraQuery) {
+            query += " " + extraQuery;
+        }
+
+        self.api.send(query, _action, error);
     };
 }]);

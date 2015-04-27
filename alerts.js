@@ -1,8 +1,10 @@
 cdbmanager.service('alerts', function () {
+    var self = this;
+
     this.alerts = [];
 
     this.get = function () {
-        return this.alerts;
+        return self.alerts;
     };
 
     // type can be one of: "success", "info" (or "debug"), "warning", "danger" (or "error")
@@ -12,11 +14,11 @@ cdbmanager.service('alerts', function () {
         } else if (type == "debug") {
             type = "info"
         }
-        this.alerts.push({'type': type, 'msg': msg});
+        self.alerts.push({'type': type, 'msg': msg});
     };
 
     this.close = function (index) {
-        this.alerts.splice(index, 1);
+        self.alerts.splice(index, 1);
     };
 });
 

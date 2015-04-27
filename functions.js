@@ -30,11 +30,13 @@ cdbmanager.service("functions", ["SQLClient", "Function", function (SQLClient, F
             }
         };
 
+        var query = "select pg_proc.oid as _oid, pg_proc.*, pg_get_functiondef(pg_proc.oid) as definition from pg_proc, pg_roles where pg_proc.proowner = pg_roles.oid and pg_roles.rolname = current_user";
+
         if (extraQuery) {
             query += " " + extraQuery;
         }
 
-        this.api.send("select pg_proc.oid as _oid, pg_proc.*, pg_get_functiondef(pg_proc.oid) as definition from pg_proc, pg_roles where pg_proc.proowner = pg_roles.oid and pg_roles.rolname = current_user;", _action, error);
+        self.api.send(query, _action, error);
     };
 
     this.order = function (parameter) {
@@ -67,14 +69,16 @@ cdbmanager.controller('functionSelectorCtrl', ["$scope", "functions", "endpoints
     };
 
     $scope.refreshList = function () {
-        functions.get();
+        functions.get(function () {
+            functions.order("proname");
+        });
     };
 
     // update function list in scope when current endpoint changes
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
-        $scope.functions = functions.get();
+        $scope.functions = $scope.refreshList();
     }, true);
 
     // update function list in scope when actual function list change
@@ -110,13 +114,6 @@ cdbmanager.controller('functionsCtrl', ["$scope", "functions", "endpoints", "nav
         ],
         orderBy: functions.order
     };
-
-    // update function list in scope when current endpoint changes
-    $scope.$watch(function () {
-        return endpoints.current;
-    }, function () {
-        $scope.functions = functions.get();
-    }, true);
 
     // update function list in scope when actual function list change
     $scope.$watch(function () {

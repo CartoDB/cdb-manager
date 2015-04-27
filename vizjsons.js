@@ -1,4 +1,6 @@
 cdbmanager.service('vizjsons', ["$localStorage", function ($localStorage) {
+    var self = this;
+
     $localStorage.vizjsons = $localStorage.vizjsons || [];
 
     this.current = null;
@@ -9,7 +11,12 @@ cdbmanager.service('vizjsons', ["$localStorage", function ($localStorage) {
 
     this.add = function (vizjson) {
         $localStorage.vizjsons.push(angular.copy(vizjson));
-        this.setCurrent(vizjson);
+        $localStorage.vizjsons.sort(function (a, b) {
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+            return 0;
+        });
+        self.setCurrent(vizjson);
     };
 
     this.update = function (vizjson, properties) {
@@ -26,12 +33,12 @@ cdbmanager.service('vizjsons', ["$localStorage", function ($localStorage) {
         });
 
         if (this.current == vizjson) {
-            this.setCurrent(null);
+            self.setCurrent(null);
         }
     };
 
     this.nameIsUsed = function (name) {
-        var vizjsons = this.get();
+        var vizjsons = self.get();
 
         for (var i = 0; i < vizjsons.length; i++) {
             if (vizjsons[i].name === name) {
@@ -42,7 +49,7 @@ cdbmanager.service('vizjsons', ["$localStorage", function ($localStorage) {
     };
 
     this.setCurrent = function (vizjson) {
-        this.current = vizjson;
+        self.current = vizjson;
     };
 }]);
 

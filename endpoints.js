@@ -1,5 +1,7 @@
 // saves endpoints to local storage
 cdbmanager.service('endpoints', ["$localStorage", function ($localStorage) {
+    var self = this;
+
     $localStorage.endpoints = $localStorage.endpoints || [];
 
     if ($localStorage.endpoints) {
@@ -14,7 +16,7 @@ cdbmanager.service('endpoints', ["$localStorage", function ($localStorage) {
 
     this.add = function (endpoint) {
         $localStorage.endpoints.push(angular.copy(endpoint));
-        this.current = $localStorage.endpoints[$localStorage.endpoints.length - 1];
+        self.current = $localStorage.endpoints[$localStorage.endpoints.length - 1];
     };
 
     this.update = function (endpoint, properties) {
@@ -30,17 +32,17 @@ cdbmanager.service('endpoints', ["$localStorage", function ($localStorage) {
             return endpoint != _endpoint;
         });
 
-        if (this.current == endpoint) {
+        if (self.current == endpoint) {
             if ($localStorage.endpoints) {
-                this.current = $localStorage.endpoints[0];
+                self.current = $localStorage.endpoints[0];
             } else {
-                this.current = null;
+                self.current = null;
             }
         }
     };
 
     this.setCurrent = function (endpoint) {
-        this.current = endpoint;
+        self.current = endpoint;
     };
 }]);
 

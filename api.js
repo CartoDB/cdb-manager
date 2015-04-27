@@ -42,6 +42,8 @@ function sendRequest(obj, request, httpService, action, error) {
 //   errorMessage: error message on error
 api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpoints, alerts) {
     return function () {
+        var self = this;
+
         this.items = null;
         this.errorMessage = null;
 
@@ -50,8 +52,6 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
             var currentEndpoint = endpoints.current;
 
             if (currentEndpoint && currentEndpoint.sqlURL) {
-                var self = this;
-
                 var req = {
                     method: 'GET',
                     url: currentEndpoint.sqlURL,
@@ -95,7 +95,7 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
 
                 };
 
-                sendRequest(this, req, $http, _action, _error);
+                sendRequest(self, req, $http, _action, _error);
             }
         }
     }
@@ -108,6 +108,8 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
 //   errorMessage: error message on error
 api.factory('MapsClient', ["$http", "endpoints", function ($http, endpoints) {
     return function () {
+        var self = this;
+
         this.items = null;
 
         this.get = function () {
@@ -121,8 +123,6 @@ api.factory('MapsClient', ["$http", "endpoints", function ($http, endpoints) {
                         api_key: currentEndpoint.apiKey
                     }
                 };
-
-                var self = this;
 
                 sendRequest(this, req, $http, function (result) {
                     self.items = [];

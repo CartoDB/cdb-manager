@@ -1,5 +1,7 @@
 api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records", "triggers", function (SQLClient, columns, constraints, indexes, records, triggers) {
     return function (tableFromDB) {
+        var self = this;
+
         angular.extend(this, tableFromDB);
 
         this.api = new SQLClient();
@@ -9,8 +11,6 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
         this.indexes = null;
         this.records = null;
         this.triggers = null;
-
-        var self = this;
 
         this.orders = {};
 
@@ -194,14 +194,16 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     };
 
     $scope.refreshList = function () {
-        tables.order("relname");
+        tables.get(function () {
+            tables.order("relname");
+        });
     };
 
     // update table list in scope when current endpoint changes
     $scope.$watch(function () {
         return endpoints.current;
     }, function () {
-        $scope.tables = tables.order("relname");
+        $scope.tables = $scope.refreshList();
     }, true);
 
     // update table list in scope when actual table list changes
@@ -241,13 +243,6 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "se
         ],
         orderBy: tables.order
     };
-
-    // update table list in scope when current endpoint changes
-    $scope.$watch(function () {
-        return endpoints.current;
-    }, function () {
-        tables.get();
-    }, true);
 
     // update table list in scope when actual table list changes
     $scope.$watch(function () {

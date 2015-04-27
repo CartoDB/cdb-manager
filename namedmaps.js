@@ -1,14 +1,16 @@
 cdbmanager.service('namedMaps', ["MapsClient", function (MapsClient) {
+    var self = this;
+
     this.api = new MapsClient();
 
     this.current = null;
 
     this.setCurrent = function (namedMap) {
-        this.current = namedMap;
+        self.current = namedMap;
     };
 
     this.get = function () {
-        this.api.get();
+        self.api.get();
     };
 }]);
 

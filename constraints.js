@@ -7,11 +7,11 @@ api.factory('Constraint', ["SQLClient", function (SQLClient) {
 }]);
 
 cdbmanager.service("constraints", ["SQLClient", "Constraint", function (SQLClient, Constraint) {
+    var self = this;
+
     this.api = new SQLClient();
 
-    this.get = function (table, action, error) {
-        var self = this;
-
+    this.get = function (table, action, error, extraQuery) {
         var _action = function () {
             for (var i = 0; i < self.api.items.length; i++) {
                 self.api.items[i] = new Constraint(self.api.items[i], self);
@@ -22,6 +22,12 @@ cdbmanager.service("constraints", ["SQLClient", "Constraint", function (SQLClien
             }
         };
 
-        this.api.send("select * from pg_constraint where conrelid = " + table._oid + ";", _action, error);
+        var query = "select * from pg_constraint where conrelid = " + table._oid;
+
+        if (extraQuery) {
+            query += " " + extraQuery;
+        }
+
+        self.api.send(query, _action, error);
     };
 }]);
