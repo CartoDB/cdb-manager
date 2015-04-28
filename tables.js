@@ -163,9 +163,9 @@ cdbmanager.service("tables", ["SQLClient", "Table", function (SQLClient, Table) 
         self.api.send(query, _action, error);
     };
 
-    this.order = function (parameter) {
+    this.order = function (parameter, newOrder) {
         if (self.api && self.api.items) {
-            if (order == "asc") {
+            if (newOrder == "desc" || (!newOrder && order == "asc")) {
                 order = "desc";
                 self.api.items.sort(function (a, b) {
                     if (a[parameter] > b[parameter]) return -1;
@@ -195,7 +195,7 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
 
     $scope.refreshList = function () {
         tables.get(function () {
-            tables.order("relname");
+            tables.order("relname", "asc");
         });
     };
 

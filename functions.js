@@ -39,9 +39,9 @@ cdbmanager.service("functions", ["SQLClient", "Function", function (SQLClient, F
         self.api.send(query, _action, error);
     };
 
-    this.order = function (parameter) {
+    this.order = function (parameter, newOrder) {
         if (self.api && self.api.items) {
-            if (order == "asc") {
+            if (newOrder == "desc" || (!newOrder && order == "asc")) {
                 order = "desc";
                 self.api.items.sort(function (a, b) {
                     if (a[parameter] > b[parameter]) return -1;
@@ -70,7 +70,7 @@ cdbmanager.controller('functionSelectorCtrl', ["$scope", "functions", "endpoints
 
     $scope.refreshList = function () {
         functions.get(function () {
-            functions.order("proname");
+            functions.order("proname", "asc");
         });
     };
 
