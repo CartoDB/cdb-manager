@@ -6,15 +6,16 @@
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
-                    <th ng-show="settings.headers" ng-repeat="header in settings.headers"><a href ng-click="settings.orderBy(header.name)">{{ header.title }}</a></th>
-                    <th ng-show="!settings.headers" ng-repeat="(name, value) in rows[0]" ng-if="itemIsData(name, value)"><a href ng-if="settings.orderBy" ng-click="settings.orderBy(name)">{{ name }}</a></th>
-                    <th ng-show="settings.actions">Actions</th>
+                    <th ng-if="settings.headers" ng-repeat="header in settings.headers"><a href ng-click="settings.orderBy(header.name)">{{ header.title }}</a></th>
+                    <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && settings.orderBy && itemIsData(name, value)"><a href ng-click="settings.orderBy(name)">{{ name }}</a></th>
+                    <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && !settings.orderBy && itemIsData(name, value)">{{ name }}</th>
+                    <th ng-if="settings.actions">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr dir-paginate="row in rows | itemsPerPage: settings.rowsPerPage">
                     <td ng-repeat="(name, value) in row" ng-if="itemIsData(name, value)">{{ value }}</td>
-                    <td ng-show="settings.actions"><a href ng-repeat="action in settings.actions" ng-click="action.onClick(row)" class="btn btn-default" role="button">{{ action.text }}</a></td>
+                    <td ng-if="settings.actions"><a href ng-repeat="action in settings.actions" ng-click="action.onClick(row)" class="btn btn-default" role="button">{{ action.text }}</a></td>
                 </tr>
             </tbody>
         </table>
