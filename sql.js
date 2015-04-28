@@ -77,7 +77,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
 
     $scope.searchHistory = function (needle) {
         for (var i = self.historyCurrent - 1; i >= 0; i--) {
-            var historyIdx = $localStorage.history[i].indexOf(needle);
+            var historyIdx = $localStorage.history[i].search(new RegExp(needle, "i"));
             if (historyIdx >= 0) {
                 self.setHistoryCurrent(i);
                 return;
