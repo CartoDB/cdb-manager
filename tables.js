@@ -80,7 +80,7 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
             self.orderByJS(self.indexes, parameter, "indexes");
         };
 
-        this.getRecords = function (action, error) {
+        this.getRecords = function (limit, offset, action, error, extraQuery) {
             var _action = function () {
                 self.records = records.api.items;
 
@@ -89,29 +89,17 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
                 }
             };
 
-            records.get(self, _action, error);
+            records.get(self, limit, offset, _action, error, extraQuery);
         };
 
-        this.orderRecords = function (parameter, action, error) {
-            var _action = function () {
-                self.records = records.api.items;
-
-                if (action) {
-                    action();
-                }
-            };
-
-            var extraQuery;
-
+        this.orderRecords = function (parameter, limit) {
             if (self.orders["records"] == "asc") {
                 self.orders["records"] = "desc";
-                extraQuery = "order by " + parameter + " desc";
+                self.getRecords(limit, 0, null, null, "order by " + parameter + " desc");
             } else {
                 self.orders["records"] = "asc";
-                extraQuery = "order by " + parameter;
+                self.getRecords(limit, 0, null, null, "order by " + parameter);
             }
-
-            records.get(self, _action, error, extraQuery);
         };
 
         this.getTriggers = function (action, error) {
@@ -163,7 +151,8 @@ cdbmanager.service("tables", ["SQLClient", "Table", function (SQLClient, Table) 
         self.api.send(query, _action, error);
     };
 
-    this.order = function (parameter, newOrder) {
+    this.order = function (parameter, pageSize, newOrder) {
+        // pageSize needs to be there because it might be sent from a result table, but we don't really need it here
         if (self.api && self.api.items) {
             if (newOrder == "desc" || (!newOrder && order == "asc")) {
                 order = "desc";
@@ -195,7 +184,7 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
 
     $scope.refreshList = function () {
         tables.get(function () {
-            tables.order("relname", "asc");
+            tables.order("relname", null, "asc");
         });
     };
 
@@ -226,6 +215,7 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "se
 
     // Config result table
     $scope.cdbrt = {
+        id: "tables",
         rowsPerPage: settings.sqlConsoleRowsPerPage,
         headers: [
             {name: 'relname', title: 'Name'},
@@ -259,19 +249,29 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "tables", "columns", "index
 
     // Settings for the result tables
     $scope.cdbrt4Columns = {
+        id: "columns",
         rowsPerPage: settings.sqlConsoleRowsPerPage
     };
     $scope.cdbrt4Indexes = {
+        id: "indexes",
         rowsPerPage: settings.sqlConsoleRowsPerPage
     };
     $scope.cdbrt4Triggers = {
+        id: "triggers",
         rowsPerPage: settings.sqlConsoleRowsPerPage
     };
     $scope.cdbrt4Constraints = {
+        id: "constraints",
         rowsPerPage: settings.sqlConsoleRowsPerPage
     };
     $scope.cdbrt4Records = {
-        rowsPerPage: settings.sqlConsoleRowsPerPage
+        id: "records",
+        rowsPerPage: settings.sqlConsoleRowsPerPage,
+        async: function (limit, offset) {
+            if ($scope.currentTable) {
+                $scope.currentTable.getRecords(limit, offset);
+            }
+        }
     };
 
     // update current table pointer in scope when a new table is selected
@@ -282,6 +282,10 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "tables", "columns", "index
         if ($scope.currentTable) {
             nav.setCurrentView("table.columns");
             $scope.currentTable.getColumns();
+
+            $scope.pagination = {
+                current: 1
+            };
 
             // Update settings for the result tables
             $scope.cdbrt4Columns.orderBy = currentTable.orderColumns;
@@ -331,12 +335,16 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "tables", "columns", "index
     $scope.$watch(function () {
         return nav.current;
     }, function () {
+        $scope.pagination = {
+            current: 1
+        };
+
         if (nav.isCurrentView("table.columns")) {
             $scope.currentTable.getColumns();
         } else if (nav.isCurrentView("table.indexes")) {
             $scope.currentTable.getIndexes();
         } else if (nav.isCurrentView("table.records")) {
-            $scope.currentTable.getRecords();
+            $scope.currentTable.getRecords($scope.cdbrt4Records.rowsPerPage);
         } else if (nav.isCurrentView("table.constraints")) {
             $scope.currentTable.getConstraints();
         } else if (nav.isCurrentView("table.triggers")) {

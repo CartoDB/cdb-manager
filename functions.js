@@ -39,7 +39,8 @@ cdbmanager.service("functions", ["SQLClient", "Function", function (SQLClient, F
         self.api.send(query, _action, error);
     };
 
-    this.order = function (parameter, newOrder) {
+    this.order = function (parameter, pageSize, newOrder) {
+        // pageSize needs to be there because it might be sent from a result table, but we don't really need it here
         if (self.api && self.api.items) {
             if (newOrder == "desc" || (!newOrder && order == "asc")) {
                 order = "desc";
@@ -101,6 +102,7 @@ cdbmanager.controller('functionsCtrl', ["$scope", "functions", "endpoints", "nav
 
     // Result table config
     $scope.cdbrt = {
+        id: "functions",
         rowsPerPage: settings.sqlConsoleRowsPerPage,
         skip: ["prosrc", "definition"],
         actions: [

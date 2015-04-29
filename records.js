@@ -11,25 +11,32 @@ cdbmanager.service("records", ["SQLClient", "Record", function (SQLClient, Recor
 
     this.api = new SQLClient();
 
-    this.get = function (table, action, error, extraQuery) {
+    this.get = function (table, limit, offset, action, error, extraQuery) {
         var _action = function () {
-            for (var i = 0; i < self.api.items.length; i++) {
-                self.api.items[i] = new Record(self.api.items[i], self);
-            }
+            if (self.api && self.api.items) {
+                for (var i = 0; i < self.api.items.length; i++) {
+                    self.api.items[i] = new Record(self.api.items[i], self);
+                }
 
-            if (action) {
-                action();
+                if (action) {
+                    action();
+                }
             }
         };
 
-        var query = "select * from " + table.relname;
+        var query = "select *, count (*) over () as total_rows from " + table.relname;
 
         if (extraQuery) {
             query += " " + extraQuery;
         }
 
-        // Limited to 1000 records until we implement server-side pagination
-        query += " limit 1000";
+        if (limit) {
+            query += " limit " + limit;
+        }
+
+        if (offset) {
+            query += " offset " + offset;
+        }
 
         self.api.send(query, _action, error);
     };

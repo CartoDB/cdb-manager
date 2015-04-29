@@ -19,6 +19,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
     $scope.running = this.api.running;
     $scope.historyNotFound = false;
     $scope.cdbrt = {  // Settings for the result table
+        id: "sql_console",
         rowsPerPage: settings.sqlConsoleRowsPerPage
     };
 
