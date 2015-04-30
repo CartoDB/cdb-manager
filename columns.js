@@ -22,7 +22,7 @@ cdbmanager.service("columns", ["SQLClient", "Column", function (SQLClient, Colum
             }
         };
 
-        var query = "select attname, format_type(atttypid, atttypmod) as type from pg_attribute where attrelid = " + table._oid + " and attisdropped = false and attnum > 0";
+        var query = "select attname, format_type(atttypid, atttypmod) as type from pg_attribute where attrelid = " + table._oid + " and attisdropped = false and attnum > 0 order by attnum";
 
         if (extraQuery) {
             query += " " + extraQuery;
