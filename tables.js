@@ -130,7 +130,7 @@ cdbmanager.service("tables", ["SQLClient", "Table", function (SQLClient, Table) 
     var order = null;
 
     this.get = function (action, error, extraQuery) {
-        var query = "select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples from pg_class, pg_roles where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_class.relkind = 'r'";
+        var query = "select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples, pg_namespace.nspname from pg_class, pg_roles, pg_namespace where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_namespace.oid = pg_class.relnamespace and pg_class.relkind = 'r'";
 
         var _action = function () {
             order = null;
@@ -218,6 +218,7 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "se
         id: "tables",
         rowsPerPage: settings.sqlConsoleRowsPerPage,
         headers: [
+            {name: 'nspname', title: 'Schema'},
             {name: 'relname', title: 'Name'},
             {name: 'reltuples', title: 'Estimated row count'}
         ],
