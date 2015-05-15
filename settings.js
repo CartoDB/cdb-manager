@@ -11,7 +11,7 @@ cdbmanager.service('settings', ["$localStorage", function ($localStorage) {
     };
 
     this.initSetting("rowsPerPage", 10);
-    this.initSetting("sqlConsoleRowsPerPage", 3);
+    this.initSetting("sqlConsoleRowsPerPage", 10);
 }]);
 
 cdbmanager.controller('settingsCtrl', ["$scope", "$localStorage", function ($scope, $localStorage) {
