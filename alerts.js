@@ -18,7 +18,11 @@ cdbmanager.service('alerts', function () {
     };
 
     this.close = function (index) {
-        self.alerts.splice(index, 1);
+        if (index != undefined) {
+            self.alerts.splice(index, 1);
+        } else {
+            self.alerts.length = 0;
+        }
     };
 });
 
