@@ -52,13 +52,16 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
             var currentEndpoint = endpoints.current;
 
             if (currentEndpoint && currentEndpoint.sqlURL) {
+                var params = {
+                    q: query
+                };
+                if (currentEndpoint.apiKey) {
+                    params.api_key = currentEndpoint.apiKey;
+                }
                 var req = {
                     method: 'GET',
                     url: currentEndpoint.sqlURL,
-                    params: {
-                        q: query,
-                        api_key: currentEndpoint.apiKey
-                    }
+                    params: params
                 };
 
                 var _action = function (result) {
