@@ -21,8 +21,10 @@ cdbmanager.service("functions", ["SQLClient", "Function", function (SQLClient, F
 
     this.get = function (action, error, extraQuery) {
         var _action = function () {
-            for (var i = 0; i < self.api.items.length; i++) {
-                self.api.items[i] = new Function(self.api.items[i], self);
+            if (self.api && self.api.items) {
+                for (var i = 0; i < self.api.items.length; i++) {
+                    self.api.items[i] = new Function(self.api.items[i], self);
+                }
             }
 
             if (action) {

@@ -13,8 +13,10 @@ cdbmanager.service("constraints", ["SQLClient", "Constraint", function (SQLClien
 
     this.get = function (table, action, error, extraQuery) {
         var _action = function () {
-            for (var i = 0; i < self.api.items.length; i++) {
-                self.api.items[i] = new Constraint(self.api.items[i], self);
+            if (self.api && self.api.items) {
+                for (var i = 0; i < self.api.items.length; i++) {
+                    self.api.items[i] = new Constraint(self.api.items[i], self);
+                }
             }
 
             if (action) {

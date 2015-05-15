@@ -135,8 +135,10 @@ cdbmanager.service("tables", ["SQLClient", "Table", function (SQLClient, Table) 
         var _action = function () {
             order = null;
 
-            for (var i = 0; i < self.api.items.length; i++) {
-                self.api.items[i] = new Table(self.api.items[i], self);
+            if (self.api && self.api.items) {
+                for (var i = 0; i < self.api.items.length; i++) {
+                    self.api.items[i] = new Table(self.api.items[i], self);
+                }
             }
 
             if (action) {
