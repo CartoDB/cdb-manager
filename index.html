@@ -87,6 +87,16 @@
                                 </form>
                             </div>
                         </div>
+                        <!-- SQL console link -->
+                        <div class="panel panel-default" ng-controller="sqlSelectorCtrl">
+                            <div class="panel-heading" role="tab" id="sqlPanel">
+                                <h4 class="panel-title">
+                                    <a href ng-click="nav.setCurrentView('sql')">
+                                        SQL Console
+                                    </a>
+                                </h4>
+                            </div>
+                        </div>
                         <!-- Table selector -->
                         <div class="panel panel-default" ng-controller="tableSelectorCtrl">
                             <div class="panel-heading" role="tab" id="tablePanelHeading">
@@ -100,8 +110,38 @@
                                     <a href ng-click="showTable(table)" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.isCurrentView('table') && table == currentTable}">{{ table.relname }}</a>
                                 </div>
                                 <div class="panel-footer">
+s                                    <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Function selector -->
+                        <div class="panel panel-default" ng-controller="functionSelectorCtrl">
+                            <div class="panel-heading" role="tab" id="functionPanelHeading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#functionPanelCollapse" aria-expanded="true" aria-controls="functionPanelCollapse">Functions</a>
+                                    <a href ng-show="functions.length > 0" ng-click="nav.setCurrentView('functions')">({{ functions.length }})</a>
+                                </h4>
+                            </div>
+                            <div id="functionPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="functionPanelHeading">
+                                <div class="panel-body list-group">
+                                    <a href ng-click="showFunction(func)" ng-repeat="func in functions" class="list-group-item" ng-class="{active: nav.isCurrentView('function') && func == currentFunction}">{{ func.proname }}</a>
+                                </div>
+                                <div class="panel-footer">
                                     <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
                                 </div>
+                            </div>
+                        </div>
+                        <!-- Sequence selector -->
+                        <div class="panel panel-default" ng-controller="sequenceSelectorCtrl">
+                            <div class="panel-heading" role="tab">
+                                <h4 class="panel-title">
+                                    <a href ng-show="sequences.length > 0" ng-click="nav.setCurrentView('sequences')">
+                                        Sequences ({{ sequences.length }})
+                                    </a>
+                                    <a href ng-hide="sequences.length > 0" ng-click="nav.setCurrentView('sequences')">
+                                        Sequences
+                                    </a>
+                                </h4>
                             </div>
                         </div>
                         <!-- vizjson selector -->
@@ -138,33 +178,6 @@
                                 <div class="panel-body list-group">
                                     <a href ng-click="showNamedMap(namedMap)" ng-repeat="namedMap in namedMaps" class="list-group-item" ng-class="{active: nav.isCurrentView('namedMap') && namedMap == currentNamedMap}">{{ namedMap.name }}</a>
                                 </div>
-                            </div>
-                        </div>
-                        <!-- Function selector -->
-                        <div class="panel panel-default" ng-controller="functionSelectorCtrl">
-                            <div class="panel-heading" role="tab" id="functionPanelHeading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#functionPanelCollapse" aria-expanded="true" aria-controls="functionPanelCollapse">Functions</a>
-                                    <a href ng-show="functions.length > 0" ng-click="nav.setCurrentView('functions')">({{ functions.length }})</a>
-                                </h4>
-                            </div>
-                            <div id="functionPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="functionPanelHeading">
-                                <div class="panel-body list-group">
-                                    <a href ng-click="showFunction(func)" ng-repeat="func in functions" class="list-group-item" ng-class="{active: nav.isCurrentView('function') && func == currentFunction}">{{ func.proname }}</a>
-                                </div>
-                                <div class="panel-footer">
-                                    <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- SQL console link -->
-                        <div class="panel panel-default" ng-controller="sqlSelectorCtrl">
-                            <div class="panel-heading" role="tab" id="sqlPanel">
-                                <h4 class="panel-title">
-                                    <a href ng-click="nav.setCurrentView('sql')">
-                                        SQL Console
-                                    </a>
-                                </h4>
                             </div>
                         </div>
                         <!-- Settings -->
@@ -220,6 +233,19 @@
                             </div>
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.triggers')">
                                 <cdb-result-table rows="triggers" settings="cdbrt4Triggers"></cdb-result-table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Sequence view -->
+                <div class="col-md-9" ng-controller="sequenceCtrl" ng-show="nav.isCurrentView('sequences')">
+                    <div role="tabpanel">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" ng-class="{active: nav.isCurrentView('sequences')}"><a href aria-controls="details" role="tab" ng-click="nav.setCurrentView('sequences')">Sequences</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('sequences')">
+                                <cdb-result-table rows="sequences" settings="cdbrt"></cdb-result-table>
                             </div>
                         </div>
                     </div>
@@ -363,6 +389,7 @@
         <script src="records.js"></script>
         <script src="tables.js"></script>
         <script src="constraints.js"></script>
+        <script src="sequences.js"></script>
         <script src="triggers.js"></script>
         <script src="functions.js"></script>
         <script src="columns.js"></script>
