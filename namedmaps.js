@@ -14,7 +14,7 @@ cdbmanager.service('namedMaps', ["MapsClient", function (MapsClient) {
     };
 }]);
 
-cdbmanager.controller('namedMapSelectorCtrl', ["$scope", "nav", "namedMaps", function ($scope, nav, namedMaps) {
+cdbmanager.controller('namedMapSelectorCtrl', ["$scope", "nav", "namedMaps", "endpoints", function ($scope, nav, namedMaps, endpoints) {
     $scope.nav = nav;
 
     $scope.currentNamedMap = null;
@@ -22,6 +22,14 @@ cdbmanager.controller('namedMapSelectorCtrl', ["$scope", "nav", "namedMaps", fun
     $scope.showNamedMap = function (namedMap) {
         namedMaps.setCurrent(namedMap);
     };
+
+    // update function list in scope when current endpoint changes
+    $scope.$watch(function () {
+        return endpoints.current;
+    }, function () {
+        namedMaps.get();
+    }, true);
+
 
     // keep the named map list in the scope always updated
     $scope.$watch(function () {
