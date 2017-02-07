@@ -73,8 +73,8 @@ cdbmanager.controller('endpointsCtrl', ["$scope", "endpoints", "alerts", functio
 
     $scope.$watch("updatedEndpoint.account", function (accountName) {
         if (accountName) {
-            $scope.updatedEndpoint.sqlURL = "https://" + accountName + ".cartodb.com/api/v1/sql";
-            $scope.updatedEndpoint.mapsURL = "https://" + accountName + ".cartodb.com/api/v1/map";
+            $scope.updatedEndpoint.sqlURL = "https://" + accountName + ".carto.com/api/v1/sql";
+            $scope.updatedEndpoint.mapsURL = "https://" + accountName + ".carto.com/api/v1/map";
         } else {
             $scope.updatedEndpoint.sqlURL = "";
             $scope.updatedEndpoint.mapsURL = "";
