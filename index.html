@@ -13,6 +13,13 @@
                 border-top: 1px solid black;
                 border-bottom: 1px solid black;
             }
+            .panel-body {
+                max-height: 400px;
+                overflow: auto;
+            }
+            .panel-body a {
+                overflow: hidden;
+            }
         </style>
         <script src="vendor/jquery-1.11.2.min.js"></script>
         <script src="vendor/bootstrap/bootstrap.min.js"></script>
@@ -107,7 +114,7 @@
                             </div>
                             <div id="tablePanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="tablePanelHeading">
                                 <div class="panel-body list-group">
-                                    <a href ng-click="showTable(table)" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.isCurrentView('table') && table == currentTable}">{{ table.relname }}</a>
+                                    <a href title="{{ table.relname }}" ng-click="showTable(table)" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.isCurrentView('table') && table == currentTable}">{{ table.relname }}</a>
                                 </div>
                                 <div class="panel-footer">
                                     <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
@@ -124,7 +131,7 @@
                             </div>
                             <div id="functionPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="functionPanelHeading">
                                 <div class="panel-body list-group">
-                                    <a href ng-click="showFunction(func)" ng-repeat="func in functions" class="list-group-item" ng-class="{active: nav.isCurrentView('function') && func == currentFunction}">{{ func.proname }}</a>
+                                    <a href title="{{ func.proname }}" ng-click="showFunction(func)" ng-repeat="func in functions" class="list-group-item" ng-class="{active: nav.isCurrentView('function') && func == currentFunction}">{{ func.proname }}</a>
                                 </div>
                                 <div class="panel-footer">
                                     <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
@@ -153,7 +160,7 @@
                             </div>
                             <div id="vizjsonPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="vizjsonPanelHeading">
                                 <div class="panel-body list-group">
-                                    <a href ng-click="showVizjson(vizjson)" ng-repeat="vizjson in vizjsons" class="list-group-item" ng-class="{active: nav.isCurrentView('vizjson') && vizjson == currentVizjson}">{{ vizjson.name }}</a>
+                                    <a href title="{{ vizjson.name }}" ng-click="showVizjson(vizjson)" ng-repeat="vizjson in vizjsons" class="list-group-item" ng-class="{active: nav.isCurrentView('vizjson') && vizjson == currentVizjson}">{{ vizjson.name }}</a>
                                 </div>
                                 <div class="panel-footer">
                                     <form novalidate>
@@ -176,7 +183,7 @@
                             </div>
                             <div id="namedMapPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="namedMapPanelHeading">
                                 <div class="panel-body list-group">
-                                    <a href ng-click="showNamedMap(namedMap)" ng-repeat="namedMap in namedMaps" class="list-group-item" ng-class="{active: nav.isCurrentView('namedMap') && namedMap == currentNamedMap}">{{ namedMap.name }}</a>
+                                    <a href title="{{ namedMap.name }}" ng-click="showNamedMap(namedMap)" ng-repeat="namedMap in namedMaps" class="list-group-item" ng-class="{active: nav.isCurrentView('namedMap') && namedMap == currentNamedMap}">{{ namedMap.name }}</a>
                                 </div>
                             </div>
                         </div>
