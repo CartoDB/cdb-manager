@@ -109,7 +109,7 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
 //   running, valid and raw from sendRequest
 //   items: list of objects returned by the database on success
 //   errorMessage: error message on error
-api.factory('MapsClient', ["$http", "endpoints", function ($http, endpoints) {
+api.factory('MapsClient', ["$http", "endpoints", "settings", function ($http, endpoints, settings) {
     return function () {
         var self = this;
 
@@ -130,7 +130,9 @@ api.factory('MapsClient', ["$http", "endpoints", function ($http, endpoints) {
                 sendRequest(this, req, $http, function (result) {
                     self.items = [];
                     for (var i = 0; i < result.data.template_ids.length; i++) {
-                        self.items.push({name: result.data.template_ids[i]});
+                        if (settings.showBuilderNamedMaps || !result.data.template_ids[i].startsWith("tpl_")) {
+                            self.items.push({name: result.data.template_ids[i]});
+                        }
                     }
                 }, function () {
                     self.items = null;

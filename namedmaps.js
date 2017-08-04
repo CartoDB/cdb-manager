@@ -14,7 +14,7 @@ cdbmanager.service('namedMaps', ["MapsClient", function (MapsClient) {
     };
 }]);
 
-cdbmanager.controller('namedMapSelectorCtrl', ["$scope", "nav", "namedMaps", "endpoints", function ($scope, nav, namedMaps, endpoints) {
+cdbmanager.controller('namedMapSelectorCtrl', ["$scope", "nav", "namedMaps", "endpoints", "settings", function ($scope, nav, namedMaps, endpoints, settings) {
     $scope.nav = nav;
 
     $scope.currentNamedMap = null;
@@ -30,6 +30,12 @@ cdbmanager.controller('namedMapSelectorCtrl', ["$scope", "nav", "namedMaps", "en
         namedMaps.get();
     }, true);
 
+    // update named map list in scope when show namd maps from builder settings change
+    $scope.$watch(function () {
+        return settings.showBuilderNamedMaps;
+    }, function () {
+        namedMaps.get();
+    });
 
     // keep the named map list in the scope always updated
     $scope.$watch(function () {
