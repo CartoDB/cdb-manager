@@ -120,7 +120,7 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
     }
 }]);
 
-cdbmanager.service("tables", ["SQLClient", "Table", function (SQLClient, Table) {
+cdbmanager.service("tables", ["SQLClient", "Table", "settings", function (SQLClient, Table, settings) {
     var self = this;
 
     this.api = new SQLClient();
@@ -130,7 +130,13 @@ cdbmanager.service("tables", ["SQLClient", "Table", function (SQLClient, Table) 
     var order = null;
 
     this.get = function (action, error, extraQuery) {
-        var query = "select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples, pg_namespace.nspname from pg_class, pg_roles, pg_namespace where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_namespace.oid = pg_class.relnamespace and pg_class.relkind = 'r'";
+        var query;
+
+        if (settings.showAnalysisTables) {
+            query = "select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples, pg_namespace.nspname from pg_class, pg_roles, pg_namespace where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_namespace.oid = pg_class.relnamespace and pg_class.relkind = 'r'";
+        } else {
+            query = "select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples, pg_namespace.nspname from pg_class, pg_roles, pg_namespace where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_namespace.oid = pg_class.relnamespace and pg_class.relkind = 'r' and pg_class.relname not like 'analysis_%'";
+        }
 
         var _action = function () {
             order = null;
@@ -175,7 +181,7 @@ cdbmanager.service("tables", ["SQLClient", "Table", function (SQLClient, Table) 
     }
 }]);
 
-cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "nav", function ($scope, tables, endpoints, nav) {
+cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "nav", "settings", function ($scope, tables, endpoints, nav, settings) {
     $scope.nav = nav;
 
     $scope.currentTable = null;
@@ -196,6 +202,13 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     }, function () {
         $scope.tables = $scope.refreshList();
     }, true);
+
+    // update table list in scope when show analysis tables settings change
+    $scope.$watch(function () {
+        return settings.showAnalysisTables;
+    }, function () {
+        $scope.tables = $scope.refreshList();
+    });
 
     // update table list in scope when actual table list changes
     $scope.$watch(function () {

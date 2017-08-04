@@ -198,12 +198,17 @@
                                 <form novalidate>
                                     <div class="panel-body">
                                         <div class="form-group">
-                                            <label for="name">Default # rows in result tables</label>
+                                            <label for="rowsPerPage">Default # rows in result tables</label>
                                             <input type="number" id="rowsPerPage" class="form-control" ng-model="settings.rowsPerPage">
                                         </div>
                                         <div class="form-group">
-                                            <label for="name">Default # rows in SQL console table</label>
+                                            <label for="sqlConsoleRowsPerPage">Default # rows in SQL console table</label>
                                             <input type="number" id="sqlConsoleRowsPerPage" class="form-control" ng-model="settings.sqlConsoleRowsPerPage">
+                                        </div>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" id="showAnalysisTables" ng-model="settings.showAnalysisTables"> Show analysis tables
+                                            </label>
                                         </div>
                                     </div>
                                 </form>
