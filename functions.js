@@ -6,8 +6,8 @@ api.factory('Function', ["SQLClient", function (SQLClient) {
 
         this.updateDefinition = function (action, error) {
             this.api.send(this.definition, action, error);
-        }
-    }
+        };
+    };
 }]);
 
 cdbmanager.service("functions", ["SQLClient", "Function", function (SQLClient, Function) {
@@ -60,7 +60,7 @@ cdbmanager.service("functions", ["SQLClient", "Function", function (SQLClient, F
                 });
             }
         }
-    }
+    };
 }]);
 
 cdbmanager.controller('functionSelectorCtrl', ["$scope", "functions", "endpoints", "nav", function ($scope, functions, endpoints, nav) {

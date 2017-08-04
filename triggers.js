@@ -3,7 +3,7 @@ api.factory('Trigger', ["SQLClient", function (SQLClient) {
         angular.extend(this, triggerFromDB);
 
         this.api = new SQLClient();
-    }
+    };
 }]);
 
 cdbmanager.service("triggers", ["SQLClient", "Trigger", function (SQLClient, Trigger) {

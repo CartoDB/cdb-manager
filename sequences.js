@@ -1,7 +1,7 @@
 api.factory('Sequence', ["SQLClient", function (SQLClient) {
     return function (sequenceFromDB) {
         angular.extend(this, sequenceFromDB);
-    }
+    };
 }]);
 
 cdbmanager.service("sequences", ["SQLClient", "Sequence", function (SQLClient, Sequence) {

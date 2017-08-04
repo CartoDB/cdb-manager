@@ -93,11 +93,11 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
         };
 
         this.orderRecords = function (parameter, limit) {
-            if (self.orders["records"] == "asc") {
-                self.orders["records"] = "desc";
+            if (self.orders.records == "asc") {
+                self.orders.records = "desc";
                 self.getRecords(limit, 0, null, null, "order by " + parameter + " desc");
             } else {
-                self.orders["records"] = "asc";
+                self.orders.records = "asc";
                 self.getRecords(limit, 0, null, null, "order by " + parameter);
             }
         };
@@ -117,7 +117,7 @@ api.factory('Table', ["SQLClient", "columns", "constraints", "indexes", "records
         this.orderTriggers = function (parameter) {
             self.orderByJS(self.triggers, parameter, "triggers");
         };
-    }
+    };
 }]);
 
 cdbmanager.service("tables", ["SQLClient", "Table", "settings", function (SQLClient, Table, settings) {

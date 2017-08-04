@@ -3,7 +3,7 @@ api.factory('Record', ["SQLClient", function (SQLClient) {
         angular.extend(this, recordFromDB);
 
         this.api = new SQLClient();
-    }
+    };
 }]);
 
 cdbmanager.service("records", ["SQLClient", "Record", function (SQLClient, Record) {

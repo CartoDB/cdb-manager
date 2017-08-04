@@ -3,7 +3,7 @@ api.factory('Column', ["SQLClient", function (SQLClient) {
         angular.extend(this, columnFromDB);
 
         this.api = new SQLClient();
-    }
+    };
 }]);
 
 cdbmanager.service("columns", ["SQLClient", "Column", function (SQLClient, Column) {

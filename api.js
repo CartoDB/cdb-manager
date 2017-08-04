@@ -35,7 +35,7 @@ function sendRequest(obj, request, httpService, action, error) {
     httpService(request).then(_action).catch(_error);
 }
 
-// SQLClient makes request to CartoDB's SQL API
+// SQLClient makes request to CARTO's SQL API
 // internal objects:
 //   running, valid and raw from sendRequest
 //   items: list of objects returned by the database on success
@@ -100,11 +100,11 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
 
                 sendRequest(self, req, $http, _action, _error);
             }
-        }
-    }
+        };
+    };
 }]);
 
-// MapsClient makes request to CartoDB's Maps API
+// MapsClient makes request to CARTO's Maps API
 // internal objects:
 //   running, valid and raw from sendRequest
 //   items: list of objects returned by the database on success

@@ -12,7 +12,7 @@ cdbmanager.service('alerts', function () {
         if (type == "error") {
             type = "danger";
         } else if (type == "debug") {
-            type = "info"
+            type = "info";
         }
         self.alerts.push({'type': type, 'msg': msg});
     };

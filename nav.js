@@ -30,5 +30,5 @@ cdbmanager.service("nav", function () {
         }
 
         return true;
-    }
+    };
 });

@@ -3,7 +3,7 @@ api.factory('Index', ["SQLClient", function (SQLClient) {
         angular.extend(this, indexFromDB);
 
         this.api = new SQLClient();
-    }
+    };
 }]);
 
 cdbmanager.service("indexes", ["SQLClient", "Index", function (SQLClient, Index) {

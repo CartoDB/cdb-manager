@@ -3,7 +3,7 @@ api.factory('Constraint', ["SQLClient", function (SQLClient) {
         angular.extend(this, constraintFromDB);
 
         this.api = new SQLClient();
-    }
+    };
 }]);
 
 cdbmanager.service("constraints", ["SQLClient", "Constraint", function (SQLClient, Constraint) {
