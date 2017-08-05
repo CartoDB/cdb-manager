@@ -231,7 +231,7 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "se
     // Config result table
     $scope.cdbrt = {
         id: "tables",
-        rowsPerPage: settings.sqlConsoleRowsPerPage,
+        rowsPerPage: settings.rowsPerPage,
         headers: [
             {name: 'nspname', title: 'Schema'},
             {name: 'relname', title: 'Name'},
@@ -250,6 +250,13 @@ cdbmanager.controller('tablesCtrl', ["$scope", "tables", "endpoints", "nav", "se
         orderBy: tables.order
     };
 
+    // update number of rows per page when settings changes
+    $scope.$watch(function () {
+        return settings.rowsPerPage;
+    }, function () {
+        $scope.cdbrt.rowsPerPage = settings.rowsPerPage;
+    });
+
     // update table list in scope when actual table list changes
     $scope.$watch(function () {
         return tables.api.items;
@@ -266,29 +273,40 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "tables", "columns", "index
     // Settings for the result tables
     $scope.cdbrt4Columns = {
         id: "columns",
-        rowsPerPage: settings.sqlConsoleRowsPerPage
+        rowsPerPage: settings.rowsPerPage
     };
     $scope.cdbrt4Indexes = {
         id: "indexes",
-        rowsPerPage: settings.sqlConsoleRowsPerPage
+        rowsPerPage: settings.rowsPerPage
     };
     $scope.cdbrt4Triggers = {
         id: "triggers",
-        rowsPerPage: settings.sqlConsoleRowsPerPage
+        rowsPerPage: settings.rowsPerPage
     };
     $scope.cdbrt4Constraints = {
         id: "constraints",
-        rowsPerPage: settings.sqlConsoleRowsPerPage
+        rowsPerPage: settings.rowsPerPage
     };
     $scope.cdbrt4Records = {
         id: "records",
-        rowsPerPage: settings.sqlConsoleRowsPerPage,
+        rowsPerPage: settings.rowsPerPage,
         async: function (limit, offset) {
             if ($scope.currentTable) {
                 $scope.currentTable.getRecords(limit, offset);
             }
         }
     };
+
+    // update number of rows per page when settings changes
+    $scope.$watch(function () {
+        return settings.rowsPerPage;
+    }, function () {
+        $scope.cdbrt4Columns.rowsPerPage = settings.rowsPerPage;
+        $scope.cdbrt4Indexes.rowsPerPage = settings.rowsPerPage;
+        $scope.cdbrt4Triggers.rowsPerPage = settings.rowsPerPage;
+        $scope.cdbrt4Constraints.rowsPerPage = settings.rowsPerPage;
+        $scope.cdbrt4Records.rowsPerPage = settings.rowsPerPage;
+    });
 
     // update current table pointer in scope when a new table is selected
     $scope.$watch(function () {

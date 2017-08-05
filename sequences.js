@@ -21,7 +21,7 @@ cdbmanager.service("sequences", ["SQLClient", "Sequence", function (SQLClient, S
                 self.api.items = [];
                 for (var i = 0; i < itemsCopy.length; i++) {
                     var query = "select * from " + itemsCopy[i].relname;
-                    //self.tmp_api.send(query, getSequenceDetails);
+                    self.tmp_api.send(query, getSequenceDetails);
                 }
             }
 
@@ -88,9 +88,16 @@ cdbmanager.controller('sequenceCtrl', ["$scope", "nav", "sequences", "columns", 
     // Settings for the result tables
     $scope.cdbrt = {
         id: "sequences",
-        rowsPerPage: settings.sqlConsoleRowsPerPage,
+        rowsPerPage: settings.rowsPerPage,
         orderBy: sequences.order
     };
+
+    // update number of rows per page when settings changes
+    $scope.$watch(function () {
+        return settings.rowsPerPage;
+    }, function () {
+        $scope.cdbrt.rowsPerPage = settings.rowsPerPage;
+    });
 
     // update sequence list in scope when actual sequence list changes
     $scope.$watch(function () {

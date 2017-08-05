@@ -94,6 +94,13 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
         self.resetEditor();
     }, true);
 
+    // update number of rows per page when settings changes
+    $scope.$watch(function () {
+        return settings.sqlConsoleRowsPerPage;
+    }, function () {
+        $scope.cdbrt.rowsPerPage = settings.sqlConsoleRowsPerPage;
+    });
+
     // query executed successfully
     $scope.$watch(function () {
         return self.api.raw;

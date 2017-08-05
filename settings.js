@@ -20,11 +20,11 @@ cdbmanager.controller('settingsCtrl', ["$scope", "$localStorage", "settings", fu
     $scope.settings = settings;
 
     $scope.$watch(function () {
-        return JSON.stringify($localStorage.settings);
+        return JSON.stringify(settings);
     }, function () {
-        for (var key in $localStorage.settings) {
-            if ($localStorage.settings.hasOwnProperty(key)) {
-                $scope.settings[key] = $localStorage.settings[key];
+        for (var key in settings) {
+            if (settings.hasOwnProperty(key)) {
+                $localStorage.settings[key] = settings[key];
             }
         }
     });
