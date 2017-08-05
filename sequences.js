@@ -21,7 +21,7 @@ cdbmanager.service("sequences", ["SQLClient", "Sequence", function (SQLClient, S
                 self.api.items = [];
                 for (var i = 0; i < itemsCopy.length; i++) {
                     var query = "select * from " + itemsCopy[i].relname;
-                    self.tmp_api.send(query, getSequenceDetails);
+                    //self.tmp_api.send(query, getSequenceDetails);
                 }
             }
 

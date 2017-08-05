@@ -178,7 +178,7 @@ cdbmanager.service("tables", ["SQLClient", "Table", "settings", function (SQLCli
                 });
             }
         }
-    }
+    };
 }]);
 
 cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "nav", "settings", function ($scope, tables, endpoints, nav, settings) {
