@@ -19,6 +19,7 @@ cdbmanager.service("map", ["$timeout", function ($timeout) {
     };
 
     this.update = function (query) {
+        this.reset();
         var source = new carto.source.SQL(query);
         var viz = new carto.Viz();
         var layer = new carto.Layer("layer_" + self.layerCounter, source, viz);
@@ -28,10 +29,6 @@ cdbmanager.service("map", ["$timeout", function ($timeout) {
 }]);
 
 cdbmanager.controller('cartovlCtrl', ["$scope", "map", "endpoints", function ($scope, map, endpoints) {
-    $scope.reset = function () {
-        map.reset();
-    }
-
     // keep the endpoint list in the scope always updated
     $scope.$watch(function () {
         return endpoints.current;
