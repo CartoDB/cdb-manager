@@ -14,6 +14,7 @@ cdbmanager.service('settings', ["$localStorage", function ($localStorage) {
     this.initSetting("sqlConsoleRowsPerPage", 10);
     this.initSetting("showAnalysisTables", false);
     this.initSetting("showBuilderNamedMaps", false);
+    this.initSetting("showOverviewTables", false);
 }]);
 
 cdbmanager.controller('settingsCtrl', ["$scope", "$localStorage", "settings", function ($scope, $localStorage, settings) {
