@@ -2,7 +2,7 @@ cdbmanager.controller('sqlSelectorCtrl', ["$scope", "nav", function ($scope, nav
     $scope.nav = nav;
 }]);
 
-cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$localStorage", "settings", "$timeout", function ($scope, SQLClient, endpoints, nav, $localStorage, settings, $timeout) {
+cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "map", "nav", "$localStorage", "settings", "$timeout", function ($scope, SQLClient, endpoints, map, nav, $localStorage, settings, $timeout) {
     var self = this;
 
     var editor = null;
@@ -67,6 +67,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "nav", "$l
         self.historyBuffer = "";
         $scope.historyNotFound = false;
         self.api.send(query);
+        map.update(query);
     };
 
     $scope.cleanHistory = function () {

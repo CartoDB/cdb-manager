@@ -7,7 +7,7 @@
         <title>CARTO Manager</title>
         <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
         <link rel="stylesheet" href="vendor/codemirror/codemirror.css" />
-        <link rel="stylesheet" href="vendor/cartodb/cartodb.css" />
+        <link href="https://libs.cartocdn.com/mapbox-gl/v0.45.0-carto1/mapbox-gl.css" rel="stylesheet" />
         <style>
             .CodeMirror {
                 border-top: 1px solid black;
@@ -20,12 +20,16 @@
             .panel-body a {
                 overflow: hidden;
             }
+            #map {
+                height: 300px;
+                width: 100%;
+            }
         </style>
         <script src="vendor/jquery-1.11.2.min.js"></script>
         <script src="vendor/bootstrap/bootstrap.min.js"></script>
         <script src="vendor/angularjs/angular.min.js"></script>
-        <script src="vendor/cartodb/cartodb.js"></script>
-    </head>
+        <script src="https://libs.cartocdn.com/carto-vl/v0.4.0/carto-vl.js"></script>
+        <script src="https://libs.cartocdn.com/mapbox-gl/v0.45.0-carto1/mapbox-gl.js"></script>
     <body>
         <!-- Top bar -->
         <nav class="navbar navbar-default">
@@ -54,8 +58,8 @@
                             <!-- Endpoint selector -->
                             <div class="panel-heading" role="tab" id="endpointPanelHeading">
                                 <h4 class="panel-title">
-                                    <a ng-show="endpoints.length == 0" data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="true" aria-controls="endpointPanelCollapse">Endpoints (start here)</a>
-                                    <a ng-show="endpoints.length > 0" data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="true" aria-controls="endpointPanelCollapse">Current endpoint:</a>
+                                    <a ng-show="endpoints.length == 0" data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="false" aria-controls="endpointPanelCollapse">Endpoints (start here)</a>
+                                    <a ng-show="endpoints.length > 0" data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="false" aria-controls="endpointPanelCollapse">Current endpoint:</a>
                                     <select ng-show="endpoints.length > 0" ng-options="endpoint as endpoint.name for endpoint in endpoints" ng-model="current" ng-change="setCurrent()"></select>
                                 </h4>
                             </div>
@@ -108,7 +112,7 @@
                         <div class="panel panel-default" ng-controller="tableSelectorCtrl">
                             <div class="panel-heading" role="tab" id="tablePanelHeading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#tablePanelCollapse" aria-expanded="true" aria-controls="tablePanelCollapse">Tables</a>
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#tablePanelCollapse" aria-expanded="false" aria-controls="tablePanelCollapse">Tables</a>
                                     <a href ng-show="tables.length > 0" ng-click="nav.setCurrentView('tables')">({{ tables.length }})</a>
                                 </h4>
                             </div>
@@ -125,7 +129,7 @@
                         <div class="panel panel-default" ng-controller="functionSelectorCtrl">
                             <div class="panel-heading" role="tab" id="functionPanelHeading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#functionPanelCollapse" aria-expanded="true" aria-controls="functionPanelCollapse">Functions</a>
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#functionPanelCollapse" aria-expanded="false" aria-controls="functionPanelCollapse">Functions</a>
                                     <a href ng-show="functions.length > 0" ng-click="nav.setCurrentView('functions')">({{ functions.length }})</a>
                                 </h4>
                             </div>
@@ -151,47 +155,11 @@
                                 </h4>
                             </div>
                         </div>
-                        <!-- vizjson selector -->
-                        <div class="panel panel-default" ng-controller="vizjsonSelectorCtrl">
-                            <div class="panel-heading" role="tab" id="vizjsonPanelHeading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#vizjsonPanelCollapse" aria-expanded="true" aria-controls="vizjsonPanelCollapse">Vizjsons</a>
-                                </h4>
-                            </div>
-                            <div id="vizjsonPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="vizjsonPanelHeading">
-                                <div class="panel-body list-group">
-                                    <a href title="{{ vizjson.name }}" ng-click="showVizjson(vizjson)" ng-repeat="vizjson in vizjsons" class="list-group-item" ng-class="{active: nav.isCurrentView('vizjson') && vizjson == currentVizjson}">{{ vizjson.name }}</a>
-                                </div>
-                                <div class="panel-footer">
-                                    <form novalidate>
-                                        <div class="input-group" ng-class="{'has-error': !nameIsValid(newVizjson.name)}">
-                                            <input type="text" class="form-control" ng-model="newVizjson.name" />
-                                            <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default" ng-disabled="!newVizjson.name || !nameIsValid(newVizjson.name)" ng-click="addVizjson(newVizjson)">New</button>
-                                            </span>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Named maps selector -->
-                        <div class="panel panel-default" ng-controller="namedMapSelectorCtrl">
-                            <div class="panel-heading" role="tab" id="namedMapPanelHeading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#namedMapPanelCollapse" aria-expanded="true" aria-controls="namedMapPanelCollapse">Named maps</a>
-                                </h4>
-                            </div>
-                            <div id="namedMapPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="namedMapPanelHeading">
-                                <div class="panel-body list-group">
-                                    <a href title="{{ namedMap.name }}" ng-click="showNamedMap(namedMap)" ng-repeat="namedMap in namedMaps" class="list-group-item" ng-class="{active: nav.isCurrentView('namedMap') && namedMap == currentNamedMap}">{{ namedMap.name }}</a>
-                                </div>
-                            </div>
-                        </div>
                         <!-- Settings -->
                         <div class="panel panel-default" ng-controller="settingsCtrl">
                             <div class="panel-heading" role="tab" id="settingsPanelHeading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#settingsPanelCollapse" aria-expanded="true" aria-controls="settingsPanelCollapse">Settings</a>
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#settingsPanelCollapse" aria-expanded="false" aria-controls="settingsPanelCollapse">Settings</a>
                                 </h4>
                             </div>
                             <div id="settingsPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="settingsPanelHeading">
@@ -215,13 +183,22 @@
                                                 <input type="checkbox" id="showOverviewTables" ng-model="settings.showOverviewTables"> Show overview tables
                                             </label>
                                         </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" id="showBuilderNamedMaps" ng-model="settings.showBuilderNamedMaps"> Show named maps created by builder
-                                            </label>
-                                        </div>
                                     </div>
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Map -->
+                    <div class="panel panel-default" ng-controller="cartovlCtrl">
+                        <div class="panel-heading" role="tab" id="cartovlPanelHeading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" href="#cartovlPanelCollapse" aria-expanded="true" aria-controls="cartovlPanelCollapse">Map</a>
+                                <a href ng-click="reset()">(Clear)</a>
+                            </h4>
+                        </div>
+                        <div id="cartovlPanelCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="cartovlPanelHeading">
+                            <div ng-controller="cartovlCtrl">
+                                <div id="map"></div>
                             </div>
                         </div>
                     </div>
@@ -268,47 +245,6 @@
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('sequences')">
                                 <cdb-result-table rows="sequences" settings="cdbrt"></cdb-result-table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- vizjson view -->
-                <div class="col-md-9" ng-controller="vizjsonCtrl" ng-show="nav.isCurrentView('vizjson')">
-                    <div role="tabpanel">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" ng-class="{active: nav.isCurrentView('vizjson.editor')}"><a href aria-controls="editor" role="tab" ng-click="showEditor()">Editor</a></li>
-                            <li role="presentation" ng-class="{active: nav.isCurrentView('vizjson.visualization')}"><a href aria-controls="visualization" role="tab" ng-click="showVisualization()">Visualization</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('vizjson.editor')">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4>vis.json</h4>
-                                    </div>
-                                    <div class="panel-body">
-                                        <div ui-codemirror="{ onLoad: codemirrorLoaded }" ui-codemirror-opts="editorOptions" ng-model="vizjsonInEditor.json"></div>
-                                    </div>
-                                    <div class="panel-footer">
-                                        <button type="button" class="btn btn-danger" ng-click="removeCurrentVizjson()">Remove</button>
-                                        <button type="button" class="pull-right btn btn-primary" ng-click="updateCurrentVizjson(vizjsonInEditor)">Save</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('vizjson.visualization')">
-                                <div id="vizjson" style="height: 500px"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Named maps view -->
-                <div class="col-md-9" ng-controller="namedMapCtrl" ng-show="nav.isCurrentView('namedMap')">
-                    <div role="tabpanel">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" ng-class="{active: nav.isCurrentView('namedMap.visualization')}"><a href aria-controls="visualization" role="tab" ng-click="showVisualization()">Visualization</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('namedMap.visualization')">
-                                <div id="named_map" style="height: 500px"></div>
                             </div>
                         </div>
                     </div>
@@ -404,8 +340,7 @@
         <script src="ui/table.js"></script>
         <script src="nav.js"></script>
         <script src="alerts.js"></script>
-        <script src="vizjsons.js"></script>
-        <script src="namedmaps.js"></script>
+        <script src="map.js"></script>
         <script src="endpoints.js"></script>
         <script src="api.js"></script>
         <script src="records.js"></script>
