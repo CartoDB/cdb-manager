@@ -130,12 +130,12 @@ cdbmanager.service("tables", ["SQLClient", "Table", "settings", function (SQLCli
     var order = null;
 
     this.get = function (action, error, extraQuery) {
-        var query;
-
-        if (settings.showAnalysisTables) {
-            query = "select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples, pg_namespace.nspname from pg_class, pg_roles, pg_namespace where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_namespace.oid = pg_class.relnamespace and pg_class.relkind = 'r'";
-        } else {
-            query = "select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples, pg_namespace.nspname from pg_class, pg_roles, pg_namespace where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_namespace.oid = pg_class.relnamespace and pg_class.relkind = 'r' and pg_class.relname not like 'analysis_%'";
+        var query = "select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples, pg_namespace.nspname from pg_class, pg_roles, pg_namespace where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_namespace.oid = pg_class.relnamespace and pg_class.relkind = 'r'";
+        if (!settings.showAnalysisTables) {
+            query += " and pg_class.relname not like 'analysis_%'";
+        }
+        if (!settings.showOverviewTables) {
+            query += " and pg_class.relname not like '_vovw_%'";
         }
 
         var _action = function () {
@@ -206,6 +206,13 @@ cdbmanager.controller('tableSelectorCtrl', ["$scope", "tables", "endpoints", "na
     // update table list in scope when show analysis tables settings change
     $scope.$watch(function () {
         return settings.showAnalysisTables;
+    }, function () {
+        $scope.tables = $scope.refreshList();
+    });
+
+    // update table list in scope when show overview tables settings change
+    $scope.$watch(function () {
+        return settings.showOverviewTables;
     }, function () {
         $scope.tables = $scope.refreshList();
     });
