@@ -3,7 +3,7 @@ cdbmanager.service("map", ["$timeout", function ($timeout) {
     this.layerCounter = 0;
 
     this.reset = function () {
-        this.map = new mapboxgl.Map({
+        self.map = new mapboxgl.Map({
               container: 'map',
               style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
         });
@@ -21,9 +21,9 @@ cdbmanager.service("map", ["$timeout", function ($timeout) {
     this.update = function (query) {
         var source = new carto.source.SQL(query);
         var viz = new carto.Viz();
-        var layer = new carto.Layer("layer_" + this.layerCounter, source, viz);
+        var layer = new carto.Layer("layer_" + self.layerCounter, source, viz);
         layer.addTo(self.map);
-        this.layerCounter++;
+        self.layerCounter++;
     };
 }]);
 
