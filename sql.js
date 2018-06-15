@@ -2,7 +2,7 @@ cdbmanager.controller('sqlSelectorCtrl', ["$scope", "nav", function ($scope, nav
     $scope.nav = nav;
 }]);
 
-cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "map", "nav", "$localStorage", "settings", "$timeout", function ($scope, SQLClient, endpoints, map, nav, $localStorage, settings, $timeout) {
+cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "map", "nav", "tables", "$localStorage", "settings", "$timeout", function ($scope, SQLClient, endpoints, map, nav, tables, $localStorage, settings, $timeout) {
     var self = this;
 
     var editor = null;
@@ -34,7 +34,10 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "map", "na
         smartIndent: true,
         lineNumbers: true,
         matchBrackets : true,
-        autofocus: true
+        autofocus: true,
+        extraKeys: {
+            "Ctrl-Space": "autocomplete"
+        }
     };
 
     this.setHistoryCurrent = function (idx) {
@@ -120,6 +123,23 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "map", "na
             });
         }
     });
+
+    $scope.$watch(function () {
+        return tables.api.items;
+    }, function () {
+        var hints = {};
+        var i = 0;
+        var table = null;
+
+        console.log("tables", tables.api.items);
+        if (tables.api.items) {
+            for (i = 0; i < tables.api.items.length; i++) {
+                table = tables.api.items[i];
+                hints[table.relname] = [];
+            }
+                 editor.setOption("hintOptions", {"tables": hints});
+        }
+    }, true);
 
     // Key bindings for history
     $scope.codemirrorLoaded = function (_editor) {
