@@ -1,362 +1,357 @@
 <!doctype html>
 <html lang="en" ng-app="cdbmanager">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>CARTO Manager</title>
-        <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
-        <link rel="stylesheet" href="vendor/codemirror/codemirror.css" />
-        <link rel="stylesheet" href="vendor/codemirror/show-hint.css" />
-        <link href="https://libs.cartocdn.com/mapbox-gl/v0.45.0-carto1/mapbox-gl.css" rel="stylesheet" />
-        <style>
-            .CodeMirror {
-                border-top: 1px solid black;
-                border-bottom: 1px solid black;
-            }
-            .panel-body {
-                max-height: 400px;
-                overflow: auto;
-            }
-            .panel-body a {
-                overflow: hidden;
-            }
-            .geometry {
-                max-width: 100px;
-                overflow: hidden;
-            }
-            #map {
-                height: 300px;
-                width: 100%;
-            }
-        </style>
-        <script src="vendor/jquery-1.11.2.min.js"></script>
-        <script src="vendor/bootstrap/bootstrap.min.js"></script>
-        <script src="vendor/angularjs/angular.min.js"></script>
-        <script src="https://cartodb.github.io/carto-vl/dist/carto-vl.js"></script>
-        <script src="https://libs.cartocdn.com/mapbox-gl/v0.45.0-carto1/mapbox-gl.js"></script>
-    <body>
-        <!-- Top bar -->
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#">CDB Manager</a>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CARTO Manager</title>
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="vendor/codemirror/codemirror.css" />
+  <link rel="stylesheet" href="vendor/codemirror/show-hint.css" />
+  <link href="https://libs.cartocdn.com/mapbox-gl/v0.45.0-carto1/mapbox-gl.css" rel="stylesheet" />
+  <style>
+    .CodeMirror {
+      border-top: 1px solid black;
+      border-bottom: 1px solid black;
+    }
+    .panel-body {
+      max-height: 400px;
+      overflow: auto;
+    }
+    .panel-body a {
+      overflow: hidden;
+    }
+    .geometry {
+      max-width: 100px;
+      overflow: hidden;
+    }
+    #map {
+      height: 300px;
+      width: 100%;
+    }
+  </style>
+  <script src="vendor/jquery-1.11.2.min.js"></script>
+  <script src="vendor/bootstrap/bootstrap.min.js"></script>
+  <script src="vendor/angularjs/angular.min.js"></script>
+  <script src="https://cartodb.github.io/carto-vl/dist/carto-vl.js"></script>
+  <script src="https://libs.cartocdn.com/mapbox-gl/v0.45.0-carto1/mapbox-gl.js"></script>
+</head>
+<body>
+  <!-- Top bar -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">CDB Manager</a>
+      </div>
+    </div>
+  </nav>
+  <!-- Alert messages -->
+  <div class="container-fluid">
+    <div ng-controller="AlertCtrl">
+      <div ng-repeat="alert in alerts" ng-class="'alert alert-dismissable alert-' + alert.type" role="alert">
+        <button type="button" class="close" ng-click="closeAlert($index)" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <alert role="alert">{{ alert.msg }}</alert>
+      </div>
+    </div>
+  </div>
+  <!-- Main work area -->
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="panel-group" id="accordion" role="tablist">
+          <!-- Endpoint manager -->
+          <div class="panel panel-default" ng-controller="endpointsCtrl">
+            <!-- Endpoint selector -->
+            <div class="panel-heading" role="tab" id="endpointPanelHeading">
+              <h4 class="panel-title">
+                <a ng-show="endpoints.length == 0" data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="false" aria-controls="endpointPanelCollapse">Endpoints (start here)</a>
+                <a ng-show="endpoints.length > 0" data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="false" aria-controls="endpointPanelCollapse">Current endpoint:</a>
+                <select ng-show="endpoints.length > 0" ng-options="endpoint as endpoint.name for endpoint in endpoints" ng-model="current" ng-change="setCurrent()"></select>
+              </h4>
+            </div>
+            <!-- New endpoint selector -->
+            <div id="endpointPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="endpointPanelHeading">
+              <form name="updatedEndpoint" novalidate>
+                <div class="panel-body">
+                  <div class="form-group">
+                    <label for="name">Endpoint name (for reference only)</label>
+                    <input type="text" id="name" class="form-control" ng-model="updatedEndpoint.name" ng-disabled="!current">
+                  </div>
+                  <div class="form-group">
+                    <label for="name">Account name</label>
+                    <input type="text" id="account" class="form-control" ng-model="updatedEndpoint.account" ng-disabled="!current">
+                  </div>
+                  <div class="form-group">
+                    <label for="name">API key</label>
+                    <input type="text" id="api_key" class="form-control" ng-model="updatedEndpoint.apiKey" ng-disabled="!current">
+                  </div>
+                  <div class="form-group">
+                    <label for="name">SQL API endpoint URL</label>
+                    <input type="text" id="sql_url" class="form-control" ng-model="updatedEndpoint.sqlURL" ng-disabled="!current">
+                  </div>
+                  <div class="form-group">
+                    <label for="name">Maps API endpoint URL</label>
+                    <input type="text" id="maps_url" class="form-control" ng-model="updatedEndpoint.mapsURL" ng-disabled="!current">
+                  </div>
                 </div>
+                <div class="panel-footer">
+                  <button type="button" class="btn btn-default" ng-click="addEndpoint()">New</button>
+                  <div class="pull-right">
+                    <button type="button" class="btn btn-danger" ng-click="removeCurrentEndpoint()" ng-disabled="!current">Remove</button>
+                    <button type="button" class="btn btn-default btn-primary" ng-click="updateCurrentEndpoint(updatedEndpoint)" ng-disabled="!current">Update</button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
-        </nav>
-        <!-- Alert messages -->
-        <div class="container-fluid">
-            <div ng-controller="AlertCtrl">
-                <div ng-repeat="alert in alerts" ng-class="'alert alert-dismissable alert-' + alert.type" role="alert">
-                    <button type="button" class="close" ng-click="closeAlert($index)" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <alert role="alert">{{ alert.msg }}</alert>
-                </div>
+          <!-- SQL console link -->
+          <div class="panel panel-default" ng-controller="sqlSelectorCtrl">
+            <div class="panel-heading" role="tab" id="sqlPanel">
+              <h4 class="panel-title">
+                <a href ng-click="nav.setCurrentView('sql')">SQL Console</a>
+              </h4>
             </div>
-        </div>
-        <!-- Main work area -->
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="panel-group" id="accordion" role="tablist">
-                        <!-- Endpoint manager -->
-                        <div class="panel panel-default" ng-controller="endpointsCtrl">
-                            <!-- Endpoint selector -->
-                            <div class="panel-heading" role="tab" id="endpointPanelHeading">
-                                <h4 class="panel-title">
-                                    <a ng-show="endpoints.length == 0" data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="false" aria-controls="endpointPanelCollapse">Endpoints (start here)</a>
-                                    <a ng-show="endpoints.length > 0" data-toggle="collapse" data-parent="#accordion" href="#endpointPanelCollapse" aria-expanded="false" aria-controls="endpointPanelCollapse">Current endpoint:</a>
-                                    <select ng-show="endpoints.length > 0" ng-options="endpoint as endpoint.name for endpoint in endpoints" ng-model="current" ng-change="setCurrent()"></select>
-                                </h4>
-                            </div>
-                            <!-- New endpoint selector -->
-                            <div id="endpointPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="endpointPanelHeading">
-                                <form name="updatedEndpoint" novalidate>
-                                    <div class="panel-body">
-                                        <div class="form-group">
-                                            <label for="name">Endpoint name (for reference only)</label>
-                                            <input type="text" id="name" class="form-control" ng-model="updatedEndpoint.name" ng-disabled="!current">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="name">Account name</label>
-                                            <input type="text" id="account" class="form-control" ng-model="updatedEndpoint.account" ng-disabled="!current">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="name">API key</label>
-                                            <input type="text" id="api_key" class="form-control" ng-model="updatedEndpoint.apiKey" ng-disabled="!current">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="name">SQL API endpoint URL</label>
-                                            <input type="text" id="sql_url" class="form-control" ng-model="updatedEndpoint.sqlURL" ng-disabled="!current">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="name">Maps API endpoint URL</label>
-                                            <input type="text" id="maps_url" class="form-control" ng-model="updatedEndpoint.mapsURL" ng-disabled="!current">
-                                        </div>
-                                    </div>
-                                    <div class="panel-footer">
-                                        <button type="button" class="btn btn-default" ng-click="addEndpoint()">New</button>
-                                        <div class="pull-right">
-                                            <button type="button" class="btn btn-danger" ng-click="removeCurrentEndpoint()" ng-disabled="!current">Remove</button>
-                                            <button type="button" class="btn btn-default btn-primary" ng-click="updateCurrentEndpoint(updatedEndpoint)" ng-disabled="!current">Update</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <!-- SQL console link -->
-                        <div class="panel panel-default" ng-controller="sqlSelectorCtrl">
-                            <div class="panel-heading" role="tab" id="sqlPanel">
-                                <h4 class="panel-title">
-                                    <a href ng-click="nav.setCurrentView('sql')">
-                                        SQL Console
-                                    </a>
-                                </h4>
-                            </div>
-                        </div>
-                        <!-- Table selector -->
-                        <div class="panel panel-default" ng-controller="tableSelectorCtrl">
-                            <div class="panel-heading" role="tab" id="tablePanelHeading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#tablePanelCollapse" aria-expanded="false" aria-controls="tablePanelCollapse">Tables</a>
-                                    <a href ng-show="tables.length > 0" ng-click="nav.setCurrentView('tables')">({{ tables.length }})</a>
-                                </h4>
-                            </div>
-                            <div id="tablePanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="tablePanelHeading">
-                                <div class="panel-body list-group">
-                                    <a href draggable="true" title="{{ table.relname }}" ng-click="showTable(table)" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.isCurrentView('table') && table == currentTable}">{{ table.relname }}</a>
-                                </div>
-                                <div class="panel-footer">
-                                    <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Function selector -->
-                        <div class="panel panel-default" ng-controller="functionSelectorCtrl">
-                            <div class="panel-heading" role="tab" id="functionPanelHeading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#functionPanelCollapse" aria-expanded="false" aria-controls="functionPanelCollapse">Functions</a>
-                                    <a href ng-show="functions.length > 0" ng-click="nav.setCurrentView('functions')">({{ functions.length }})</a>
-                                </h4>
-                            </div>
-                            <div id="functionPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="functionPanelHeading">
-                                <div class="panel-body list-group">
-                                    <a href title="{{ func.proname }}" ng-click="showFunction(func)" ng-repeat="func in functions" class="list-group-item" ng-class="{active: nav.isCurrentView('function') && func == currentFunction}">{{ func.proname }}</a>
-                                </div>
-                                <div class="panel-footer">
-                                    <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Sequence selector -->
-                        <div class="panel panel-default" ng-controller="sequenceSelectorCtrl">
-                            <div class="panel-heading" role="tab">
-                                <h4 class="panel-title">
-                                    <a href ng-show="sequences.length > 0" ng-click="nav.setCurrentView('sequences')">
-                                        Sequences ({{ sequences.length }})
-                                    </a>
-                                    <a href ng-hide="sequences.length > 0" ng-click="nav.setCurrentView('sequences')">
-                                        Sequences
-                                    </a>
-                                </h4>
-                            </div>
-                        </div>
-                        <!-- Settings -->
-                        <div class="panel panel-default" ng-controller="settingsCtrl">
-                            <div class="panel-heading" role="tab" id="settingsPanelHeading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#settingsPanelCollapse" aria-expanded="false" aria-controls="settingsPanelCollapse">Settings</a>
-                                </h4>
-                            </div>
-                            <div id="settingsPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="settingsPanelHeading">
-                                <form novalidate>
-                                    <div class="panel-body">
-                                        <div class="form-group">
-                                            <label for="rowsPerPage">Default # rows in result tables</label>
-                                            <input type="number" id="rowsPerPage" class="form-control" ng-model="settings.rowsPerPage">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="sqlConsoleRowsPerPage">Default # rows in SQL console table</label>
-                                            <input type="number" id="sqlConsoleRowsPerPage" class="form-control" ng-model="settings.sqlConsoleRowsPerPage">
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" id="showAnalysisTables" ng-model="settings.showAnalysisTables"> Show analysis tables
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" id="showOverviewTables" ng-model="settings.showOverviewTables"> Show overview tables
-                                            </label>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Map -->
-                    <div class="panel panel-default" ng-controller="cartovlCtrl">
-                        <div class="panel-heading" role="tab" id="cartovlPanelHeading">
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" href="#cartovlPanelCollapse" aria-expanded="true" aria-controls="cartovlPanelCollapse">Map preview</a>
-                            </h4>
-                        </div>
-                        <div id="cartovlPanelCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="cartovlPanelHeading">
-                            <div ng-controller="cartovlCtrl">
-                                <div droppable="true" id="map"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Tables view -->
-                <div class="col-md-9" ng-controller="tablesCtrl" ng-show="nav.isCurrentView('tables')">
-                    <cdb-result-table rows="tables" settings="cdbrt"></cdb-result-table>
-                </div>
-                <!-- Single table view -->
-                <div class="col-md-9" ng-controller="tableCtrl" ng-show="nav.isCurrentView('table')">
-                    <div role="tabpanel">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" ng-class="{active: nav.isCurrentView('table.columns')}"><a href aria-controls="columns" role="tab" ng-click="nav.setCurrentView('table.columns')">Columns</a></li>
-                            <li role="presentation" ng-class="{active: nav.isCurrentView('table.records')}"><a href aria-controls="records" role="tab" ng-click="nav.setCurrentView('table.records')">Records</a></li>
-                            <li role="presentation" ng-class="{active: nav.isCurrentView('table.indexes')}"><a href aria-controls="indexes" role="tab" ng-click="nav.setCurrentView('table.indexes')">Indexes</a></li>
-                            <li role="presentation" ng-class="{active: nav.isCurrentView('table.constraints')}"><a href aria-controls="constraints" role="tab" ng-click="nav.setCurrentView('table.constraints')">Constraints</a></li>
-                            <li role="presentation" ng-class="{active: nav.isCurrentView('table.triggers')}"><a href aria-controls="triggers" role="tab" ng-click="nav.setCurrentView('table.triggers')">Triggers</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.columns')">
-                                <cdb-result-table rows="columns" settings="cdbrt4Columns"></cdb-result-table>
-                            </div>
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.indexes')">
-                                <cdb-result-table rows="indexes" settings="cdbrt4Indexes"></cdb-result-table>
-                            </div>
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.records')">
-                                <cdb-result-table rows="records" settings="cdbrt4Records"></cdb-result-table>
-                            </div>
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.constraints')">
-                                <cdb-result-table rows="constraints" settings="cdbrt4Constraints"></cdb-result-table>
-                            </div>
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.triggers')">
-                                <cdb-result-table rows="triggers" settings="cdbrt4Triggers"></cdb-result-table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Sequence view -->
-                <div class="col-md-9" ng-controller="sequenceCtrl" ng-show="nav.isCurrentView('sequences')">
-                    <div role="tabpanel">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" ng-class="{active: nav.isCurrentView('sequences')}"><a href aria-controls="details" role="tab" ng-click="nav.setCurrentView('sequences')">Sequences</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('sequences')">
-                                <cdb-result-table rows="sequences" settings="cdbrt"></cdb-result-table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Functions view -->
-                <div class="col-md-9" ng-controller="functionsCtrl" ng-show="nav.isCurrentView('functions')">
-                    <cdb-result-table rows="functions" settings="cdbrt"></cdb-result-table>
-                </div>
-                <!-- Single function view -->
-                <div class="col-md-9" ng-controller="functionCtrl" ng-show="nav.isCurrentView('function')">
-                    <div class="container-fluid" >
-                        <div class="row">
-                            <div class="panel panel-default">
-                                <div class="panel-body">
-                                    <div ui-codemirror="{ onLoad: codemirrorLoaded }" ui-codemirror-opts="editorOptions" ng-model="functionInEditor.definition"></div>
-                                    <small><i>Use Ctrl-Enter to update function</i></small>
-                                </div>
-                                <div class="panel-footer" style="text-align: right;">
-                                    <button type="button" class="btn btn-primary" ng-disabled="functionInEditor.api.running" ng-click="updateFunction(functionInEditor)">Update function</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="alert alert-info" role="alert" ng-show="functionInEditor.api.running">
-                                <alert role="alert">Please wait...</alert>
-                            </div>
-                            <div class="alert alert-success" role="alert" ng-show="!functionInEditor.api.running && functionInEditor.api.valid">
-                                <alert role="alert">Function updated successfully</alert>
-                            </div>
-                            <div class="alert alert-danger" role="alert" ng-show="!functionInEditor.api.running && functionInEditor.api.errorMessage">
-                                <alert role="alert">{{ functionInEditor.api.errorMessage }}</alert>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- SQL console view -->
-                <div class="col-md-9" ng-controller="sqlCtrl" ng-show="nav.isCurrentView('sql')">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <div class="input-group" ng-class="{'has-error': historyNotFound}">
-                                        <input type="text" ng-model="sql.historyNeedle" class="form-control">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default" ng-disabled="!sql.historyNeedle" ng-click="searchHistory(sql.historyNeedle)" type="button">Search history</button>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="panel-body">
-                                    <div ui-codemirror="{ onLoad: codemirrorLoaded }" ui-codemirror-opts="editorOptions" ng-model="sql.query"></div>
-                                    <small><i>Use Ctrl-Up / Ctrl-Down to browse history, Ctrl-Enter to run query, Ctrl-Space to autocomplete table names</i></small>
-                                </div>
-                                <div class="panel-footer">
-                                    <button type="button" class="btn btn-warning" ng-click="cleanHistory()">Clean history</button>
-                                    <span class="pull-right">
-                                        <button type="button" class="btn btn-default" ng-click="resetConsole()">Reset console</button>
-                                        <button type="button" class="btn btn-primary" ng-disabled="sql.result.running" ng-click="execSQL(sql.query)">Execute query (Ctrl-Enter)</button>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="alert alert-info" role="alert" ng-show="sql.result.running">
-                                <alert role="alert">Please wait...</alert>
-                            </div>
-                            <div class="alert alert-success" role="alert" ng-show="!sql.result.running && sql.result.items">
-                                <alert role="alert">Total rows: {{ sql.result.raw.data.total_rows }}, server runtime: {{ sql.result.raw.data.time }}s</alert>
-                            </div>
-                            <div class="alert alert-danger" role="alert" ng-show="!sql.result.running && sql.result.errorMessage">
-                                <alert role="alert">{{ sql.result.errorMessage }}</alert>
-                            </div>
-                        </div>
-                        <div class="row" ng-show="sql.result.items">
-                            <cdb-result-table rows="sql.result.items" settings="cdbrt"></cdb-result-table>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <!-- Table selector -->
+          <div class="panel panel-default" ng-controller="tableSelectorCtrl">
+            <div class="panel-heading" role="tab" id="tablePanelHeading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#tablePanelCollapse" aria-expanded="false" aria-controls="tablePanelCollapse">Tables</a>
+                <a href ng-show="tables.length > 0" ng-click="nav.setCurrentView('tables')">({{ tables.length }})</a>
+              </h4>
             </div>
+            <div id="tablePanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="tablePanelHeading">
+              <div class="panel-body list-group">
+                <a href draggable="true" title="{{ table.relname }}" ng-click="showTable(table)" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.isCurrentView('table') && table == currentTable}">{{ table.relname }}</a>
+              </div>
+              <div class="panel-footer">
+                <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
+              </div>
+            </div>
+          </div>
+          <!-- Function selector -->
+          <div class="panel panel-default" ng-controller="functionSelectorCtrl">
+            <div class="panel-heading" role="tab" id="functionPanelHeading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#functionPanelCollapse" aria-expanded="false" aria-controls="functionPanelCollapse">Functions</a>
+                <a href ng-show="functions.length > 0" ng-click="nav.setCurrentView('functions')">({{ functions.length }})</a>
+              </h4>
+            </div>
+            <div id="functionPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="functionPanelHeading">
+              <div class="panel-body list-group">
+                <a href title="{{ func.proname }}" ng-click="showFunction(func)" ng-repeat="func in functions" class="list-group-item" ng-class="{active: nav.isCurrentView('function') && func == currentFunction}">{{ func.proname }}</a>
+              </div>
+              <div class="panel-footer">
+                <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
+              </div>
+            </div>
+          </div>
+          <!-- Sequence selector -->
+          <div class="panel panel-default" ng-controller="sequenceSelectorCtrl">
+            <div class="panel-heading" role="tab">
+              <h4 class="panel-title">
+                <a href ng-show="sequences.length > 0" ng-click="nav.setCurrentView('sequences')">Sequences ({{ sequences.length }})</a>
+                <a href ng-hide="sequences.length > 0" ng-click="nav.setCurrentView('sequences')">Sequences</a>
+              </h4>
+            </div>
+          </div>
+          <!-- Settings -->
+          <div class="panel panel-default" ng-controller="settingsCtrl">
+            <div class="panel-heading" role="tab" id="settingsPanelHeading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#settingsPanelCollapse" aria-expanded="false" aria-controls="settingsPanelCollapse">Settings</a>
+              </h4>
+            </div>
+            <div id="settingsPanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="settingsPanelHeading">
+              <form novalidate>
+                <div class="panel-body">
+                  <div class="form-group">
+                    <label for="rowsPerPage">Default # rows in result tables</label>
+                    <input type="number" id="rowsPerPage" class="form-control" ng-model="settings.rowsPerPage">
+                  </div>
+                  <div class="form-group">
+                    <label for="sqlConsoleRowsPerPage">Default # rows in SQL console table</label>
+                    <input type="number" id="sqlConsoleRowsPerPage" class="form-control" ng-model="settings.sqlConsoleRowsPerPage">
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" id="showAnalysisTables" ng-model="settings.showAnalysisTables"> Show analysis tables
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" id="showOverviewTables" ng-model="settings.showOverviewTables"> Show overview tables
+                    </label>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-        <script src="vendor/ngStorage.min.js"></script>
-        <script src="vendor/codemirror/codemirror.js"></script>
-        <script src="vendor/codemirror/sql.js"></script>
-        <script src="vendor/codemirror/show-hint.js"></script>
-        <script src="vendor/codemirror/sql-hint.js"></script>
-        <script src="vendor/codemirror/javascript.js"></script>
-        <script src="vendor/codemirror/ui-codemirror.js"></script>
-        <script src="vendor/angularutils/dirPagination.js"></script>
-        <script>
-            var cdbmanager = angular.module("cdbmanager", ["ngStorage", "api", "ui.codemirror", "angularUtils.directives.dirPagination"]);
-            cdbmanager.config(function (paginationTemplateProvider) {
-                paginationTemplateProvider.setPath('vendor/angularutils/dirPagination.tpl.html');
-            });
-        </script>
-        <script src="settings.js"></script>
-        <script src="ui/table.js"></script>
-        <script src="nav.js"></script>
-        <script src="alerts.js"></script>
-        <script src="map.js"></script>
-        <script src="endpoints.js"></script>
-        <script src="api.js"></script>
-        <script src="records.js"></script>
-        <script src="tables.js"></script>
-        <script src="constraints.js"></script>
-        <script src="sequences.js"></script>
-        <script src="triggers.js"></script>
-        <script src="functions.js"></script>
-        <script src="columns.js"></script>
-        <script src="indexes.js"></script>
-        <script src="sql.js"></script>
-    </body>
+        <!-- Map -->
+        <div class="panel panel-default" ng-controller="cartovlCtrl">
+          <div class="panel-heading" role="tab" id="cartovlPanelHeading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" href="#cartovlPanelCollapse" aria-expanded="true" aria-controls="cartovlPanelCollapse">Map preview</a>
+            </h4>
+          </div>
+          <div id="cartovlPanelCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="cartovlPanelHeading">
+            <div ng-controller="cartovlCtrl">
+              <div droppable="true" id="map"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Tables view -->
+      <div class="col-md-9" ng-controller="tablesCtrl" ng-show="nav.isCurrentView('tables')">
+        <cdb-result-table rows="tables" settings="cdbrt"></cdb-result-table>
+      </div>
+      <!-- Single table view -->
+      <div class="col-md-9" ng-controller="tableCtrl" ng-show="nav.isCurrentView('table')">
+        <div role="tabpanel">
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" ng-class="{active: nav.isCurrentView('table.columns')}"><a href aria-controls="columns" role="tab" ng-click="nav.setCurrentView('table.columns')">Columns</a></li>
+            <li role="presentation" ng-class="{active: nav.isCurrentView('table.records')}"><a href aria-controls="records" role="tab" ng-click="nav.setCurrentView('table.records')">Records</a></li>
+            <li role="presentation" ng-class="{active: nav.isCurrentView('table.indexes')}"><a href aria-controls="indexes" role="tab" ng-click="nav.setCurrentView('table.indexes')">Indexes</a></li>
+            <li role="presentation" ng-class="{active: nav.isCurrentView('table.constraints')}"><a href aria-controls="constraints" role="tab" ng-click="nav.setCurrentView('table.constraints')">Constraints</a></li>
+            <li role="presentation" ng-class="{active: nav.isCurrentView('table.triggers')}"><a href aria-controls="triggers" role="tab" ng-click="nav.setCurrentView('table.triggers')">Triggers</a></li>
+          </ul>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.columns')">
+              <cdb-result-table rows="columns" settings="cdbrt4Columns"></cdb-result-table>
+            </div>
+            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.indexes')">
+              <cdb-result-table rows="indexes" settings="cdbrt4Indexes"></cdb-result-table>
+            </div>
+            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.records')">
+              <cdb-result-table rows="records" settings="cdbrt4Records"></cdb-result-table>
+            </div>
+            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.constraints')">
+              <cdb-result-table rows="constraints" settings="cdbrt4Constraints"></cdb-result-table>
+            </div>
+            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.triggers')">
+              <cdb-result-table rows="triggers" settings="cdbrt4Triggers"></cdb-result-table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Sequence view -->
+      <div class="col-md-9" ng-controller="sequenceCtrl" ng-show="nav.isCurrentView('sequences')">
+        <div role="tabpanel">
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" ng-class="{active: nav.isCurrentView('sequences')}"><a href aria-controls="details" role="tab" ng-click="nav.setCurrentView('sequences')">Sequences</a></li>
+          </ul>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('sequences')">
+              <cdb-result-table rows="sequences" settings="cdbrt"></cdb-result-table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Functions view -->
+      <div class="col-md-9" ng-controller="functionsCtrl" ng-show="nav.isCurrentView('functions')">
+        <cdb-result-table rows="functions" settings="cdbrt"></cdb-result-table>
+      </div>
+      <!-- Single function view -->
+      <div class="col-md-9" ng-controller="functionCtrl" ng-show="nav.isCurrentView('function')">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div ui-codemirror="{ onLoad: codemirrorLoaded }" ui-codemirror-opts="editorOptions" ng-model="functionInEditor.definition"></div>
+                <small><i>Use Ctrl-Enter to update function</i></small>
+              </div>
+              <div class="panel-footer" style="text-align: right;">
+                <button type="button" class="btn btn-primary" ng-disabled="functionInEditor.api.running" ng-click="updateFunction(functionInEditor)">Update function</button>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="alert alert-info" role="alert" ng-show="functionInEditor.api.running">
+              <alert role="alert">Please wait...</alert>
+            </div>
+            <div class="alert alert-success" role="alert" ng-show="!functionInEditor.api.running && functionInEditor.api.valid">
+              <alert role="alert">Function updated successfully</alert>
+            </div>
+            <div class="alert alert-danger" role="alert" ng-show="!functionInEditor.api.running && functionInEditor.api.errorMessage">
+              <alert role="alert">{{ functionInEditor.api.errorMessage }}</alert>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- SQL console view -->
+      <div class="col-md-9" ng-controller="sqlCtrl" ng-show="nav.isCurrentView('sql')">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <div class="input-group" ng-class="{'has-error': historyNotFound}">
+                  <input type="text" ng-model="sql.historyNeedle" class="form-control">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" ng-disabled="!sql.historyNeedle" ng-click="searchHistory(sql.historyNeedle)" type="button">Search history</button>
+                  </span>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div ui-codemirror="{ onLoad: codemirrorLoaded }" ui-codemirror-opts="editorOptions" ng-model="sql.query"></div>
+                <small><i>Use Ctrl-Up / Ctrl-Down to browse history, Ctrl-Enter to run query, Ctrl-Space to autocomplete table names</i></small>
+              </div>
+              <div class="panel-footer">
+                <button type="button" class="btn btn-warning" ng-click="cleanHistory()">Clean history</button>
+                <span class="pull-right">
+                  <button type="button" class="btn btn-default" ng-click="resetConsole()">Reset console</button>
+                  <button type="button" class="btn btn-primary" ng-disabled="sql.result.running" ng-click="execSQL(sql.query)">Execute query (Ctrl-Enter)</button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="alert alert-info" role="alert" ng-show="sql.result.running">
+              <alert role="alert">Please wait...</alert>
+            </div>
+            <div class="alert alert-success" role="alert" ng-show="!sql.result.running && sql.result.items">
+              <alert role="alert">Total rows: {{ sql.result.raw.data.total_rows }}, server runtime: {{ sql.result.raw.data.time }}s</alert>
+            </div>
+            <div class="alert alert-danger" role="alert" ng-show="!sql.result.running && sql.result.errorMessage">
+              <alert role="alert">{{ sql.result.errorMessage }}</alert>
+            </div>
+          </div>
+          <div class="row" ng-show="sql.result.items">
+            <cdb-result-table rows="sql.result.items" settings="cdbrt"></cdb-result-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="vendor/ngStorage.min.js"></script>
+  <script src="vendor/codemirror/codemirror.js"></script>
+  <script src="vendor/codemirror/sql.js"></script>
+  <script src="vendor/codemirror/show-hint.js"></script>
+  <script src="vendor/codemirror/sql-hint.js"></script>
+  <script src="vendor/codemirror/javascript.js"></script>
+  <script src="vendor/codemirror/ui-codemirror.js"></script>
+  <script src="vendor/angularutils/dirPagination.js"></script>
+  <script>
+    let cdbmanager = angular.module("cdbmanager", ["ngStorage", "api", "ui.codemirror", "angularUtils.directives.dirPagination"]);
+    cdbmanager.config(function(paginationTemplateProvider) {
+      paginationTemplateProvider.setPath('vendor/angularutils/dirPagination.tpl.html');
+    });
+  </script>
+  <script src="settings.js"></script>
+  <script src="ui/table.js"></script>
+  <script src="nav.js"></script>
+  <script src="alerts.js"></script>
+  <script src="map.js"></script>
+  <script src="endpoints.js"></script>
+  <script src="api.js"></script>
+  <script src="records.js"></script>
+  <script src="tables.js"></script>
+  <script src="constraints.js"></script>
+  <script src="sequences.js"></script>
+  <script src="triggers.js"></script>
+  <script src="functions.js"></script>
+  <script src="columns.js"></script>
+  <script src="indexes.js"></script>
+  <script src="sql.js"></script>
+</body>
 </html>
