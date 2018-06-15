@@ -14,11 +14,11 @@
             </thead>
             <tbody>
                 <tr ng-if="settings.async" dir-paginate="row in rows | itemsPerPage: settings.rowsPerPage" total-items="rows[0].total_rows" pagination-id="settings.id">
-                    <td ng-repeat="(name, value) in row" ng-if="itemIsData(name, value)">{{ value }}</td>
+                    <td ng-repeat="(name, value) in row" ng-if="itemIsData(name, value)" draggable="true">{{ value }}</td>
                     <td ng-if="settings.actions"><a href ng-repeat="action in settings.actions" ng-click="action.onClick(row)" class="btn btn-default" role="button">{{ action.text }}</a></td>
                 </tr>
                 <tr ng-if="!settings.async" dir-paginate="row in rows | itemsPerPage: settings.rowsPerPage" pagination-id="settings.id">
-                    <td ng-repeat="(name, value) in row" ng-if="itemIsData(name, value)">{{ value }}</td>
+                    <td ng-repeat="(name, value) in row" ng-if="itemIsData(name, value)" draggable="true">{{ value }}</td>
                     <td ng-if="settings.actions"><a href ng-repeat="action in settings.actions" ng-click="action.onClick(row)" class="btn btn-default" role="button">{{ action.text }}</a></td>
                 </tr>
             </tbody>

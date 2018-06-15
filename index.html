@@ -118,7 +118,7 @@
                             </div>
                             <div id="tablePanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="tablePanelHeading">
                                 <div class="panel-body list-group">
-                                    <a href title="{{ table.relname }}" ng-click="showTable(table)" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.isCurrentView('table') && table == currentTable}">{{ table.relname }}</a>
+                                    <a href draggable="true" title="{{ table.relname }}" ng-click="showTable(table)" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.isCurrentView('table') && table == currentTable}">{{ table.relname }}</a>
                                 </div>
                                 <div class="panel-footer">
                                     <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>
@@ -197,7 +197,7 @@
                         </div>
                         <div id="cartovlPanelCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="cartovlPanelHeading">
                             <div ng-controller="cartovlCtrl">
-                                <div id="map"></div>
+                                <div droppable="true" id="map"></div>
                             </div>
                         </div>
                     </div>
