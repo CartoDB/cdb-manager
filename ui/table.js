@@ -20,8 +20,16 @@ cdbmanager.directive('cdbResultTable', function () {
         replace: true,
         templateUrl: "ui/table.html",
         link: function link(scope) {
+            scope.itemIsId = function (name, value) {
+                return (name == 'cartodb_id');
+            };
+
+            scope.itemIsGeom = function (name, value) {
+                return (name.startsWith('the_geom'));
+            };
+
             scope.itemIsData = function (name, value) {
-                return (name != 'api' && !name.startsWith('_') && (!scope.settings.skip || scope.settings.skip.indexOf(name) < 0) && typeof(value) != 'function');
+                return (!name.startsWith('the_geom') && name != 'cartodb_id' && name != 'api' && !name.startsWith('_') && (!scope.settings.skip || scope.settings.skip.indexOf(name) < 0) && typeof(value) != 'function');
             };
 
             scope.pageChanged = function (newPage) {

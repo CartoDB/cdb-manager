@@ -109,35 +109,35 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
 //   running, valid and raw from sendRequest
 //   items: list of objects returned by the database on success
 //   errorMessage: error message on error
-api.factory('MapsClient', ["$http", "endpoints", "settings", function ($http, endpoints, settings) {
-    return function () {
-        var self = this;
-
-        this.items = null;
-
-        this.get = function () {
-            var currentEndpoint = endpoints.current;
-
-            if (currentEndpoint && currentEndpoint.mapsURL) {
-                var req = {
-                    method: 'GET',
-                    url: currentEndpoint.mapsURL + "/named",
-                    params: {
-                        api_key: currentEndpoint.apiKey
-                    }
-                };
-
-                sendRequest(this, req, $http, function (result) {
-                    self.items = [];
-                    for (var i = 0; i < result.data.template_ids.length; i++) {
-                        if (settings.showBuilderNamedMaps || !result.data.template_ids[i].startsWith("tpl_")) {
-                            self.items.push({name: result.data.template_ids[i]});
-                        }
-                    }
-                }, function () {
-                    self.items = null;
-                });
-            }
-        };
-    }
-}]);
+// api.factory('MapsClient', ["$http", "endpoints", "settings", function ($http, endpoints, settings) {
+//     return function () {
+//         var self = this;
+//
+//         this.items = null;
+//
+//         this.get = function () {
+//             var currentEndpoint = endpoints.current;
+//
+//             if (currentEndpoint && currentEndpoint.mapsURL) {
+//                 var req = {
+//                     method: 'GET',
+//                     url: currentEndpoint.mapsURL + "/named",
+//                     params: {
+//                         api_key: currentEndpoint.apiKey
+//                     }
+//                 };
+//
+//                 sendRequest(this, req, $http, function (result) {
+//                     self.items = [];
+//                     for (var i = 0; i < result.data.template_ids.length; i++) {
+//                         if (settings.showBuilderNamedMaps || !result.data.template_ids[i].startsWith("tpl_")) {
+//                             self.items.push({name: result.data.template_ids[i]});
+//                         }
+//                     }
+//                 }, function () {
+//                     self.items = null;
+//                 });
+//             }
+//         };
+//     }
+// }]);

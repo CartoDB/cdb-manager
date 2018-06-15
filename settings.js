@@ -13,7 +13,6 @@ cdbmanager.service('settings', ["$localStorage", function ($localStorage) {
     this.initSetting("rowsPerPage", 10);
     this.initSetting("sqlConsoleRowsPerPage", 10);
     this.initSetting("showAnalysisTables", false);
-    this.initSetting("showBuilderNamedMaps", false);
     this.initSetting("showOverviewTables", false);
 }]);
 
