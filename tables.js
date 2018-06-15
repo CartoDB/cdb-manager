@@ -305,7 +305,7 @@ cdbmanager.controller('tableCtrl', ["$scope", "nav", "tables", "columns", "index
     rowsPerPage: settings.rowsPerPage,
     async: function (limit, offset) {
       if ($scope.currentTable) {
-        $scope.currentTable.getRecords(limit, offset);
+        $scope.currentTable.getRecords(limit, (offset - limit));
       }
     }
   };
