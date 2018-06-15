@@ -131,7 +131,6 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "map", "na
         var i = 0;
         var table = null;
 
-        console.log("tables", tables.api.items);
         if (tables.api.items) {
             for (i = 0; i < tables.api.items.length; i++) {
                 table = tables.api.items[i];
