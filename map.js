@@ -51,25 +51,29 @@ cdbmanager.service("map", ["$timeout", function ($timeout) {
     };
 
     this.update = function (query) {
-        this.reset();
-        var source = new carto.source.SQL(query);
-        var viz = new carto.Viz();
-        var layer = new carto.Layer("layer", source, viz);
-        layer.addTo(self.map);
+        if (self.map._container.offsetParent) {
+            this.reset();
+            var source = new carto.source.SQL(query);
+            var viz = new carto.Viz();
+            var layer = new carto.Layer("layer", source, viz);
+            layer.addTo(self.map);
+        }
     };
 
     this.showGeometry = function (geometry) {
-      this.reset();
-      if (geometry.indexOf("10E6") >= 0 || geometry.indexOf("E610") >= 0) {
-          var source = new carto.source.SQL("SELECT 1 as cartodb_id, '" + geometry + "'::geometry AS the_geom, st_transform('" + geometry + "'::geometry, 3857) as the_geom_webmercator");
-      } else if (geometry.indexOf("0F11") >= 0 || geometry.indexOf("110F") >= 0) {
-          var source = new carto.source.SQL("SELECT 1 as cartodb_id, '" + geometry + "'::geometry AS the_geom, st_transform('" + geometry + "'::geometry, 3857) as the_geom_webmercator");
-      } else {
-          var source = new carto.source.SQL('SELECT * from "' + geometry + '"');
-      }
-      var viz = new carto.Viz();
-      var layer = new carto.Layer("layer", source, viz);
-      layer.addTo(self.map);
+        if (self.map._container.offsetParent) {
+            this.reset();
+            if (geometry.indexOf("10E6") >= 0 || geometry.indexOf("E610") >= 0) {
+                var source = new carto.source.SQL("SELECT 1 as cartodb_id, '" + geometry + "'::geometry AS the_geom, st_transform('" + geometry + "'::geometry, 3857) as the_geom_webmercator");
+            } else if (geometry.indexOf("0F11") >= 0 || geometry.indexOf("110F") >= 0) {
+                var source = new carto.source.SQL("SELECT 1 as cartodb_id, '" + geometry + "'::geometry AS the_geom, st_transform('" + geometry + "'::geometry, 3857) as the_geom_webmercator");
+            } else {
+                var source = new carto.source.SQL('SELECT * from "' + geometry + '"');
+            }
+            var viz = new carto.Viz();
+            var layer = new carto.Layer("layer", source, viz);
+            layer.addTo(self.map);
+        }
     }
 }]);
 
