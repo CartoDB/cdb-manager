@@ -66,7 +66,7 @@ cdbmanager.service("map", ["$timeout", function ($timeout) {
             if (geometry.indexOf("10E6") >= 0 || geometry.indexOf("E610") >= 0) {
                 var source = new carto.source.SQL("SELECT 1 as cartodb_id, '" + geometry + "'::geometry AS the_geom, st_transform('" + geometry + "'::geometry, 3857) as the_geom_webmercator");
             } else if (geometry.indexOf("0F11") >= 0 || geometry.indexOf("110F") >= 0) {
-                var source = new carto.source.SQL("SELECT 1 as cartodb_id, '" + geometry + "'::geometry AS the_geom, st_transform('" + geometry + "'::geometry, 3857) as the_geom_webmercator");
+                var source = new carto.source.SQL("SELECT 1 as cartodb_id, '" + geometry + "'::geometry AS the_geom_webmercator, st_transform('" + geometry + "'::geometry, 4326) as the_geom");
             } else {
                 var source = new carto.source.SQL('SELECT * from "' + geometry + '"');
             }
