@@ -10,6 +10,8 @@
                     <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && settings.orderBy && itemIsId(name, value)"><a href ng-click="settings.orderBy(name, settings.rowsPerPage)">{{ name }}</a></th>
                     <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && settings.orderBy && itemIsGeom(name, value)"><a href ng-click="settings.orderBy(name, settings.rowsPerPage)">{{ name }}</a></th>
                     <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && settings.orderBy && itemIsData(name, value)"><a href ng-click="settings.orderBy(name, settings.rowsPerPage)">{{ name }}</a></th>
+                    <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && !settings.orderBy && itemIsId(name, value)">{{ name }}</th>
+                    <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && !settings.orderBy && itemIsGeom(name, value)">{{ name }}</th>
                     <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && !settings.orderBy && itemIsData(name, value)">{{ name }}</th>
                     <th ng-if="settings.actions">Actions</th>
                 </tr>
