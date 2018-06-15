@@ -146,8 +146,11 @@ cdbmanager.controller('functionCtrl', ["$scope", "nav", "functions", "$timeout",
         indentWithTabs: false,
         smartIndent: true,
         lineNumbers: true,
-        matchBrackets : true,
-        autofocus: true
+        matchBrackets: true,
+        autofocus: true,
+        extraKeys: {
+            "Ctrl-Space": "autocomplete"
+        }
     };
 
     $scope.updateFunction = function (func) {
