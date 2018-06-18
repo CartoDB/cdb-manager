@@ -46,6 +46,15 @@ cdbmanager.service('endpoints', ["$localStorage", function ($localStorage) {
   };
 }]);
 
+cdbmanager.controller('titleCtrl', ["$scope", "endpoints", function ($scope, endpoints) {
+  // keep the endpoint list in the title always updated
+  $scope.$watch(function () {
+    return endpoints.current;
+  }, function (currentEndpoint) {
+    $scope.currentEndpoint = currentEndpoint;
+  });
+}]);
+
 cdbmanager.controller('endpointsCtrl', ["$scope", "endpoints", "alerts", function ($scope, endpoints, alerts) {
   $scope.updatedEndpoint = {};
 
