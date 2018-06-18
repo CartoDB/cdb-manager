@@ -29,7 +29,7 @@ cdbmanager.directive('cdbResultTable', function () {
       };
 
       scope.itemIsData = function (name, value) {
-        return (!name.startsWith('the_geom') && name != 'cartodb_id' && name != 'api' && !name.startsWith('_') && (!scope.settings.skip || scope.settings.skip.indexOf(name) < 0) && typeof(value) != 'function');
+        return (name != "total_rows" && !name.startsWith('the_geom') && name != 'cartodb_id' && name != 'api' && !name.startsWith('_') && (!scope.settings.skip || scope.settings.skip.indexOf(name) < 0) && typeof(value) != 'function');
       };
 
       scope.pageChanged = function (newPage) {
