@@ -64,12 +64,12 @@ cdbmanager.service("map", ["$timeout", function ($timeout) {
     if (self.map._container.offsetParent) {
       self.reset();
       let source = null;
-      if (geometry.indexOf("10E6") >= 0 || geometry.indexOf("E610") >= 0) {
+      if (geometry.slice(10, 14) == "10E6" || geometry.slice(10, 14) == "E610") {
         source = new carto.source.SQL("select 1 as cartodb_id, the_geom, st_transform(the_geom, 3857) as the_geom_webmercator from (select '" + geometry + "'::geometry AS the_geom) c");
-      } else if (geometry.indexOf("0F11") >= 0 || geometry.indexOf("110F") >= 0) {
+      } else if (geometry.slice(10, 14) == "0F11" || geometry.slice(10, 14) == "110F") {
         source = new carto.source.SQL("select 1 as cartodb_id, the_geom_webmercator, st_transform(the_geom_webmercator, 4326) as the_geom from (select '" + geometry + "'::geometry AS the_geom_webmercator) c");
       } else {
-        source = new carto.source.SQL('SELECT * from "' + geometry + '"');
+        source = new carto.source.SQL('SELECT cartodb_id, the_geom, the_geom_webmercator from "' + geometry + '"');  // "geometry" is most likely a table name ;-)
       }
       let viz = new carto.Viz();
       let layer = new carto.Layer("layer", source, viz);
