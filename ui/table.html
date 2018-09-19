@@ -5,29 +5,31 @@
     <span ng-if="settings.async" class="pull-right">Total items: {{ rows[0].total_rows }}</span>
   </div>
   <div style="overflow: auto;">
-    <table class="table table-striped table-bordered">
+    <table class="table table-bordered" ng-class="{'table-striped': !('QUERY PLAN' in rows[0])}">
       <thead>
         <tr>
           <th ng-if="settings.headers" ng-repeat="header in settings.headers"><a href ng-click="settings.orderBy(header.name, settings.rowsPerPage)">{{ header.title }}</a></th>
-          <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && settings.orderBy && itemIsId(name, value)"><a href ng-click="settings.orderBy(name, settings.rowsPerPage)">{{ name }}</a></th>
-          <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && settings.orderBy && itemIsGeom(name, value)"><a href ng-click="settings.orderBy(name, settings.rowsPerPage)">{{ name }}</a></th>
+          <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && settings.orderBy && itemIsId(name)"><a href ng-click="settings.orderBy(name, settings.rowsPerPage)">{{ name }}</a></th>
+          <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && settings.orderBy && itemIsGeom(name)"><a href ng-click="settings.orderBy(name, settings.rowsPerPage)">{{ name }}</a></th>
           <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && settings.orderBy && itemIsData(name, value)"><a href ng-click="settings.orderBy(name, settings.rowsPerPage)">{{ name }}</a></th>
-          <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && !settings.orderBy && itemIsId(name, value)">{{ name }}</th>
-          <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && !settings.orderBy && itemIsGeom(name, value)">{{ name }}</th>
+          <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && !settings.orderBy && itemIsId(name)">{{ name }}</th>
+          <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && !settings.orderBy && itemIsGeom(name)">{{ name }}</th>
           <th ng-repeat="(name, value) in rows[0]" ng-if="!settings.headers && !settings.orderBy && itemIsData(name, value)">{{ name }}</th>
           <th ng-if="settings.actions">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr ng-if="settings.async" dir-paginate="row in rows | itemsPerPage: settings.rowsPerPage" total-items="rows[0].total_rows" pagination-id="settings.id">
-          <td ng-repeat="(name, value) in row" ng-if="itemIsId(name, value)">{{ value }}</td>
-          <td ng-repeat="(name, value) in row" ng-if="itemIsGeom(name, value)" class="geometry" draggable="true">{{ value }}</td>
+          <td ng-repeat="(name, value) in row" ng-if="itemIsId(name)">{{ value }}</td>
+          <td ng-repeat="(name, value) in row" ng-if="itemIsGeom(name)" class="geometry" draggable="true">{{ value }}</td>
+          <td ng-repeat="(name, value) in row" ng-if="itemIsQueryPlan(name)" style="font-family: monospace"><pre>{{ value }}</pre></td>
           <td ng-repeat="(name, value) in row" ng-if="itemIsData(name, value)">{{ value }}</td>
           <td ng-if="settings.actions"><a href ng-repeat="action in settings.actions" ng-click="action.onClick(row)" class="btn btn-default" role="button">{{ action.text }}</a></td>
         </tr>
         <tr ng-if="!settings.async" dir-paginate="row in rows | itemsPerPage: settings.rowsPerPage" pagination-id="settings.id">
-          <td ng-repeat="(name, value) in row" ng-if="itemIsId(name, value)">{{ value }}</td>
-          <td ng-repeat="(name, value) in row" ng-if="itemIsGeom(name, value)" class="geometry" draggable="true">{{ value }}</td>
+          <td ng-repeat="(name, value) in row" ng-if="itemIsId(name)">{{ value }}</td>
+          <td ng-repeat="(name, value) in row" ng-if="itemIsGeom(name)" class="geometry" draggable="true">{{ value }}</td>
+          <td ng-repeat="(name, value) in row" ng-if="itemIsQueryPlan(name)" style="font-family: monospace"><pre>{{ value }}</pre></td>
           <td ng-repeat="(name, value) in row" ng-if="itemIsData(name, value)">{{ value }}</td>
           <td ng-if="settings.actions"><a href ng-repeat="action in settings.actions" ng-click="action.onClick(row)" class="btn btn-default" role="button">{{ action.text }}</a></td>
         </tr>
