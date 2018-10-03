@@ -1,0 +1,12 @@
+<div class="panel panel-default" ng-show="rows">
+  <div class="panel-heading">QUERY PLAN</div>
+  <div style="overflow: auto;">
+    <table class="table">
+      <tbody>
+        <tr ng-repeat="row in rows">
+          <td ng-repeat="(name, value) in row" style="font-family: monospace; border-top:0; padding: 4px 0px 0 10px"><pre>{{ value }}</pre></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

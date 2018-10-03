@@ -15,6 +15,7 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "map", "na
   this.historyBuffer = null; // Temporary buffer for the current input when browsing the history.
 
   $scope.sql = {};
+  $scope.isQueryPlan = false;
   $scope.nav = nav;
   $scope.running = this.api.running;
   $scope.historyNotFound = false;
@@ -110,6 +111,11 @@ cdbmanager.controller('sqlCtrl', ["$scope", "SQLClient", "endpoints", "map", "na
     return self.api.raw;
   }, function () {
     $scope.sql.result = self.api;
+    if (self.api.items && self.api.items.length > 0 && self.api.items[0].hasOwnProperty("QUERY PLAN")) {
+      $scope.isQueryPlan = true;
+    } else {
+      $scope.isQueryPlan = false;
+    }
   });
 
   // codemirror must be refreshed when not hidden anymore, otherwise the text won't show until you click on the editor

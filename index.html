@@ -323,7 +323,8 @@
             </div>
           </div>
           <div class="row" ng-show="sql.result.items">
-            <cdb-result-table rows="sql.result.items" settings="cdbrt"></cdb-result-table>
+            <cdb-result-table ng-if="!isQueryPlan" rows="sql.result.items" settings="cdbrt"></cdb-result-table>
+            <query-plan ng-if="isQueryPlan" rows="sql.result.items" settings="cdbrt"></query-plan>
           </div>
         </div>
       </div>
@@ -344,7 +345,7 @@
     });
   </script>
   <script src="settings.js"></script>
-  <script src="ui/table.js"></script>
+  <script src="ui/results.js"></script>
   <script src="nav.js"></script>
   <script src="alerts.js"></script>
   <script src="map.js"></script>

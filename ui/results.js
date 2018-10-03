@@ -1,6 +1,6 @@
 // Paginated table
 // Use like: <cdb-result-table rows="data" settings="cdbrt"></cdb-result-table> where:
-// data is the array with the rows to display (columns starting with _ will not be displayed)
+// data is the array with the rows to display
 // cdbrt is an object with the settings for the table.
 // Settings are:
 //   id for the pagination widget
@@ -28,12 +28,8 @@ cdbmanager.directive('cdbResultTable', function () {
         return (name.startsWith('the_geom'));
       };
 
-      scope.itemIsQueryPlan = function (name) {
-        return (name.startsWith('QUERY PLAN'));
-      };
-
       scope.itemIsData = function (name, value) {
-        return (name != "total_rows" && !scope.itemIsGeom(name) && !scope.itemIsId(name) && !scope.itemIsQueryPlan(name) && name != 'api' && !name.startsWith('_') && (!scope.settings.skip || scope.settings.skip.indexOf(name) < 0) && typeof(value) != 'function');
+        return (name != "total_rows" && !scope.itemIsGeom(name) && !scope.itemIsId(name) && name != 'api' && (!scope.settings.skip || scope.settings.skip.indexOf(name) < 0) && typeof(value) != 'function');
       };
 
       scope.pageChanged = function (newPage) {
@@ -42,5 +38,20 @@ cdbmanager.directive('cdbResultTable', function () {
         }
       };
     }
+  }
+});
+
+// Display PostgreSQL's query plans
+// Use like: <query-plan rows="data"></query-plan> where:
+// data is the array with the rows to display
+cdbmanager.directive('queryPlan', function () {
+  return {
+    restrict: "E",
+    transclude: true,
+    scope: {
+      rows: "=rows"
+    },
+    replace: true,
+    templateUrl: "ui/query_plan.html"
   }
 });
