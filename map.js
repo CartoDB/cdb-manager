@@ -34,14 +34,18 @@ cdbmanager.directive('droppable', function () {
 cdbmanager.service("map", ["$timeout", function ($timeout) {
   let self = this;
 
-  this.reset = function () {
-    self.map = new mapboxgl.Map({
-      container: 'map',
-      style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
-    });
+  this.reloading = true;
+
+  this.reset = function (force) {
+    if (this.reloading || force) {
+      self.map = new mapboxgl.Map({
+        container: 'map',
+        style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
+      });
+    }
   };
 
-  this.reset();
+  this.reset(true);
 
   this.setAuth = function (user, apiKey) {
     carto.setDefaultAuth({
@@ -55,7 +59,7 @@ cdbmanager.service("map", ["$timeout", function ($timeout) {
       self.reset();
       let source = new carto.source.SQL(query);
       let viz = new carto.Viz();
-      let layer = new carto.Layer("layer", source, viz);
+      let layer = new carto.Layer("layer_" + Math.floor((Math.random() * 1000000000) + 1), source, viz);
       layer.addTo(self.map);
     }
   };
@@ -72,13 +76,25 @@ cdbmanager.service("map", ["$timeout", function ($timeout) {
         source = new carto.source.SQL('SELECT cartodb_id, the_geom, the_geom_webmercator from "' + geometry + '"');  // "geometry" is most likely a table name ;-)
       }
       let viz = new carto.Viz();
-      let layer = new carto.Layer("layer", source, viz);
+      let layer = new carto.Layer("layer_" + Math.floor((Math.random() * 1000000000) + 1), source, viz);
       layer.addTo(self.map);
     }
   }
 }]);
 
 cdbmanager.controller('cartovlCtrl', ["$scope", "map", "endpoints", function ($scope, map, endpoints) {
+  $scope.reloading = map.reloading;
+
+  $scope.toggleReloading = function () {
+    map.reloading = !(map.reloading);
+  };
+
+  $scope.$watch(function () {
+    return map.reloading;
+  }, function (currentTable) {
+    $scope.reloading = map.reloading;
+  });
+
   // keep the endpoint list in the scope always updated
   $scope.$watch(function () {
     return endpoints.current;

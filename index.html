@@ -199,6 +199,10 @@
           <div class="panel-heading" role="tab" id="cartovlPanelHeading">
             <h4 class="panel-title">
               <a data-toggle="collapse" title="Drag&drop tables or geometries you want to preview" href="#cartovlPanelCollapse" aria-expanded="true" aria-controls="cartovlPanelCollapse">Map preview</a>
+              <span class="pull-right">
+                <a ng-if="!reloading" role="button" title="Click to enable map reloading" style="text-decoration: none" class="text-muted" ng-click="toggleReloading()">&circlearrowright;</a>
+                <a ng-if="reloading" role="button" title="Click to disable map reloading" style="text-decoration: none; color: black" ng-click="toggleReloading()">&circlearrowright;</a>
+              </span>
             </h4>
           </div>
           <div id="cartovlPanelCollapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="cartovlPanelHeading">
