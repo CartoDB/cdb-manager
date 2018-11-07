@@ -90,6 +90,6 @@ cdbmanager.controller('cartovlCtrl', ["$scope", "map", "endpoints", function ($s
     e.preventDefault();
     e.stopPropagation();
     let dataText = e.dataTransfer.getData('text');
-    map.showGeometry(dataText);
+    map.showGeometry(dataText.trim());
   };
 }]);
