@@ -17,6 +17,7 @@
     .panel-body {
       max-height: 400px;
       overflow: auto;
+      font-family: "Courier New", monospace, Monospaced;
     }
     .panel-body a {
       overflow: hidden;
@@ -122,13 +123,13 @@
           <div class="panel panel-default" ng-controller="tableSelectorCtrl">
             <div class="panel-heading" role="tab" id="tablePanelHeading">
               <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#tablePanelCollapse" aria-expanded="false" aria-controls="tablePanelCollapse">Tables</a>
+                <a data-toggle="collapse" data-parent="#accordion" href="#tablePanelCollapse" aria-expanded="false" aria-controls="tablePanelCollapse">Tables / Views</a>
                 <a href ng-show="tables.length > 0" ng-click="nav.setCurrentView('tables')">({{ tables.length }})</a>
               </h4>
             </div>
-            <div id="tablePanelCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="tablePanelHeading">
+            <div id="tablePanelCollapse" class="panel-collapse collapse text-truncate text-nowrap" role="tabpanel" aria-labelledby="tablePanelHeading">
               <div class="panel-body list-group">
-                <a href draggable="true" title="{{ table.relname }}" ng-click="showTable(table); nav.setCurrentView('table.columns')" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.isCurrentView('table') && table == currentTable}">{{ table.relname }}</a>
+                <a href draggable="true" title="{{ table.relname }}" ng-click="showTable(table); nav.setCurrentView('table.columns')" ng-repeat="table in tables" class="list-group-item" ng-class="{active: nav.isCurrentView('table') && table == currentTable}">[{{table.relkind}}] {{ table.relname }}</a>
               </div>
               <div class="panel-footer">
                 <button type="button" class="btn btn-default" ng-click="refreshList()">Refresh list</button>

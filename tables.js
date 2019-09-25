@@ -130,7 +130,22 @@ cdbmanager.service("tables", ["SQLClient", "Table", "settings", function (SQLCli
   let order = null;
 
   this.get = function (action, error, extraQuery) {
-    let query = "select pg_class.oid as _oid, pg_class.relname, pg_class.reltuples, pg_namespace.nspname from pg_class, pg_roles, pg_namespace where pg_roles.oid = pg_class.relowner and pg_roles.rolname = current_user and pg_namespace.oid = pg_class.relnamespace and pg_class.relkind = 'r'";
+    let query = `
+      select 
+        pg_class.oid as _oid, 
+        pg_class.relname, 
+        pg_class.reltuples, 
+        pg_namespace.nspname,
+        pg_class.relkind 
+      from pg_class, pg_roles, pg_namespace 
+      where 
+        pg_roles.oid = pg_class.relowner and 
+        pg_roles.rolname = current_user and 
+        pg_namespace.oid = pg_class.relnamespace and 
+        pg_class.relkind IN ('r', 'm', 'v') and
+        nspname = current_schema
+    `;
+
     if (!settings.showAnalysisTables) {
       query += " and pg_class.relname not like 'analysis_%'";
     }
