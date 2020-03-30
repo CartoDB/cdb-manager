@@ -142,7 +142,7 @@ cdbmanager.service("tables", ["SQLClient", "Table", "settings", function (SQLCli
         pg_roles.oid = pg_class.relowner and 
         pg_roles.rolname = current_user and 
         pg_namespace.oid = pg_class.relnamespace and 
-        pg_class.relkind IN ('r', 'm', 'v') and
+        pg_class.relkind IN ('r', 'm', 'v', 'p') and
         nspname = current_schema
     `;
 
