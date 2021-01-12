@@ -229,19 +229,19 @@
           </ul>
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.columns')">
-              <cdb-result-table rows="columns" settings="cdbrt4Columns"></cdb-result-table>
+              <cdb-result-table title="currentTable.relname" rows="columns" settings="cdbrt4Columns"></cdb-result-table>
             </div>
             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.indexes')">
-              <cdb-result-table rows="indexes" settings="cdbrt4Indexes"></cdb-result-table>
+              <cdb-result-table title="currentTable.relname" rows="indexes" settings="cdbrt4Indexes"></cdb-result-table>
             </div>
             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.records')">
-              <cdb-result-table rows="records" settings="cdbrt4Records"></cdb-result-table>
+              <cdb-result-table title="currentTable.relname" rows="records" settings="cdbrt4Records"></cdb-result-table>
             </div>
             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.constraints')">
-              <cdb-result-table rows="constraints" settings="cdbrt4Constraints"></cdb-result-table>
+              <cdb-result-table title="currentTable.relname" rows="constraints" settings="cdbrt4Constraints"></cdb-result-table>
             </div>
             <div role="tabpanel" class="tab-pane active" ng-show="nav.isCurrentView('table.triggers')">
-              <cdb-result-table rows="triggers" settings="cdbrt4Triggers"></cdb-result-table>
+              <cdb-result-table title="currentTable.relname" rows="triggers" settings="cdbrt4Triggers"></cdb-result-table>
             </div>
           </div>
         </div>

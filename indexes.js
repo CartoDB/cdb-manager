@@ -31,7 +31,7 @@ cdbmanager.service("indexes", ["SQLClient", "Index", function (SQLClient, Index)
       "JOIN pg_index ix ON ix.indrelid = t.oid " +
       "JOIN pg_class i ON ix.indexrelid = i.oid AND a.attnum = ANY(ix.indkey) " +
       "JOIN pg_am am ON i.relam = am.oid " +
-      "WHERE t.relkind = 'r' " +
+      "WHERE t.relkind IN ('r', 'p') " +
       "AND t.oid = " + table._oid +
       "ORDER BY t.relname, i.relname;";
 

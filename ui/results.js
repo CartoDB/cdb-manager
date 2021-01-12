@@ -15,7 +15,8 @@ cdbmanager.directive('cdbResultTable', function () {
     transclude: true,
     scope: {
       rows: "=rows",
-      settings: "=settings"
+      settings: "=settings",
+      title: "=title"
     },
     replace: true,
     templateUrl: "ui/table.html",
