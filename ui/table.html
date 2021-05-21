@@ -1,6 +1,6 @@
 <div class="panel panel-default" ng-show="rows">
   <div class="panel-heading">
-    Rows per page: <input ng-model="settings.rowsPerPage" type="number" />
+    <span ng-if="title"><strong>{{ title }}</strong> - </span>Rows per page: <input ng-model="settings.rowsPerPage" type="number" />
     <span ng-if="!settings.async" class="pull-right">Total items: {{ rows.length }}</span>
     <span ng-if="settings.async" class="pull-right">Total items: {{ rows[0].total_rows }}</span>
   </div>

@@ -48,8 +48,9 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
     this.errorMessage = null;
 
     // action and error are functions for the promise. if defined they'll be run after the default action and error functions
-    this.send = function (query, action, error) {
+    this.send = function (query, action, error, maxRetry) {
       let currentEndpoint = endpoints.current;
+      maxRetry = maxRetry || 0;
 
       if (currentEndpoint && currentEndpoint.sqlURL) {
         let params = {
@@ -82,6 +83,12 @@ api.factory('SQLClient', ["$http", "endpoints", "alerts", function ($http, endpo
           if (result.status == 400) {
             // PostgreSQL error
             self.errorMessage = result.data.error[0];
+          } else if (result.status == 429 && maxRetry < 6) {
+            const retryAfter = Number(result.headers()['retry-after']) * 1000 || 1000;
+            maxRetry += 1;
+            setTimeout(() => {
+              this.send(query, action, error, maxRetry);
+            }, retryAfter);
           } else {
             // Network error
             self.errorMessage = result.statusText;
